@@ -1,8 +1,22 @@
 grammar Mxstar;
 
-@header {
-package Ornn.Parser;
-}
+Int:        'int';
+Bool:       'bool';
+String:     'string';
+Void:       'void';
+If:         'if';
+Else:       'else';
+For:        'for';
+While:      'while';
+Return:     'return';
+Break:      'break';
+Continue:   'continue';
+New:        'new';
+Class:      'class';
+This:       'this';
+fragment Null:  'null';
+fragment True:  'true';
+fragment False: 'false';
 
 program: programSection* EOF;
 
@@ -45,63 +59,60 @@ constructiveFunctionDeclaration:
 ;
 
 constant:
-    StringConstant
-|   IntConstant
-|   NullConstant
-|   BoolConstant
+    StringConstant  #intLiteral
+|   IntConstant     #strLiteral
+|   NullConstant    #nullLiteral
+|   BoolConstant    #boolLiteral
 ;
-IntConstant:
-    [0-9]+
-;
-StringConstant:
-    '"' (~["\n\r\\] | '\\' ["nr\\])*? '"'
-;
+
+IntConstant: [0-9]+;
+StringConstant:'"' (~["\n\r\\] | '\\' ["nr\\])*? '"';
 NullConstant:   Null;
 BoolConstant:   True | False;
 
 type:
-    nonarrayType
-|   type '[' ']'
+    nonarrayType    #simpleType
+|   type '[' ']'    #arrayType
 ;
 nonarrayType:
     Bool
-|   Int
-|   Void
-|   String
-|   Identifier
+|   Int             #typeInt
+|   Void            #typeBool
+|   String          #typeString
+|   Identifier      #typeIdentifier
 ;
 returnType:   type|Void;
-newType:
-    nonarrayType ('[' expression ']')+ ('[' ']')+ ('[' expression ']')+
-|   nonarrayType
-|   nonarrayType '(' ')'
-|   nonarrayType ('[' expression ']')+ ('[' ']')*
+creator:
+    nonarrayType ('[' expression ']')+ ('[' ']')+ ('[' expression ']')+     #rejectCreator
+|   nonarrayType '(' ')'                                                    #classCreator
+|   nonarrayType ('[' expression ']')+ ('[' ']')*                           #arrayCreator
+|   nonarrayType                                                            #simpleCreator
 ;
 expression:
-    expression      op=('++'|'--')
-|   expression      '(' parameterList?   ')'
-|   name=expression '[' index=expression ']'
-|   expression      '.' Identifier
-|   <assoc=right>   op=('++' | '--')     expression
-|   <assoc=right>   op=('+' | '-')       expression
-|   <assoc=right>   op=('!' | '~')       expression
-|   <assoc=right>   'new'                newType
-|   src1=expression op=('*' | '/' | '%') src2=expression
-|   src1=expression op=('+' | '-')       src2=expression
-|   src1=expression op=('<<' | '>>')     src2=expression
-|   src1=expression op=('<' | '<=' )     src2=expression
-|   src1=expression op=('>' | '>=' )     src2=expression
-|   src1=expression op=('!=' | '==')     src2=expression
-|   src1=expression op='&'               src2=expression
-|   src1=expression op='^'               src2=expression
-|   src1=expression op='|'               src2=expression
-|   src1=expression op='&&'              src2=expression
-|   src1=expression op='||'              src2=expression
-|   <assoc=right> src1=expression op='=' src2=expression
-|   constant
-|   This
-|   Identifier
-|   '(' expression ')'
+    expression      op=('++'|'--')                                          #sufExpr
+|   expression      '(' parameterList?   ')'                                #funcallExpr
+|   name=expression '[' index=expression ']'                                #subscriptExpr
+|   expression      '.' Identifier                                          #memaccessExpr
+|   <assoc=right>   op=('++' | '--')     expression                         #unaryExpr
+|   <assoc=right>   op=('+' | '-')       expression                         #unaryExpr
+|   <assoc=right>   op=('!' | '~')       expression                         #unaryExpr
+|   <assoc=right>   'new'                creator                            #newExpr
+|   src1=expression op=('*' | '/' | '%') src2=expression                    #binaryExpr
+|   src1=expression op=('+' | '-')       src2=expression                    #binaryExpr
+|   src1=expression op=('<<' | '>>')     src2=expression                    #binaryExpr
+|   src1=expression op=('<' | '<=' )     src2=expression                    #binaryExpr
+|   src1=expression op=('>' | '>=' )     src2=expression                    #binaryExpr
+|   src1=expression op=('!=' | '==')     src2=expression                    #binaryExpr
+|   src1=expression op='&'               src2=expression                    #binaryExpr
+|   src1=expression op='^'               src2=expression                    #binaryExpr
+|   src1=expression op='|'               src2=expression                    #binaryExpr
+|   src1=expression op='&&'              src2=expression                    #binaryExpr
+|   src1=expression op='||'              src2=expression                    #binaryExpr
+|   <assoc=right> src1=expression op='=' src2=expression                    #binaryExpr
+|   constant                                                                #literal
+|   This                                                                    #thisExpr
+|   Identifier                                                              #identifier
+|   '(' expression ')'                                                      #bracketExpr
 ;
 
 parameterList:
@@ -109,13 +120,13 @@ parameterList:
 ;
 
 statement:
-    block
-|   variableDeclaration
-|   expression ';'
-|   conditionStatement
-|   loopStatement
-|   controlStatement
-|   ';'
+    block                   #blockStmt
+|   variableDeclaration     #vDecStmt
+|   expression ';'          #exprStmt
+|   conditionStatement      #condStmt
+|   loopStatement           #loopStmt
+|   controlStatement        #ctrlStmt
+|   ';'                     #emptyStmt
 ;
 block:
     '{' statement* '}'
@@ -136,28 +147,10 @@ loopStatement:
 |   While '(' expression ')' statement
 ;
 controlStatement:
-    Return expression? ';'
-|   Break ';'
-|   Continue ';'
+    Return expression? ';'  #returnStmt
+|   Break ';'               #breakStmt
+|   Continue ';'            #continueStmt
 ;
-
-Int:        'int';
-Bool:       'bool';
-String:     'string';
-Void:       'void';
-If:         'if';
-Else:       'else';
-For:        'for';
-While:      'while';
-Return:     'return';
-Break:      'break';
-Continue:   'continue';
-New:        'new';
-Class:      'class';
-This:       'this';
-fragment Null:  'null';
-fragment True:  'true';
-fragment False: 'false';
 
 Identifier:
     [a-zA-Z][0-9a-zA-Z_]*
