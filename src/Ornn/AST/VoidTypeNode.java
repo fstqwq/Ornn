@@ -2,9 +2,9 @@ package Ornn.AST;
 
 import Ornn.util.Position;
 
-public class VoidTypeNode extends ASTNode {
-    public VoidTypeNode(Position pos) {
-        super(pos);
+public class VoidTypeNode extends PrimitiveTypeNode {
+    public VoidTypeNode(Position position) {
+        super("void", position);
     }
 
     @Override
@@ -12,4 +12,3 @@ public class VoidTypeNode extends ASTNode {
         visitor.visit(this);
     }
 }
-

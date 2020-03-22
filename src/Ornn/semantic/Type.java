@@ -15,8 +15,6 @@ public interface Type  {
 
     boolean isNullType();
 
-    boolean isPointerType();
-
     /* TODO:
     int getTypeSize();
  */

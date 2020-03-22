@@ -2,9 +2,9 @@ package Ornn.AST;
 
 import Ornn.util.Position;
 
-public class BoolTypeNode extends ASTNode {
-    public BoolTypeNode(Position pos) {
-        super(pos);
+public class BoolTypeNode extends PrimitiveTypeNode {
+    public BoolTypeNode(Position position) {
+        super("bool", position);
     }
 
     @Override

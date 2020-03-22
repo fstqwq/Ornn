@@ -2,9 +2,9 @@ package Ornn.AST;
 
 import Ornn.util.Position;
 
-public class StringTypeNode extends ASTNode {
-    public StringTypeNode(Position pos) {
-        super(pos);
+public class StringTypeNode extends PrimitiveTypeNode {
+    public StringTypeNode(Position position) {
+        super("string", position);
     }
 
     @Override

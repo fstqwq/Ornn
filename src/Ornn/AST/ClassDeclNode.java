@@ -3,8 +3,8 @@ package Ornn.AST;
 import Ornn.util.Position;
 
 public class ClassDeclNode extends ASTNode {
-    public ClassDeclNode(Position pos) {
-        super(pos);
+    public ClassDeclNode(Position positon) {
+        super(positon);
     }
 
     @Override

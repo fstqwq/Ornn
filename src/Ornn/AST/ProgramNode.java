@@ -8,12 +8,9 @@ public class ProgramNode extends ASTNode {
 
     private List <DeclNode> declNodeList;
 
-    public boolean hasClassDeclNode = false;
-
-    public ProgramNode(List<DeclNode> declNodeList, Position position, boolean hasClassDeclNode) {
+    public ProgramNode(List<DeclNode> declNodeList, Position position) {
         super(position);
         this.declNodeList = declNodeList;
-        this.hasClassDeclNode = hasClassDeclNode;
     }
     public List<DeclNode> getDeclNodeList() {
         return this.declNodeList;

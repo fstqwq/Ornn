@@ -4,8 +4,8 @@ import Ornn.util.Position;
 
 public class ExprStmtNode extends StmtNode {
     ExprNode expr;
-    public ExprStmtNode (ExprNode expr, Position pos) {
-        super(pos);
+    public ExprStmtNode (ExprNode expr, Position position) {
+        super(position);
         this.expr = expr;
     }
     public ExprNode getExpr() {
