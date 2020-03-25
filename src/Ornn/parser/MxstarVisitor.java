@@ -71,19 +71,19 @@ public interface MxstarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConstructiveFunctionDeclaration(MxstarParser.ConstructiveFunctionDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code intLiteral}
-	 * labeled alternative in {@link MxstarParser#constant}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIntLiteral(MxstarParser.IntLiteralContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code strLiteral}
 	 * labeled alternative in {@link MxstarParser#constant}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStrLiteral(MxstarParser.StrLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code intLiteral}
+	 * labeled alternative in {@link MxstarParser#constant}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntLiteral(MxstarParser.IntLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code nullLiteral}
 	 * labeled alternative in {@link MxstarParser#constant}.
@@ -297,11 +297,19 @@ public interface MxstarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConditionStatement(MxstarParser.ConditionStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MxstarParser#loopStatement}.
+	 * Visit a parse tree produced by the {@code forStmt}
+	 * labeled alternative in {@link MxstarParser#loopStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoopStatement(MxstarParser.LoopStatementContext ctx);
+	T visitForStmt(MxstarParser.ForStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code whileStmt}
+	 * labeled alternative in {@link MxstarParser#loopStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStmt(MxstarParser.WhileStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code returnStmt}
 	 * labeled alternative in {@link MxstarParser#controlStatement}.

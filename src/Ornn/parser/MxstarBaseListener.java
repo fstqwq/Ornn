@@ -136,18 +136,6 @@ public class MxstarBaseListener implements MxstarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIntLiteral(MxstarParser.IntLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIntLiteral(MxstarParser.IntLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterStrLiteral(MxstarParser.StrLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -155,6 +143,18 @@ public class MxstarBaseListener implements MxstarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStrLiteral(MxstarParser.StrLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIntLiteral(MxstarParser.IntLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIntLiteral(MxstarParser.IntLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -532,13 +532,25 @@ public class MxstarBaseListener implements MxstarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoopStatement(MxstarParser.LoopStatementContext ctx) { }
+	@Override public void enterForStmt(MxstarParser.ForStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoopStatement(MxstarParser.LoopStatementContext ctx) { }
+	@Override public void exitForStmt(MxstarParser.ForStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWhileStmt(MxstarParser.WhileStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhileStmt(MxstarParser.WhileStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

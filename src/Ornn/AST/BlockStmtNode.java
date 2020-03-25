@@ -8,9 +8,19 @@ import java.util.List;
 public class BlockStmtNode extends StmtNode {
     private List<StmtNode> stmtList;
 
-    public BlockStmtNode(List<StmtNode> stmtNode, Position position) {
+    public BlockStmtNode(List<StmtNode> stmtList, Position position) {
         super(position);
         this.stmtList = stmtList;
+    }
+
+    public BlockStmtNode(StmtNode stmt) {
+        super(stmt.getPosition());
+        if (stmt instanceof BlockStmtNode) {
+            stmtList = new ArrayList<>(((BlockStmtNode) stmt).getStmtList());
+        } else {
+            this.stmtList = new ArrayList<>();
+            this.stmtList.add(stmt);
+        }
     }
 
     public List<StmtNode> getStmtList() {

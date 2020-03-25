@@ -59,8 +59,8 @@ constructiveFunctionDeclaration:
 ;
 
 constant:
-    StringConstant  #intLiteral
-|   IntConstant     #strLiteral
+    StringConstant  #strLiteral
+|   IntConstant     #intLiteral
 |   NullConstant    #nullLiteral
 |   BoolConstant    #boolLiteral
 ;
@@ -143,8 +143,8 @@ loopStatement:
             cond = expression ? ';'
             step = expression ?
         ')'
-        statement
-|   While '(' expression ')' statement
+        statement #forStmt
+|   While '(' expression ')' statement #whileStmt
 ;
 controlStatement:
     Return expression? ';'  #returnStmt

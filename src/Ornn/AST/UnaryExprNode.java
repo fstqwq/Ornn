@@ -5,7 +5,7 @@ import Ornn.util.Position;
 public class UnaryExprNode extends ExprNode {
     private Op op;
     public enum Op {
-        PEC_INC, PRE_DEC, SUF_INC, SUF_DEC, POS, NEG, LNOT, NOT
+        PRE_INC, PRE_DEC, SUF_INC, SUF_DEC, POS, NEG, LNOT, NOT
     }
     private ExprNode expr;
     public UnaryExprNode(ExprNode expr, Op op, Position position) {

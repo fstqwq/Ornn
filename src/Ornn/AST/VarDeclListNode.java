@@ -6,6 +6,9 @@ import java.util.List;
 
 public class VarDeclListNode extends DeclNode {
     private List<VarDeclNode> declList;
+    public VarDeclListNode(Position position) {
+        super(position);
+    }
     public VarDeclListNode(List<VarDeclNode> declNodeList, Position position) {
         super(position);
         this.declList = declNodeList;

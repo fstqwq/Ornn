@@ -769,7 +769,7 @@ public class MxstarParser extends Parser {
 		}
 	}
 	public static class StrLiteralContext extends ConstantContext {
-		public TerminalNode IntConstant() { return getToken(MxstarParser.IntConstant, 0); }
+		public TerminalNode StringConstant() { return getToken(MxstarParser.StringConstant, 0); }
 		public StrLiteralContext(ConstantContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -803,7 +803,7 @@ public class MxstarParser extends Parser {
 		}
 	}
 	public static class IntLiteralContext extends ConstantContext {
-		public TerminalNode StringConstant() { return getToken(MxstarParser.StringConstant, 0); }
+		public TerminalNode IntConstant() { return getToken(MxstarParser.IntConstant, 0); }
 		public IntLiteralContext(ConstantContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -845,7 +845,7 @@ public class MxstarParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case StringConstant:
-				_localctx = new IntLiteralContext(_localctx);
+				_localctx = new StrLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(113);
@@ -853,7 +853,7 @@ public class MxstarParser extends Parser {
 				}
 				break;
 			case IntConstant:
-				_localctx = new StrLiteralContext(_localctx);
+				_localctx = new IntLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(114);
@@ -968,7 +968,7 @@ public class MxstarParser extends Parser {
 			setState(127);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -1252,7 +1252,7 @@ public class MxstarParser extends Parser {
 					setState(143); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
-				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
+				} while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER );
 				setState(147); 
 				_errHandler.sync(this);
 				_alt = 1;
@@ -1274,7 +1274,7 @@ public class MxstarParser extends Parser {
 					setState(149); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
-				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
+				} while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER );
 				setState(155); 
 				_errHandler.sync(this);
 				_alt = 1;
@@ -1298,7 +1298,7 @@ public class MxstarParser extends Parser {
 					setState(157); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,13,_ctx);
-				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
+				} while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER );
 				}
 				break;
 			case 2:
@@ -1342,11 +1342,11 @@ public class MxstarParser extends Parser {
 					setState(170); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
-				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
+				} while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER );
 				setState(176);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
-				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1763,7 +1763,7 @@ public class MxstarParser extends Parser {
 			setState(254);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -2492,6 +2492,17 @@ public class MxstarParser extends Parser {
 	}
 
 	public static class LoopStatementContext extends ParserRuleContext {
+		public LoopStatementContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_loopStatement; }
+	 
+		public LoopStatementContext() { }
+		public void copyFrom(LoopStatementContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class ForStmtContext extends LoopStatementContext {
 		public ExpressionContext init;
 		public ExpressionContext cond;
 		public ExpressionContext step;
@@ -2505,22 +2516,41 @@ public class MxstarParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode While() { return getToken(MxstarParser.While, 0); }
-		public LoopStatementContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_loopStatement; }
+		public ForStmtContext(LoopStatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxstarListener ) ((MxstarListener)listener).enterLoopStatement(this);
+			if ( listener instanceof MxstarListener ) ((MxstarListener)listener).enterForStmt(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxstarListener ) ((MxstarListener)listener).exitLoopStatement(this);
+			if ( listener instanceof MxstarListener ) ((MxstarListener)listener).exitForStmt(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MxstarVisitor ) return ((MxstarVisitor<? extends T>)visitor).visitLoopStatement(this);
+			if ( visitor instanceof MxstarVisitor ) return ((MxstarVisitor<? extends T>)visitor).visitForStmt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class WhileStmtContext extends LoopStatementContext {
+		public TerminalNode While() { return getToken(MxstarParser.While, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public WhileStmtContext(LoopStatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MxstarListener ) ((MxstarListener)listener).enterWhileStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MxstarListener ) ((MxstarListener)listener).exitWhileStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxstarVisitor ) return ((MxstarVisitor<? extends T>)visitor).visitWhileStmt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2534,6 +2564,7 @@ public class MxstarParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case For:
+				_localctx = new ForStmtContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(294);
@@ -2546,7 +2577,7 @@ public class MxstarParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__9) | (1L << T__10) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << New) | (1L << This) | (1L << IntConstant) | (1L << StringConstant) | (1L << NullConstant) | (1L << BoolConstant) | (1L << Identifier))) != 0)) {
 					{
 					setState(296);
-					((LoopStatementContext)_localctx).init = expression(0);
+					((ForStmtContext)_localctx).init = expression(0);
 					}
 				}
 
@@ -2558,7 +2589,7 @@ public class MxstarParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__9) | (1L << T__10) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << New) | (1L << This) | (1L << IntConstant) | (1L << StringConstant) | (1L << NullConstant) | (1L << BoolConstant) | (1L << Identifier))) != 0)) {
 					{
 					setState(300);
-					((LoopStatementContext)_localctx).cond = expression(0);
+					((ForStmtContext)_localctx).cond = expression(0);
 					}
 				}
 
@@ -2570,7 +2601,7 @@ public class MxstarParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__9) | (1L << T__10) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << New) | (1L << This) | (1L << IntConstant) | (1L << StringConstant) | (1L << NullConstant) | (1L << BoolConstant) | (1L << Identifier))) != 0)) {
 					{
 					setState(304);
-					((LoopStatementContext)_localctx).step = expression(0);
+					((ForStmtContext)_localctx).step = expression(0);
 					}
 				}
 
@@ -2581,6 +2612,7 @@ public class MxstarParser extends Parser {
 				}
 				break;
 			case While:
+				_localctx = new WhileStmtContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(309);

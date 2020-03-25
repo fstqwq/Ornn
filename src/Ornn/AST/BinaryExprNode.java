@@ -6,7 +6,7 @@ public class BinaryExprNode extends ExprNode {
     private Op op;
     private ExprNode lhs, rhs;
     public enum Op {
-        MUL, DIV, MOD, ADD, SUB, SHL, SHR, LT, LEQ, GT, GEQ, AND, XOR, OR, LAND, LOR, ASG
+        MUL, DIV, MOD, ADD, SUB, SHL, SHR, LT, LEQ, GT, GEQ, EQ, NEQ, AND, XOR, OR, LAND, LOR, ASG
     }
 
     public BinaryExprNode(ExprNode lhs, ExprNode rhs, Op op, Position position) {
