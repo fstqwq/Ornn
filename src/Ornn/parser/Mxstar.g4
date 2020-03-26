@@ -75,9 +75,8 @@ type:
 |   type '[' ']'    #arrayType
 ;
 nonarrayType:
-    Bool
+    Bool            #typeBool
 |   Int             #typeInt
-|   Void            #typeBool
 |   String          #typeString
 |   Identifier      #typeIdentifier
 ;

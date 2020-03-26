@@ -17,7 +17,13 @@ public class ArrayTypeNode extends TypeNode {
         }
     }
 
-    public int getDimension() {return dimension;}
+    public int getDimension() {
+        return dimension;
+    }
+
+    public TypeNode getBaseType(){
+        return baseType;
+    }
 
     @Override
     public void accept(ASTVisitor visitor) {

@@ -6,6 +6,7 @@ import Ornn.parser.MxstarParser;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ErrorNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,12 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
         if (ctx.programSection() != null) {
             for (ParserRuleContext programSection : ctx.programSection()) {
                 ASTNode decl = visit(programSection);
-                if (decl instanceof VarDeclListNode) declNodeList.addAll(((VarDeclListNode) decl).getDeclList());
-                else declNodeList.add((DeclNode) decl);
+                if (decl instanceof VarDeclListNode) {
+                    declNodeList.addAll(((VarDeclListNode) decl).getDeclList());
+                }
+                else {
+                    declNodeList.add((DeclNode) decl);
+                }
             }
         }
         return new ProgramNode(declNodeList, new Position(ctx.getStart()));
@@ -36,7 +41,8 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     public ASTNode visitFunctionDeclaration(MxstarParser.FunctionDeclarationContext ctx) {
         TypeNode type = (TypeNode)visit(ctx.returnType());
         String identifier = ctx.Identifier().getText();
-        List<VarDeclNode> varDeclNodes = ctx.parameterDeclarationList() == null
+        List<VarDeclNode> varDeclNodes =
+                ctx.parameterDeclarationList() == null
                 ? new ArrayList<>()
                 : ((VarDeclListNode) visit(ctx.parameterDeclarationList())).getDeclList();
         BlockStmtNode blockStmt = (BlockStmtNode) visit(ctx.block());
@@ -47,7 +53,12 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     public ASTNode visitConstructiveFunctionDeclaration(MxstarParser.ConstructiveFunctionDeclarationContext ctx) {
         String identifier = ctx.Identifier().getText();
         BlockStmtNode blockStmt = (BlockStmtNode) visit(ctx.block());
-        return new FuncDeclNode(null, identifier, null, blockStmt, new Position(ctx.getStart()));
+        return new FuncDeclNode(
+                null, identifier,
+                null,
+                blockStmt,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -61,10 +72,12 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitParameterDeclaration(MxstarParser.ParameterDeclarationContext ctx) {
-        return new VarDeclNode((TypeNode) visit(ctx.type()),
-                                null,
-                                ctx.Identifier().getText(),
-                                new Position(ctx.getStart()));
+        return new VarDeclNode(
+                (TypeNode) visit(ctx.type()),
+                null,
+                ctx.Identifier().getText(),
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -122,7 +135,9 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitVDecStmt(MxstarParser.VDecStmtContext ctx) {
-        return new VarDeclStmtNode((VarDeclListNode) visit(ctx.variableDeclaration()), new Position(ctx.getStart()));
+        return new VarDeclStmtNode(
+                (VarDeclListNode) visit(ctx.variableDeclaration()),
+                new Position(ctx.getStart()));
     }
 
     @Override
@@ -152,7 +167,11 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitReturnStmt(MxstarParser.ReturnStmtContext ctx) {
-        return new ReturnNode((ExprNode) visit(ctx.expression()), null, new Position(ctx.getStart()));
+        return new ReturnNode(
+                (ExprNode) visit(ctx.expression()),
+                null,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -169,7 +188,12 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     public ASTNode visitConditionStatement(MxstarParser.ConditionStatementContext ctx) {
         StmtNode thenStmt = new BlockStmtNode((StmtNode) visit(ctx.thenStmt));
         StmtNode elseStmt = ctx.elseStmt != null ? new BlockStmtNode((StmtNode) visit(ctx.elseStmt)) : null;
-        return new IfStmtNode((ExprNode) visit(ctx.expression()), thenStmt, elseStmt, new Position(ctx.getStart()));
+        return new IfStmtNode(
+                (ExprNode) visit(ctx.expression()),
+                thenStmt,
+                elseStmt,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -195,6 +219,40 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitRejectCreator(MxstarParser.RejectCreatorContext ctx) {
         throw new CompilationError("Invalid new creator", new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitSimpleCreator(MxstarParser.SimpleCreatorContext ctx) {
+        return new NewExprNode(
+                (TypeNode) visit(ctx.nonarrayType()),
+                0,
+                null,
+                new Position(ctx.getStart())
+        );
+    }
+
+    @Override
+    public ASTNode visitClassCreator(MxstarParser.ClassCreatorContext ctx) {
+        return new NewExprNode(
+                (TypeNode) visit(ctx.nonarrayType()),
+                0,
+                null,
+                new Position(ctx.getStart())
+        );
+    }
+
+    @Override
+    public ASTNode visitArrayCreator(MxstarParser.ArrayCreatorContext ctx) {
+        List<ExprNode> exprNodes = new ArrayList<>();
+        for (ParserRuleContext expr : ctx.expression()) {
+            exprNodes.add((ExprNode) visit(expr));
+        }
+        return new NewExprNode(
+                (TypeNode) visit(ctx.nonarrayType()),
+                (ctx.getChildCount() - ctx.expression().size()) / 2,
+                exprNodes,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -261,7 +319,12 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
             default:
                 throw new CompilationError("Unknown binary operator", new Position(ctx.getStart()));
         }
-        return new BinaryExprNode((ExprNode) visit(ctx.src1), (ExprNode) visit(ctx.src2), op, new Position(ctx.getStart()));
+        return new BinaryExprNode(
+                (ExprNode) visit(ctx.src1),
+                (ExprNode) visit(ctx.src2),
+                op,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -289,7 +352,11 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
             default:
                 throw new CompilationError("Unknown unary operator", new Position(ctx.getStart()));
         }
-        return new UnaryExprNode((ExprNode) visit(ctx.expression()), op, new Position(ctx.getStart()));
+        return new UnaryExprNode(
+                (ExprNode) visit(ctx.expression()),
+                op,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -314,6 +381,69 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     }
 
     @Override
+    public ASTNode visitBracketExpr(MxstarParser.BracketExprContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
+    public ASTNode visitFuncallExpr(MxstarParser.FuncallExprContext ctx) {
+        List <ExprNode> parameters = new ArrayList<>();
+        if (ctx.parameterList() != null) {
+            for (ParserRuleContext parameter : ctx.parameterList().expression()) {
+                parameters.add((ExprNode) visit(parameter));
+            }
+        }
+        return new FuncCallExprNode(
+                (ExprNode) visit(ctx.expression()),
+                parameters,
+                new Position(ctx.getStart())
+        );
+    }
+
+    @Override
+    public ASTNode visitParameterList(MxstarParser.ParameterListContext ctx) {
+        throw new CompilationError("Internal Error", new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitSubscriptExpr(MxstarParser.SubscriptExprContext ctx) {
+        return new ArrayIndexNode(
+                (ExprNode) visit(ctx.name),
+                (ExprNode) visit(ctx.index),
+                new Position(ctx.getStart())
+        );
+    }
+
+    @Override
+    public ASTNode visitThisExpr(MxstarParser.ThisExprContext ctx) {
+        return new ThisExprNode(new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitMemaccessExpr(MxstarParser.MemaccessExprContext ctx) {
+        return new ClassMemberNode(
+                (ExprNode) visit(ctx.expression()),
+                ctx.Identifier().getText(),
+                new Position(ctx.getStart())
+        );
+    }
+
+    @Override
+    public ASTNode visitSimpleType(MxstarParser.SimpleTypeContext ctx) {
+        return visit(ctx.nonarrayType());
+    }
+
+    @Override
+    public ASTNode visitArrayType(MxstarParser.ArrayTypeContext ctx) {
+        return new ArrayTypeNode((TypeNode) visit(ctx.type()), new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitLiteral(MxstarParser.LiteralContext ctx) {
+        return visit(ctx.constant());
+    }
+
+    @Override
     public ASTNode visitIntLiteral(MxstarParser.IntLiteralContext ctx) {
         return new IntLiteralNode(Integer.parseInt(ctx.IntConstant().getText()), new Position(ctx.getStart()));
     }
@@ -325,12 +455,48 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitBoolLiteral(MxstarParser.BoolLiteralContext ctx) {
-        return new BoolLiteralNode(Boolean.parseBoolean(ctx.BoolConstant().getText()), new Position(ctx.getStart()));
+        return new BoolLiteralNode(
+                Boolean.parseBoolean(ctx.BoolConstant().getText()),
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
     public ASTNode visitNullLiteral(MxstarParser.NullLiteralContext ctx) {
         return new NullLiteralNode(new Position(ctx.getStart()));
     }
+
+    @Override
+    public ASTNode visitReturnType(MxstarParser.ReturnTypeContext ctx) {
+        return ctx.Void() == null
+                ? visit(ctx.type())
+                : new VoidTypeNode(new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitTypeBool(MxstarParser.TypeBoolContext ctx) {
+        return new BoolTypeNode(new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitTypeInt(MxstarParser.TypeIntContext ctx) {
+        return new IntTypeNode(new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitTypeString(MxstarParser.TypeStringContext ctx) {
+        return new StringTypeNode(new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitTypeIdentifier(MxstarParser.TypeIdentifierContext ctx) {
+        return new ClassTypeNode(ctx.getText(), new Position(ctx.getStart()));
+    }
+
+    @Override
+    public ASTNode visitIdentifier(MxstarParser.IdentifierContext ctx) {
+        return new IDExprNode(ctx.Identifier().getText(), new Position(ctx.getStart()));
+    }
+
 
 }
