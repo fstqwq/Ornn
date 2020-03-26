@@ -7,7 +7,7 @@
 ![](https://opgg-static.akamaized.net/images/lol/item/1054.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/2033.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3751.png?image=q_auto,w_42&v=1583298869)
-![](https://opgg-static.akamaized.net/images/lol/item/1029.png?image=q_auto,w_42&v=1583298869)
+![](https://opgg-static.akamaized.net/images/lol/item/1031.png?image=q_auto,w_42&v=1583298869)
 
 
 List of things I shall done:
@@ -23,7 +23,7 @@ AST
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3111.png?image=q_auto,w_42&v=1583298869) Sematic Checker
 
-![](https://opgg-static.akamaized.net/images/lol/item/3379.png?image=q_auto,w_42&v=1583298869) IR Visitor
+![](https://opgg-static.akamaized.net/images/lol/item/3379.png?image=q_auto,w_42&v=1583298869) IR Builder
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3386.png?image=q_auto,w_42&v=1583298869) Optim
 

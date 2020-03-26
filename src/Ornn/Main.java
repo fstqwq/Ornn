@@ -10,14 +10,15 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-public class main {
+public class Main {
     public static void main(String[] args) throws Exception {
         String fileName;
         if (args.length > 0) {
             fileName = args[0];
         } else {
-            fileName = "test.txt";
+            fileName = "code.mx";
         }
+        System.err.println("File name = " + fileName);
         try {
             InputStream file = new FileInputStream(fileName);
 

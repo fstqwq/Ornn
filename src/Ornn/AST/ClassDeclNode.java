@@ -5,7 +5,7 @@ import Ornn.util.Position;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassDeclNode extends ASTNode {
+public class ClassDeclNode extends DeclNode {
     String Identifier;
     List<VarDeclNode> varDeclNodes;
     List<FuncDeclNode> funcDeclNodes;
@@ -30,6 +30,10 @@ public class ClassDeclNode extends ASTNode {
 
     public void addVarDecl(VarDeclNode varDeclNode) {
         varDeclNodes.add(varDeclNode);
+    }
+
+    public void addVarDecl(List<VarDeclNode> varDeclNodes) {
+        varDeclNodes.addAll(varDeclNodes);
     }
 
     public void addFuncDecl(FuncDeclNode funcDeclNode) {

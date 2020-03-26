@@ -14,6 +14,6 @@ public class CompilationError extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "[Error]: " + super.getMessage() + pos.toString();
+        return "[Error]: " + super.getMessage() + " " + pos.toString();
     }
 }

@@ -6,7 +6,7 @@ import Ornn.util.Position;
 
 import java.util.List;
 
-public class FuncDeclNode extends ASTNode {
+public class FuncDeclNode extends DeclNode {
     private TypeNode type;
     private String identifier;
     private List<VarDeclNode> parameterList;

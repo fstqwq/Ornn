@@ -100,7 +100,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     public ASTNode visitClassDeclaration(MxstarParser.ClassDeclarationContext ctx) {
         ClassDeclNode classDeclNode = new ClassDeclNode(ctx.Identifier().getText(), new Position(ctx.getStart()));
         for (ParserRuleContext decl : ctx.variableDeclaration()) {
-            classDeclNode.addVarDecl((VarDeclNode) visit(decl));
+            classDeclNode.addVarDecl(((VarDeclListNode) visit(decl)).getDeclList());
         }
         for (ParserRuleContext decl : ctx.functionDeclaration()) {
             classDeclNode.addFuncDecl((FuncDeclNode) visit(decl));
@@ -168,7 +168,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitReturnStmt(MxstarParser.ReturnStmtContext ctx) {
         return new ReturnNode(
-                (ExprNode) visit(ctx.expression()),
+                ctx.expression() == null ? null : (ExprNode) visit(ctx.expression()),
                 null,
                 new Position(ctx.getStart())
         );
