@@ -18,7 +18,7 @@ public class Main {
         } else {
             fileName = "code.mx";
         }
-        System.err.println("File name = " + fileName);
+//        System.err.println("File name = " + fileName);
         try {
             InputStream file = new FileInputStream(fileName);
             ProgramNode ast = buildAST(file);
@@ -31,7 +31,10 @@ public class Main {
     }
 
     public static ProgramNode buildAST(InputStream file) throws Exception {
-        MxstarParser parser = new MxstarParser(new CommonTokenStream(new MxstarLexer(CharStreams.fromStream(file))));
+        MxstarLexer lexer = new MxstarLexer(CharStreams.fromStream(file));
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new ErrorListener());
+        MxstarParser parser = new MxstarParser(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
         parser.addErrorListener(new ErrorListener());
         return (ProgramNode) (new ASTBuilder()).visit(parser.program());

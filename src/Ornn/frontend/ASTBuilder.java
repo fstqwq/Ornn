@@ -123,7 +123,13 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
     public ASTNode visitBlock(MxstarParser.BlockContext ctx) {
         List<StmtNode> stmtNodes = new ArrayList<>();
         for (ParserRuleContext stmt : ctx.statement()) {
-            stmtNodes.add((StmtNode) visit(stmt));
+            StmtNode stmtNode = (StmtNode) visit(stmt);
+            if (stmtNode == null || (stmtNode instanceof BlockStmtNode && ((BlockStmtNode) stmtNode).getStmtList().size() == 0)) {
+
+            }
+            else {
+                stmtNodes.add(stmtNode);
+            }
         }
         return new BlockStmtNode(stmtNodes, new Position(ctx.getStart()));
     }
@@ -162,7 +168,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitEmptyStmt(MxstarParser.EmptyStmtContext ctx) {
-        return null;
+        return new BlockStmtNode(new ArrayList<>(), new Position(ctx.getStart()));
     }
 
     @Override

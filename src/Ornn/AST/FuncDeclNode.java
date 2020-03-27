@@ -4,6 +4,7 @@ import Ornn.semantic.FunctionSymbol;
 import Ornn.semantic.Type;
 import Ornn.util.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FuncDeclNode extends DeclNode {
@@ -17,7 +18,12 @@ public class FuncDeclNode extends DeclNode {
         super(position);
         this.type = type;
         this.identifier = identifier;
-        this.parameterList = parameterList;
+        if (parameterList == null) {
+            this.parameterList = new ArrayList<>();
+        }
+        else {
+            this.parameterList = parameterList;
+        }
         this.blockStmt = blockStmt;
         this.parameterList.forEach(VarDeclNode::setParameterVariable);
     }

@@ -1,38 +1,31 @@
-- {case: ./basic-package/basic-25.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-40.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input 'void' expecting\
-    \ {'(', '{', '}', ';', '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string',\
-    \ 'if', 'for', 'while', 'return', 'break', 'continue', 'new', 'this', IntConstant,\
-    \ StringConstant, NullConstant, BoolConstant, Identifier} at line 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-25.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-40.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input 'void' expecting {'(', '{', '}', ';',\
+    \ '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while',\
+    \ 'return', 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
+    \ BoolConstant, Identifier} at line 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
     \tat Ornn.parser.MxstarParser.block(MxstarParser.java:2495)\n\tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input 'void' expecting {'(', '{', '}', ';', '++',\
     \ '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while', 'return',\
     \ 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
     \ BoolConstant, Identifier} at line 2, 4\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-11.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-50.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-4.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-64.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-35.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input ']' expecting\
-    \ {'(', '++', '--', '+', '-', '!', '~', 'new', 'this', IntConstant, StringConstant,\
-    \ NullConstant, BoolConstant, Identifier} at line 5, 21\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-11.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-50.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-4.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-64.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-35.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input ']' expecting {'(', '++', '--', '+',\
+    \ '-', '!', '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
+    \ Identifier} at line 5, 21\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
@@ -43,21 +36,18 @@
     \ Ornn.parser.MxstarParser.statement(MxstarParser.java:2382)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input ']' expecting {'(', '++', '--', '+', '-', '!',\
     \ '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
     \ Identifier} at line 5, 21\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-15.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-44.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-70.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input ']' expecting\
-    \ {'(', '++', '--', '+', '-', '!', '~', 'new', 'this', IntConstant, StringConstant,\
-    \ NullConstant, BoolConstant, Identifier} at line 2, 27\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-15.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-44.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-70.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input ']' expecting {'(', '++', '--', '+',\
+    \ '-', '!', '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
+    \ Identifier} at line 2, 27\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
@@ -66,29 +56,23 @@
     \tat Ornn.parser.MxstarParser.variableDeclarationList(MxstarParser.java:621)\n\
     \tat Ornn.parser.MxstarParser.variableDeclaration(MxstarParser.java:460)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:237)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input ']' expecting {'(', '++', '--', '+', '-', '!',\
     \ '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
     \ Identifier} at line 2, 27\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-21.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-31.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-60.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-54.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-14.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-45.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input 'void' expecting\
-    \ {'int', 'bool', 'string', Identifier} at line 2, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-21.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-31.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-60.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-54.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-14.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-45.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input 'void' expecting {'int', 'bool', 'string',\
+    \ Identifier} at line 2, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
@@ -96,174 +80,120 @@
     \tat Ornn.parser.MxstarParser.statement(MxstarParser.java:2390)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input 'void' expecting {'int', 'bool', 'string', Identifier}\
     \ at line 2, 8\nException in thread \"main\" java.lang.RuntimeException\n\tat\
     \ Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-20.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-30.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-61.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] missing ';' at 'int' at line\
-    \ 2, 0\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\t\
-    at org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./basic-package/basic-20.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-30.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-61.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] missing ';' at 'int' at line 2, 0\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportMissingToken(DefaultErrorStrategy.java:409)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenInsertion(DefaultErrorStrategy.java:519)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.recoverInline(DefaultErrorStrategy.java:476)\n\
     \tat org.antlr.v4.runtime.Parser.match(Parser.java:206)\n\tat Ornn.parser.MxstarParser.classDeclaration(MxstarParser.java:411)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:230)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] missing ';' at 'int' at line 2, 0\nException in thread \"main\"\
     \ java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n", stdout: '',
   verdict: Accepted}
-- {case: ./basic-package/basic-55.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-24.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-41.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-10.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-51.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-5.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] extraneous input 'void' expecting\
-    \ {'(', '{', '}', ';', '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string',\
-    \ 'if', 'for', 'while', 'return', 'break', 'continue', 'new', 'this', IntConstant,\
-    \ StringConstant, NullConstant, BoolConstant, Identifier} at line 3, 1\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-55.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-24.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-41.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-10.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-51.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-5.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';',\
+    \ '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while',\
+    \ 'return', 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
+    \ BoolConstant, Identifier} at line 3, 1\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportUnwantedToken(DefaultErrorStrategy.java:377)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenDeletion(DefaultErrorStrategy.java:548)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.sync(DefaultErrorStrategy.java:266)\n\
     \tat Ornn.parser.MxstarParser.block(MxstarParser.java:2476)\n\tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';', '++',\
     \ '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while', 'return',\
     \ 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
     \ BoolConstant, Identifier} at line 3, 1\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-65.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-34.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-46.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] extraneous input 'void' expecting\
-    \ {'(', '{', '}', ';', '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string',\
-    \ 'if', 'for', 'while', 'return', 'break', 'continue', 'new', 'this', IntConstant,\
-    \ StringConstant, NullConstant, BoolConstant, Identifier} at line 10, 4\n\tat\
-    \ Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
-    \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportUnwantedToken(DefaultErrorStrategy.java:377)\n\
-    \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenDeletion(DefaultErrorStrategy.java:548)\n\
-    \tat org.antlr.v4.runtime.DefaultErrorStrategy.sync(DefaultErrorStrategy.java:266)\n\
-    \tat Ornn.parser.MxstarParser.block(MxstarParser.java:2476)\n\tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\
-    \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
-    \ [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';', '++',\
-    \ '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while', 'return',\
-    \ 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
-    \ BoolConstant, Identifier} at line 10, 4\nException in thread \"main\" java.lang.RuntimeException\n\
-    \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-17.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-23.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] extraneous input 'void' expecting\
-    \ {'(', '{', '}', ';', '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string',\
-    \ 'if', 'for', 'while', 'return', 'break', 'continue', 'new', 'this', IntConstant,\
-    \ StringConstant, NullConstant, BoolConstant, Identifier} at line 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-65.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-34.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-46.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';',\
+    \ '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while',\
+    \ 'return', 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
+    \ BoolConstant, Identifier} at line 10, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportUnwantedToken(DefaultErrorStrategy.java:377)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenDeletion(DefaultErrorStrategy.java:548)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.sync(DefaultErrorStrategy.java:266)\n\
     \tat Ornn.parser.MxstarParser.block(MxstarParser.java:2476)\n\tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \ [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';', '++',\
+    \ '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while', 'return',\
+    \ 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
+    \ BoolConstant, Identifier} at line 10, 4\nException in thread \"main\" java.lang.RuntimeException\n\
+    \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-17.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-23.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';',\
+    \ '++', '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while',\
+    \ 'return', 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
+    \ BoolConstant, Identifier} at line 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+    \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportUnwantedToken(DefaultErrorStrategy.java:377)\n\
+    \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenDeletion(DefaultErrorStrategy.java:548)\n\
+    \tat org.antlr.v4.runtime.DefaultErrorStrategy.sync(DefaultErrorStrategy.java:266)\n\
+    \tat Ornn.parser.MxstarParser.block(MxstarParser.java:2476)\n\tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\
+    \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] extraneous input 'void' expecting {'(', '{', '}', ';', '++',\
     \ '--', '+', '-', '!', '~', 'int', 'bool', 'string', 'if', 'for', 'while', 'return',\
     \ 'break', 'continue', 'new', 'this', IntConstant, StringConstant, NullConstant,\
     \ BoolConstant, Identifier} at line 2, 4\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-62.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-33.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-2.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-56.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-27.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-13.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-42.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-6.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-52.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-37.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-66.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-26.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-12.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-43.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-7.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-53.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-36.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input ']' expecting\
-    \ {'(', '++', '--', '+', '-', '!', '~', 'new', 'this', IntConstant, StringConstant,\
-    \ NullConstant, BoolConstant, Identifier} at line 19, 227\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-62.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-33.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-56.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-27.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-13.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-42.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-6.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-52.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-37.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-66.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-26.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-12.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-43.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-7.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-53.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-36.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input ']' expecting {'(', '++', '--', '+',\
+    \ '-', '!', '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
+    \ Identifier} at line 19, 227\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
@@ -277,53 +207,41 @@
     \tat Ornn.parser.MxstarParser.statement(MxstarParser.java:2374)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input ']' expecting {'(', '++', '--', '+', '-', '!',\
     \ '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
     \ Identifier} at line 19, 227\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-67.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-47.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-16.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-22.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-63.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-32.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-3.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-57.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] missing '{' at 'int' at line\
-    \ 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\t\
-    at org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./basic-package/basic-67.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-47.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-16.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-22.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-63.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-32.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-57.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] missing '{' at 'int' at line 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportMissingToken(DefaultErrorStrategy.java:409)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenInsertion(DefaultErrorStrategy.java:519)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.recoverInline(DefaultErrorStrategy.java:476)\n\
     \tat org.antlr.v4.runtime.Parser.match(Parser.java:206)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2474)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] missing '{' at 'int' at line 2, 4\nException in thread \"main\"\
     \ java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n", stdout: '',
   verdict: Accepted}
-- {case: ./basic-package/basic-29.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-68.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] extraneous input '(' expecting\
-    \ Identifier at line 18, 12\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
-    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./basic-package/basic-29.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-68.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] extraneous input '(' expecting Identifier at line 18,\
+    \ 12\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\tat\
+    \ org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportUnwantedToken(DefaultErrorStrategy.java:377)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenDeletion(DefaultErrorStrategy.java:548)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.recoverInline(DefaultErrorStrategy.java:467)\n\
@@ -331,183 +249,110 @@
     \tat Ornn.parser.MxstarParser.statement(MxstarParser.java:2390)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] extraneous input '(' expecting Identifier at line 18, 12\nException\
     \ in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
   stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-39.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-8.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input 'this' expecting\
-    \ Identifier at line 3, 10\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
-    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./basic-package/basic-39.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-8.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input 'this' expecting Identifier at line\
+    \ 3, 10\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\t\
+    at org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
     \tat Ornn.parser.MxstarParser.expression(MxstarParser.java:2147)\n\tat Ornn.parser.MxstarParser.controlStatement(MxstarParser.java:2815)\n\
     \tat Ornn.parser.MxstarParser.statement(MxstarParser.java:2416)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input 'this' expecting Identifier at line 3, 10\n\
     Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
   stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-19.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-48.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] missing ';' at '<EOF>' at\
-    \ line 7, 1\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./basic-package/basic-19.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-48.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] missing ';' at '<EOF>' at line 7, 1\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportMissingToken(DefaultErrorStrategy.java:409)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenInsertion(DefaultErrorStrategy.java:519)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.recoverInline(DefaultErrorStrategy.java:476)\n\
     \tat org.antlr.v4.runtime.Parser.match(Parser.java:206)\n\tat Ornn.parser.MxstarParser.classDeclaration(MxstarParser.java:411)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:230)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] missing ';' at '<EOF>' at line 7, 1\nException in thread \"main\"\
     \ java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n", stdout: '',
   verdict: Accepted}
-- {case: ./basic-package/basic-58.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./basic-package/basic-18.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-49.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-59.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-28.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-69.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-38.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input 'int' expecting\
-    \ Identifier at line 1, 6\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
-    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./basic-package/basic-58.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./basic-package/basic-18.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-49.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-59.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-28.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-69.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./basic-package/basic-38.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input 'int' expecting Identifier at line\
+    \ 1, 6\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\t\
+    at org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
     \tat Ornn.parser.MxstarParser.classDeclaration(MxstarParser.java:416)\n\tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:230)\n\
-    \tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\tat Ornn.Main.buildAST(Main.java:37)\n\
+    \tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\tat Ornn.Main.buildAST(Main.java:40)\n\
     \tat Ornn.Main.main(Main.java:24)\n[Error]: [Syntax Error] mismatched input 'int'\
     \ expecting Identifier at line 1, 6\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./basic-package/basic-9.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./builtin-func-package/builtin-4.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./builtin-func-package/builtin-1.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./builtin-func-package/builtin-2.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./builtin-func-package/builtin-3.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./if-package/if-3.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./if-package/if-2.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./if-package/if-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./breakcontinue-package/breakcontinue-3.mx, stage: semantic, stderr: 'File
-    name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./breakcontinue-package/breakcontinue-2.mx, stage: semantic, stderr: 'File
-    name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./breakcontinue-package/breakcontinue-1.mx, stage: semantic, stderr: 'File
-    name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./breakcontinue-package/breakcontinue-5.mx, stage: semantic, stderr: 'File
-    name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./breakcontinue-package/breakcontinue-4.mx, stage: semantic, stderr: 'File
-    name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./expression-package/expression-5.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./expression-package/expression-1.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./expression-package/expression-4.mx, stage: semantic, stderr: "File name\
-    \ = code.mx\njava.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
+- {case: ./basic-package/basic-9.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./builtin-func-package/builtin-4.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./builtin-func-package/builtin-1.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Accepted}
+- {case: ./builtin-func-package/builtin-2.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Accepted}
+- {case: ./builtin-func-package/builtin-3.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./if-package/if-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./if-package/if-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./if-package/if-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./breakcontinue-package/breakcontinue-3.mx, stage: semantic, stderr: '',
   stdout: '', verdict: Accepted}
-- {case: ./expression-package/expression-3.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./expression-package/expression-2.mx, stage: semantic, stderr: 'File name
-    = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./array-package/array-7.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./array-package/array-3.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./array-package/array-2.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./array-package/array-6.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./array-package/array-9.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./array-package/array-8.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./array-package/array-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./array-package/array-5.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./array-package/array-4.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: Invalid new creator at line 2, 18\n\tat Ornn.frontend.ASTBuilder.visitRejectCreator(ASTBuilder.java:221)\n\
+- {case: ./breakcontinue-package/breakcontinue-2.mx, stage: semantic, stderr: '',
+  stdout: '', verdict: Wrong Answer}
+- {case: ./breakcontinue-package/breakcontinue-1.mx, stage: semantic, stderr: '',
+  stdout: '', verdict: Wrong Answer}
+- {case: ./breakcontinue-package/breakcontinue-5.mx, stage: semantic, stderr: '',
+  stdout: '', verdict: Wrong Answer}
+- {case: ./breakcontinue-package/breakcontinue-4.mx, stage: semantic, stderr: '',
+  stdout: '', verdict: Wrong Answer}
+- {case: ./expression-package/expression-5.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./expression-package/expression-1.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./expression-package/expression-4.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./expression-package/expression-3.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Accepted}
+- {case: ./expression-package/expression-2.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Accepted}
+- {case: ./array-package/array-7.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./array-package/array-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./array-package/array-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./array-package/array-6.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./array-package/array-9.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./array-package/array-8.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./array-package/array-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./array-package/array-5.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./array-package/array-4.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: Invalid new creator at line 2, 18\n\tat Ornn.frontend.ASTBuilder.visitRejectCreator(ASTBuilder.java:227)\n\
     \tat Ornn.frontend.ASTBuilder.visitRejectCreator(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$RejectCreatorContext.accept(MxstarParser.java:1253)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitNewExpr(ASTBuilder.java:380)\n\tat Ornn.frontend.ASTBuilder.visitNewExpr(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitNewExpr(ASTBuilder.java:386)\n\tat Ornn.frontend.ASTBuilder.visitNewExpr(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$NewExprContext.accept(MxstarParser.java:1498)\n\t\
     at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
     \tat Ornn.frontend.ASTBuilder.visitSingleVariableDeclaration(ASTBuilder.java:117)\n\
@@ -522,7 +367,7 @@
     at Ornn.frontend.ASTBuilder.visitVariableDeclaration(ASTBuilder.java:14)\n\tat\
     \ Ornn.parser.MxstarParser$VariableDeclarationContext.accept(MxstarParser.java:446)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitVDecStmt(ASTBuilder.java:139)\n\tat Ornn.frontend.ASTBuilder.visitVDecStmt(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitVDecStmt(ASTBuilder.java:145)\n\tat Ornn.frontend.ASTBuilder.visitVDecStmt(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$VDecStmtContext.accept(MxstarParser.java:2246)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
     \tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:126)\n\tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:14)\n\
@@ -538,56 +383,28 @@
     \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
     at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ Invalid new creator at line 2, 18\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./loop-package/loop-3.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.BlockStmtNode.<init>(BlockStmtNode.java:17)\n\
-    \tat Ornn.frontend.ASTBuilder.visitForStmt(ASTBuilder.java:214)\n\tat Ornn.frontend.ASTBuilder.visitForStmt(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ForStmtContext.accept(MxstarParser.java:2614)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitLoopStmt(ASTBuilder.java:155)\n\tat Ornn.frontend.ASTBuilder.visitLoopStmt(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$LoopStmtContext.accept(MxstarParser.java:2284)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:126)\n\tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$BlockContext.accept(MxstarParser.java:2461)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitFunctionDeclaration(ASTBuilder.java:48)\n\t\
-    at Ornn.frontend.ASTBuilder.visitFunctionDeclaration(ASTBuilder.java:14)\n\tat\
-    \ Ornn.parser.MxstarParser$FunctionDeclarationContext.accept(MxstarParser.java:278)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:34)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Accepted}
-- {case: ./loop-package/loop-2.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./loop-package/loop-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./string-package/string-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./symbol-package/symbol-7.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] no viable alternative at input\
-    \ 'intthis' at line 2, 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
-    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./loop-package/loop-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./loop-package/loop-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./loop-package/loop-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./string-package/string-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./symbol-package/symbol-7.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] no viable alternative at input 'intthis' at line 2,\
+    \ 4\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportNoViableAlternative(DefaultErrorStrategy.java:310)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:136)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:244)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] no viable alternative at input 'intthis' at line 2, 4\nException\
     \ in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
   stdout: '', verdict: Accepted}
-- {case: ./symbol-package/symbol-3.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input '123' expecting\
-    \ {'[', Identifier} at line 3, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./symbol-package/symbol-3.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input '123' expecting {'[', Identifier} at\
+    \ line 3, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
@@ -597,48 +414,43 @@
     \ Ornn.parser.MxstarParser.statement(MxstarParser.java:2382)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input '123' expecting {'[', Identifier} at line 3,\
     \ 8\nException in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
   stdout: '', verdict: Accepted}
-- {case: ./symbol-package/symbol-2.mx, stage: semantic, stderr: 'File name = code.mx
-
-    line 3:8 token recognition error at: ''_''
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./symbol-package/symbol-6.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input 'this' expecting\
-    \ Identifier at line 3, 9\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./symbol-package/symbol-2.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] token recognition error at: '_' at line 3, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+    \tat org.antlr.v4.runtime.Lexer.notifyListeners(Lexer.java:364)\n\tat org.antlr.v4.runtime.Lexer.nextToken(Lexer.java:144)\n\
+    \tat org.antlr.v4.runtime.BufferedTokenStream.fetch(BufferedTokenStream.java:169)\n\
+    \tat org.antlr.v4.runtime.BufferedTokenStream.sync(BufferedTokenStream.java:152)\n\
+    \tat org.antlr.v4.runtime.BufferedTokenStream.consume(BufferedTokenStream.java:136)\n\
+    \tat org.antlr.v4.runtime.Parser.consume(Parser.java:571)\n\tat org.antlr.v4.runtime.Parser.match(Parser.java:203)\n\
+    \tat Ornn.parser.MxstarParser.nonarrayType(MxstarParser.java:1105)\n\tat Ornn.parser.MxstarParser.type(MxstarParser.java:965)\n\
+    \tat Ornn.parser.MxstarParser.variableDeclaration(MxstarParser.java:458)\n\tat\
+    \ Ornn.parser.MxstarParser.statement(MxstarParser.java:2382)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
+    \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
+    \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \ [Syntax Error] token recognition error at: '_' at line 3, 8\nException in thread\
+    \ \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n", stdout: '',
+  verdict: Accepted}
+- {case: ./symbol-package/symbol-6.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input 'this' expecting Identifier at line\
+    \ 3, 9\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\t\
+    at org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:314)\n\tat\
     \ Ornn.parser.MxstarParser.classDeclaration(MxstarParser.java:393)\n\tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:230)\n\
-    \tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\tat Ornn.Main.buildAST(Main.java:37)\n\
+    \tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\tat Ornn.Main.buildAST(Main.java:40)\n\
     \tat Ornn.Main.main(Main.java:24)\n[Error]: [Syntax Error] mismatched input 'this'\
     \ expecting Identifier at line 3, 9\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./symbol-package/symbol-1.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./symbol-package/symbol-5.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] mismatched input 'int' expecting\
-    \ {'[', Identifier} at line 3, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./symbol-package/symbol-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./symbol-package/symbol-5.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] mismatched input 'int' expecting {'[', Identifier} at\
+    \ line 3, 8\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportInputMismatch(DefaultErrorStrategy.java:327)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.reportError(DefaultErrorStrategy.java:139)\n\
@@ -648,75 +460,49 @@
     \ Ornn.parser.MxstarParser.statement(MxstarParser.java:2382)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] mismatched input 'int' expecting {'[', Identifier} at line 3,\
     \ 8\nException in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
   stdout: '', verdict: Accepted}
-- {case: ./symbol-package/symbol-4.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./function-package/function-3.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./function-package/function-2.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./function-package/function-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./class-package/class-5.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./class-package/class-1.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./class-package/class-4.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] missing ';' at 'int' at line\
-    \ 11, 0\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\t\
-    at org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
+- {case: ./symbol-package/symbol-4.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./function-package/function-3.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./function-package/function-2.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./function-package/function-1.mx, stage: semantic, stderr: '', stdout: '',
+  verdict: Wrong Answer}
+- {case: ./class-package/class-5.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-4.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] missing ';' at 'int' at line 11, 0\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+    \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportMissingToken(DefaultErrorStrategy.java:409)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenInsertion(DefaultErrorStrategy.java:519)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.recoverInline(DefaultErrorStrategy.java:476)\n\
     \tat org.antlr.v4.runtime.Parser.match(Parser.java:206)\n\tat Ornn.parser.MxstarParser.classDeclaration(MxstarParser.java:411)\n\
     \tat Ornn.parser.MxstarParser.programSection(MxstarParser.java:230)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] missing ';' at 'int' at line 11, 0\nException in thread \"main\"\
     \ java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n", stdout: '',
   verdict: Accepted}
-- {case: ./class-package/class-11.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./class-package/class-10.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NumberFormatException: For input string: \"2147483648\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:68)\n\
+- {case: ./class-package/class-11.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-10.mx, stage: semantic, stderr: "java.lang.NumberFormatException:\
+    \ For input string: \"2147483648\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:68)\n\
     \tat java.base/java.lang.Integer.parseInt(Integer.java:656)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:770)\n\
-    \tat Ornn.frontend.ASTBuilder.visitIntLiteral(ASTBuilder.java:448)\n\tat Ornn.frontend.ASTBuilder.visitIntLiteral(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitIntLiteral(ASTBuilder.java:454)\n\tat Ornn.frontend.ASTBuilder.visitIntLiteral(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$IntLiteralContext.accept(MxstarParser.java:818)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitLiteral(ASTBuilder.java:443)\n\tat Ornn.frontend.ASTBuilder.visitLiteral(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitLiteral(ASTBuilder.java:449)\n\tat Ornn.frontend.ASTBuilder.visitLiteral(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$LiteralContext.accept(MxstarParser.java:1701)\n\t\
     at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitUnaryExpr(ASTBuilder.java:356)\n\tat Ornn.frontend.ASTBuilder.visitUnaryExpr(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitUnaryExpr(ASTBuilder.java:362)\n\tat Ornn.frontend.ASTBuilder.visitUnaryExpr(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$UnaryExprContext.accept(MxstarParser.java:1552)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitBinaryExpr(ASTBuilder.java:324)\n\tat Ornn.frontend.ASTBuilder.visitBinaryExpr(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitBinaryExpr(ASTBuilder.java:330)\n\tat Ornn.frontend.ASTBuilder.visitBinaryExpr(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$BinaryExprContext.accept(MxstarParser.java:1642)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitExprStmt(ASTBuilder.java:145)\n\tat Ornn.frontend.ASTBuilder.visitExprStmt(ASTBuilder.java:14)\n\
+    \tat Ornn.frontend.ASTBuilder.visitExprStmt(ASTBuilder.java:151)\n\tat Ornn.frontend.ASTBuilder.visitExprStmt(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$ExprStmtContext.accept(MxstarParser.java:2265)\n\
     \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
     \tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:126)\n\tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:14)\n\
@@ -732,304 +518,46 @@
     \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
     \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
     at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nFor\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\nFor\
     \ input string: \"2147483648\"\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./class-package/class-14.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./class-package/class-9.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./class-package/class-13.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./class-package/class-8.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Accepted}
-- {case: ./class-package/class-12.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Accepted}
-- {case: ./class-package/class-3.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./class-package/class-7.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./class-package/class-6.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./class-package/class-2.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-3.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-29.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-7.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-19.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.BlockStmtNode.<init>(BlockStmtNode.java:17)\n\
-    \tat Ornn.frontend.ASTBuilder.visitForStmt(ASTBuilder.java:214)\n\tat Ornn.frontend.ASTBuilder.visitForStmt(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ForStmtContext.accept(MxstarParser.java:2614)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitLoopStmt(ASTBuilder.java:155)\n\tat Ornn.frontend.ASTBuilder.visitLoopStmt(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$LoopStmtContext.accept(MxstarParser.java:2284)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:126)\n\tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$BlockContext.accept(MxstarParser.java:2461)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitFunctionDeclaration(ASTBuilder.java:48)\n\t\
-    at Ornn.frontend.ASTBuilder.visitFunctionDeclaration(ASTBuilder.java:14)\n\tat\
-    \ Ornn.parser.MxstarParser$FunctionDeclarationContext.accept(MxstarParser.java:278)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:34)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-6.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-18.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-2.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-28.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-23.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-17.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-9.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-33.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-13.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-27.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-37.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-12.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-26.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-36.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-22.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-16.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-8.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-32.mx, stage: semantic, stderr: "File name = code.mx\n\
-    Ornn.util.CompilationError: [Error]: [Syntax Error] extraneous input '>' expecting\
-    \ {'(', '++', '--', '+', '-', '!', '~', 'new', 'this', IntConstant, StringConstant,\
-    \ NullConstant, BoolConstant, Identifier} at line 52, 24\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
+- {case: ./class-package/class-14.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./class-package/class-9.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-13.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-8.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./class-package/class-12.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./class-package/class-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-7.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-6.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./class-package/class-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-29.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-7.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-19.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-6.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-18.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-28.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-23.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-17.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-9.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-33.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-13.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-27.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-37.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-12.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-26.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-36.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-22.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-16.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-8.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-32.mx, stage: semantic, stderr: "Ornn.util.CompilationError:\
+    \ [Error]: [Syntax Error] extraneous input '>' expecting {'(', '++', '--', '+',\
+    \ '-', '!', '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
+    \ Identifier} at line 52, 24\n\tat Ornn.parser.ErrorListener.syntaxError(ErrorListener.java:12)\n\
     \tat org.antlr.v4.runtime.ProxyErrorListener.syntaxError(ProxyErrorListener.java:41)\n\
     \tat org.antlr.v4.runtime.Parser.notifyErrorListeners(Parser.java:544)\n\tat org.antlr.v4.runtime.DefaultErrorStrategy.reportUnwantedToken(DefaultErrorStrategy.java:377)\n\
     \tat org.antlr.v4.runtime.DefaultErrorStrategy.singleTokenDeletion(DefaultErrorStrategy.java:548)\n\
@@ -1038,204 +566,35 @@
     \tat Ornn.parser.MxstarParser.statement(MxstarParser.java:2390)\n\tat Ornn.parser.MxstarParser.block(MxstarParser.java:2482)\n\
     \tat Ornn.parser.MxstarParser.functionDeclaration(MxstarParser.java:309)\n\tat\
     \ Ornn.parser.MxstarParser.programSection(MxstarParser.java:223)\n\tat Ornn.parser.MxstarParser.program(MxstarParser.java:161)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
+    \tat Ornn.Main.buildAST(Main.java:40)\n\tat Ornn.Main.main(Main.java:24)\n[Error]:\
     \ [Syntax Error] extraneous input '>' expecting {'(', '++', '--', '+', '-', '!',\
     \ '~', 'new', 'this', IntConstant, StringConstant, NullConstant, BoolConstant,\
     \ Identifier} at line 52, 24\nException in thread \"main\" java.lang.RuntimeException\n\
     \tat Ornn.Main.main(Main.java:29)\n", stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-11.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-25.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-35.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-21.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-15.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-31.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-20.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-14.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-30.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-10.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-24.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-34.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-5.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./misc-package/misc-1.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./misc-package/misc-4.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./scope-package/scope-3.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./scope-package/scope-7.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./scope-package/scope-6.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./scope-package/scope-2.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./scope-package/scope-8.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Accepted}
-- {case: ./scope-package/scope-5.mx, stage: semantic, stderr: 'File name = code.mx
-
-    ', stdout: '', verdict: Wrong Answer}
-- {case: ./scope-package/scope-1.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.FuncDeclNode.<init>(FuncDeclNode.java:22)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:60)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConstructiveFunctionDeclaration(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ConstructiveFunctionDeclarationContext.accept(MxstarParser.java:728)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:109)\n\tat\
-    \ Ornn.frontend.ASTBuilder.visitClassDeclaration(ASTBuilder.java:14)\n\tat Ornn.parser.MxstarParser$ClassDeclarationContext.accept(MxstarParser.java:358)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:36)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Wrong Answer}
-- {case: ./scope-package/scope-4.mx, stage: semantic, stderr: "File name = code.mx\n\
-    java.lang.NullPointerException\n\tat Ornn.AST.BlockStmtNode.<init>(BlockStmtNode.java:17)\n\
-    \tat Ornn.frontend.ASTBuilder.visitConditionStatement(ASTBuilder.java:189)\n\t\
-    at Ornn.frontend.ASTBuilder.visitConditionStatement(ASTBuilder.java:14)\n\tat\
-    \ Ornn.parser.MxstarParser$ConditionStatementContext.accept(MxstarParser.java:2532)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitCondStmt(ASTBuilder.java:150)\n\tat Ornn.frontend.ASTBuilder.visitCondStmt(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$CondStmtContext.accept(MxstarParser.java:2357)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:126)\n\tat Ornn.frontend.ASTBuilder.visitBlock(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$BlockContext.accept(MxstarParser.java:2461)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitFunctionDeclaration(ASTBuilder.java:48)\n\t\
-    at Ornn.frontend.ASTBuilder.visitFunctionDeclaration(ASTBuilder.java:14)\n\tat\
-    \ Ornn.parser.MxstarParser$FunctionDeclarationContext.accept(MxstarParser.java:278)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:34)\n\tat Ornn.frontend.ASTBuilder.visitProgramSection(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramSectionContext.accept(MxstarParser.java:207)\n\
-    \tat org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:20)\n\tat Ornn.frontend.ASTBuilder.visitProgram(ASTBuilder.java:14)\n\
-    \tat Ornn.parser.MxstarParser$ProgramContext.accept(MxstarParser.java:142)\n\t\
-    at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(AbstractParseTreeVisitor.java:18)\n\
-    \tat Ornn.Main.buildAST(Main.java:37)\n\tat Ornn.Main.main(Main.java:24)\nnull\n\
-    Exception in thread \"main\" java.lang.RuntimeException\n\tat Ornn.Main.main(Main.java:29)\n",
-  stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-11.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-25.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-35.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-21.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-15.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./misc-package/misc-31.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-20.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-14.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-30.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-10.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-24.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-34.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-5.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./misc-package/misc-4.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./scope-package/scope-3.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./scope-package/scope-7.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./scope-package/scope-6.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./scope-package/scope-2.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./scope-package/scope-8.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./scope-package/scope-5.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}
+- {case: ./scope-package/scope-1.mx, stage: semantic, stderr: '', stdout: '', verdict: Accepted}
+- {case: ./scope-package/scope-4.mx, stage: semantic, stderr: '', stdout: '', verdict: Wrong
+    Answer}

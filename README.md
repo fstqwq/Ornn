@@ -9,7 +9,6 @@
 ![](https://opgg-static.akamaized.net/images/lol/item/3751.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/1031.png?image=q_auto,w_42&v=1583298869)
 
-
 List of things I shall done:
 
 ![](https://opgg-static.akamaized.net/images/lol/item/2031.png?image=q_auto,w_42&v=1583298869)
