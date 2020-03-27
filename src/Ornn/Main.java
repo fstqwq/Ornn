@@ -2,11 +2,11 @@ package Ornn;
 
 import Ornn.AST.ProgramNode;
 import Ornn.frontend.ASTBuilder;
+import Ornn.parser.ErrorListener;
 import Ornn.parser.MxstarLexer;
 import Ornn.parser.MxstarParser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -21,7 +21,6 @@ public class Main {
         System.err.println("File name = " + fileName);
         try {
             InputStream file = new FileInputStream(fileName);
-
             ProgramNode ast = buildAST(file);
 
         } catch (Exception err) {
@@ -33,6 +32,8 @@ public class Main {
 
     public static ProgramNode buildAST(InputStream file) throws Exception {
         MxstarParser parser = new MxstarParser(new CommonTokenStream(new MxstarLexer(CharStreams.fromStream(file))));
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ErrorListener());
         return (ProgramNode) (new ASTBuilder()).visit(parser.program());
     }
 }
