@@ -1,5 +1,7 @@
 package Ornn.semantic;
 
+import Ornn.AST.ClassDeclNode;
+import Ornn.AST.TypeNode;
 import Ornn.AST.VarDeclNode;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
@@ -13,8 +15,8 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     private Map<String, VariableSymbol> variableSymbolMap = new LinkedHashMap<>();
     private Map<String, FunctionSymbol> functionSymbolMap = new LinkedHashMap<>();
 
-    public ClassSymbol(String name, Type type, VarDeclNode varDeclNode, Scope enclosingScope) {
-        super(name, type, varDeclNode);
+    public ClassSymbol(String name, ClassDeclNode classDeclNode, Scope enclosingScope) {
+        super(name, null, classDeclNode);
         this.enclosingScope = enclosingScope;
         constructor = null;
     }
@@ -22,11 +24,6 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     @Override
     public boolean isClassSymbol() {
         return true;
-    }
-
-    @Override
-    public String getScopeName() {
-        return super.getSymbolName();
     }
 
     @Override
@@ -49,16 +46,18 @@ public class ClassSymbol extends Symbol implements Scope, Type{
 
     @Override
     public void defineVariable(VariableSymbol symbol) {
-        if (variableSymbolMap.containsKey(symbol.getSymbolName()) || functionSymbolMap.containsKey(symbol.getSymbolName()))
-            throw new CompilationError("duplicate identifiers : " + symbol.getSymbolName(), symbol.getDefine().getPosition());
+        if (variableSymbolMap.containsKey(symbol.getSymbolName()) || functionSymbolMap.containsKey(symbol.getSymbolName())) {
+            throw new CompilationError("duplicate identifiers : " + symbol.getSymbolName(), symbol.getDefineNode().getPosition());
+        }
         variableSymbolMap.put(symbol.getSymbolName(), symbol);
         symbol.setScope(this);
     }
 
     @Override
     public void defineFunction(FunctionSymbol symbol) {
-        if (variableSymbolMap.containsKey(symbol.getSymbolName()) || functionSymbolMap.containsKey(symbol.getSymbolName()))
-            throw new CompilationError("duplicate identifiers : " + symbol.getSymbolName(), symbol.getDefine().getPosition());
+        if (variableSymbolMap.containsKey(symbol.getSymbolName()) || functionSymbolMap.containsKey(symbol.getSymbolName())) {
+            throw new CompilationError("duplicate identifiers : " + symbol.getSymbolName(), symbol.getDefineNode().getPosition());
+        }
         functionSymbolMap.put(symbol.getSymbolName(), symbol);
         symbol.setScope(this);
     }
@@ -74,7 +73,7 @@ public class ClassSymbol extends Symbol implements Scope, Type{
         Symbol functionSymbol = functionSymbolMap.get(identifier);
         if (variableSymbol != null) return variableSymbol;
         if (functionSymbol != null) return functionSymbol;
-        throw new CompilationError(identifier + " is not a member of " + getSymbolName(), position);
+        return enclosingScope.resolveSymbol(identifier, position);
     }
 
     @Override
@@ -83,8 +82,9 @@ public class ClassSymbol extends Symbol implements Scope, Type{
                 (type.getTypeName().equals("string")
                 || !type.getTypeName().equals("null")
                 )
-        )
+        ) {
             throw new CompilationError("'" + getTypeName().equals("string") + "' is not compatible with '" + type.getTypeName() + "'", position);
+        }
     }
 
     @Override

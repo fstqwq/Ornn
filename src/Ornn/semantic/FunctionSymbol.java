@@ -1,5 +1,8 @@
 package Ornn.semantic;
 
+import Ornn.AST.ASTNode;
+import Ornn.AST.FuncDeclNode;
+import Ornn.AST.TypeNode;
 import Ornn.AST.VarDeclNode;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
@@ -9,16 +12,12 @@ import java.util.Map;
 
 public class FunctionSymbol extends Symbol implements Scope {
     private Scope enclosingScope;
-    private Map<String, VariableSymbol>  arguments = new LinkedHashMap<>();
+    private Map<String, VariableSymbol> arguments;
 
-    public FunctionSymbol(String name, Type type, VarDeclNode varDeclNode, Scope enclosingScope) {
-        super(name, type, varDeclNode);
+    public FunctionSymbol(String name, Type returnType, FuncDeclNode funcDeclNode, Scope enclosingScope) {
+        super(name, returnType, funcDeclNode);
         this.enclosingScope = enclosingScope;
-    }
-
-    @Override
-    public String getScopeName() {
-        return super.getSymbolName();
+        arguments = new LinkedHashMap<>();
     }
 
     @Override
@@ -34,7 +33,7 @@ public class FunctionSymbol extends Symbol implements Scope {
     @Override
     public void defineVariable(VariableSymbol symbol) {
         if (arguments.containsKey(symbol.getSymbolName())) {
-            throw new CompilationError("duplicate identifiers : " + symbol.getSymbolName(), symbol.getDefine().getPosition());
+            throw new CompilationError("duplicate identifiers : " + symbol.getSymbolName(), symbol.getDefineNode().getPosition());
         } else {
             arguments.put(symbol.getSymbolName(), symbol);
         }
@@ -44,6 +43,10 @@ public class FunctionSymbol extends Symbol implements Scope {
     @Override
     public void defineClass(ClassSymbol symbol) {
 
+    }
+
+    public Map<String, VariableSymbol> getArguments() {
+        return arguments;
     }
 
     @Override
@@ -57,4 +60,5 @@ public class FunctionSymbol extends Symbol implements Scope {
     public boolean isFunctionSymbol() {
         return true;
     }
+
 }

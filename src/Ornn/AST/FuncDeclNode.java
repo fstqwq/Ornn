@@ -1,22 +1,22 @@
 package Ornn.AST;
 
 import Ornn.semantic.FunctionSymbol;
-import Ornn.semantic.Type;
 import Ornn.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FuncDeclNode extends DeclNode {
-    private TypeNode type;
+    private TypeNode returnType;
     private String identifier;
     private List<VarDeclNode> parameterList;
     private BlockStmtNode blockStmt;
     private FunctionSymbol functionSymbol;
 
-    public FuncDeclNode(TypeNode type, String identifier, List<VarDeclNode> parameterList, BlockStmtNode blockStmt, Position position) {
+
+    public FuncDeclNode(TypeNode returnType, String identifier, List<VarDeclNode> parameterList, BlockStmtNode blockStmt, Position position) {
         super(position);
-        this.type = type;
+        this.returnType = returnType;
         this.identifier = identifier;
         if (parameterList == null) {
             this.parameterList = new ArrayList<>();
@@ -32,8 +32,8 @@ public class FuncDeclNode extends DeclNode {
         return identifier;
     }
 
-    public TypeNode getType() {
-        return type;
+    public TypeNode getReturnType() {
+        return returnType;
     }
 
     public List<VarDeclNode> getParameterList() {

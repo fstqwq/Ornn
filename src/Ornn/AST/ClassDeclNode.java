@@ -1,5 +1,6 @@
 package Ornn.AST;
 
+import Ornn.semantic.ClassSymbol;
 import Ornn.util.Position;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ public class ClassDeclNode extends DeclNode {
     String Identifier;
     List<VarDeclNode> varDeclNodes;
     List<FuncDeclNode> funcDeclNodes;
+    ClassSymbol classSymbol;
 
     public ClassDeclNode(String Identifier, Position position) {
         super(position);
@@ -24,6 +26,14 @@ public class ClassDeclNode extends DeclNode {
         this.funcDeclNodes = funcDeclNodes;
     }
 
+    public void setClassSymbol(ClassSymbol classSymbol) {
+        this.classSymbol = classSymbol;
+    }
+
+    public ClassSymbol getClassSymbol() {
+        return classSymbol;
+    }
+
     public String getIdentifier() {
         return Identifier;
     }
@@ -33,7 +43,7 @@ public class ClassDeclNode extends DeclNode {
     }
 
     public void addVarDecl(List<VarDeclNode> varDeclNodes) {
-        varDeclNodes.addAll(varDeclNodes);
+        this.varDeclNodes.addAll(varDeclNodes);
     }
 
     public void addFuncDecl(FuncDeclNode funcDeclNode) {

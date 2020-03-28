@@ -16,8 +16,16 @@ public class ReturnNode extends StmtNode {
         return expr;
     }
 
+    public void setExpr(ExprNode expr) {
+        this.expr = expr;
+    }
+
     public FunctionSymbol getFunctionSymbol() {
         return functionSymbol;
+    }
+
+    public void setFunctionSymbol(FunctionSymbol functionSymbol) {
+        this.functionSymbol = functionSymbol;
     }
 
     @Override

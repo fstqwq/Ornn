@@ -54,7 +54,8 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
         String identifier = ctx.Identifier().getText();
         BlockStmtNode blockStmt = (BlockStmtNode) visit(ctx.block());
         return new FuncDeclNode(
-                null, identifier,
+                null,
+                identifier,
                 null,
                 blockStmt,
                 new Position(ctx.getStart())

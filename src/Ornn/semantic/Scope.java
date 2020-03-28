@@ -1,11 +1,10 @@
 package Ornn.semantic;
 
 
+import Ornn.AST.TypeNode;
 import Ornn.util.Position;
 
 public interface Scope {
-    String getScopeName();
-
     Scope getEnclosingScope();
 
     void defineVariable(VariableSymbol symbol);

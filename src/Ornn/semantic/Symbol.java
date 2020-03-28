@@ -6,20 +6,20 @@ public class Symbol {
     private String name;
     private Type type;
     private Scope scope;
-    private ASTNode define;
+    private ASTNode defineNode;
 
-    public Symbol(String name, Type type, ASTNode define) {
+    public Symbol(String name, Type type, ASTNode defineNode) {
         this.name = name;
         this.type = type;
-        this.define = define;
+        this.defineNode = defineNode;
     }
 
     public String getSymbolName() {
         return this.name;
     }
 
-    public ASTNode getDefine() {
-        return define;
+    public ASTNode getDefineNode() {
+        return defineNode;
     }
 
     public Type getType() {

@@ -10,7 +10,6 @@ public class VarDeclNode extends DeclNode {
     private ExprNode expr;
     private String identifier;
     private VariableSymbol variableSymbol;
-    private boolean isGlobalVariable = false;
     private boolean isParameterVariable = false;
 
     public VarDeclNode(TypeNode type, ExprNode expr, String identifier, Position position) {
@@ -58,14 +57,6 @@ public class VarDeclNode extends DeclNode {
 
     public void setVariableSymbol(VariableSymbol variableSymbol) {
         this.variableSymbol = variableSymbol;
-    }
-
-    public boolean isGlobalVariable() {
-        return isGlobalVariable;
-    }
-
-    public void setGlobalVariable() {
-        isGlobalVariable = true;
     }
 
     public boolean isParameterVariable() {
