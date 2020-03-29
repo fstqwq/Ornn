@@ -22,11 +22,6 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     }
 
     @Override
-    public boolean isClassSymbol() {
-        return true;
-    }
-
-    @Override
     public String getTypeName() {
         return super.getSymbolName();
     }
@@ -76,35 +71,27 @@ public class ClassSymbol extends Symbol implements Scope, Type{
         return enclosingScope.resolveSymbol(identifier, position);
     }
 
+    public Symbol accessMember(String identifier, Position position) {
+        Symbol variableSymbol = variableSymbolMap.get(identifier);
+        Symbol functionSymbol = functionSymbolMap.get(identifier);
+        if (variableSymbol != null) return variableSymbol;
+        if (functionSymbol != null) return functionSymbol;
+        throw new CompilationError(identifier + " is not member of " + getSymbolName(), position);
+    }
+
     @Override
     public void compatible(Type type, Position position) {
-        if (!type.getTypeName().equals(getTypeName()) &&
-                (type.getTypeName().equals("string")
-                || !type.getTypeName().equals("null")
-                )
-        ) {
-            throw new CompilationError("'" + getTypeName().equals("string") + "' is not compatible with '" + type.getTypeName() + "'", position);
-        }
+        if (!type.getTypeName().equals(getTypeName()))
+            if (type.getTypeName().equals("string") || !(type instanceof NullType)) {
+                throw new CompilationError(getTypeName() + " is not compatible with " + type.getTypeName(), position);
+            }
     }
 
     @Override
-    public boolean isPrimitiveType() {
-        return false;
+    public void equable(Type type, Position position) {
+        if (!type.getTypeName().equals(getTypeName()))
+            if (!(type instanceof NullType)) {
+                throw new CompilationError(getTypeName() + " can't compare equality with " + type.getTypeName(), position);
+            }
     }
-
-    @Override
-    public boolean isClassType() {
-        return true;
-    }
-
-    @Override
-    public boolean isArrayType() {
-        return false;
-    }
-
-    @Override
-    public boolean isNullType() {
-        return false;
-    }
-
 }

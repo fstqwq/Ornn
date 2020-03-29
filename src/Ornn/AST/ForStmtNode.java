@@ -20,6 +20,10 @@ public class ForStmtNode extends StmtNode implements Loop {
         return init;
     }
 
+    public void setCond(ExprNode cond) {
+        this.cond = cond;
+    }
+
     public ExprNode getCond() {
         return cond;
     }

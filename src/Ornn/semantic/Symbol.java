@@ -33,16 +33,4 @@ public class Symbol {
     public void setScope(Scope scope) {
         this.scope = scope;
     }
-
-    public boolean isVariableSymbol() {
-        return false;
-    }
-
-    public boolean isClassSymbol() {
-        return false;
-    }
-
-    public boolean isFunctionSymbol() {
-        return false;
-    }
 }

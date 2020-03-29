@@ -1,5 +1,6 @@
 package Ornn.semantic;
 
+import Ornn.AST.ArrayTypeNode;
 import Ornn.AST.TypeNode;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
@@ -13,6 +14,10 @@ public class ToplevelScope extends NameScope {
     public ToplevelScope () {
         super(null);
         typeMap = new LinkedHashMap<>();
+    }
+
+    public void defineNull(NullType nullType) {
+        typeMap.put("null", nullType);
     }
 
     public void defineType(PrimitiveTypeSymbol symbol) {
@@ -49,6 +54,11 @@ public class ToplevelScope extends NameScope {
     }
 
     public Type resolveType(TypeNode typeNode) {
-        return resolveType(typeNode.getTypeIdentifier(), typeNode.getPosition());
+        Type type = resolveType(typeNode.getTypeIdentifier(), typeNode.getPosition());
+        if (typeNode instanceof ArrayTypeNode) {
+            return new ArrayType(type, ((ArrayTypeNode) typeNode).getDimension());
+        } else {
+            return type;
+        }
     }
 }

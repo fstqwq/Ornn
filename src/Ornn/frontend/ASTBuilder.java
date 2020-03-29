@@ -264,100 +264,46 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitBinaryExpr(MxstarParser.BinaryExprContext ctx) {
-        BinaryExprNode.Op op;
         switch (ctx.op.getText()) {
-            case "*":
-                op = BinaryExprNode.Op.MUL;
-                break;
-            case "/":
-                op = BinaryExprNode.Op.DIV;
-                break;
-            case "%":
-                op = BinaryExprNode.Op.MOD;
-                break;
-            case "+":
-                op = BinaryExprNode.Op.ADD;
-                break;
-            case "-":
-                op = BinaryExprNode.Op.SUB;
-                break;
-            case "<<":
-                op = BinaryExprNode.Op.SHL;
-                break;
-            case ">>":
-                op = BinaryExprNode.Op.SHR;
-                break;
-            case "<":
-                op = BinaryExprNode.Op.LT;
-                break;
-            case ">":
-                op = BinaryExprNode.Op.GT;
-                break;
-            case "<=":
-                op = BinaryExprNode.Op.LEQ;
-                break;
-            case ">=":
-                op = BinaryExprNode.Op.GEQ;
-                break;
-            case "==":
-                op = BinaryExprNode.Op.EQ;
-                break;
-            case "!=":
-                op = BinaryExprNode.Op.NEQ;
-                break;
+            case "*": case "/":  case "%":
+            case "+": case "-":
+            case "<<": case ">>":
+            case "<": case ">": case "<=": case ">=":
+            case "==": case "!=":
             case "&":
-                op = BinaryExprNode.Op.AND;
-                break;
             case "^":
-                op = BinaryExprNode.Op.XOR;
-                break;
             case "|":
-                op = BinaryExprNode.Op.OR;
-                break;
             case "&&":
-                op = BinaryExprNode.Op.LAND;
-                break;
             case "||":
-                op = BinaryExprNode.Op.LOR;
-                break;
             case "=":
-                op = BinaryExprNode.Op.ASG;
                 break;
             default:
-                throw new CompilationError("Unknown binary operator", new Position(ctx.getStart()));
+                throw new CompilationError("unknown binary operator", new Position(ctx.getStart()));
         }
         return new BinaryExprNode(
                 (ExprNode) visit(ctx.src1),
                 (ExprNode) visit(ctx.src2),
-                op,
+                ctx.op.getText(),
                 new Position(ctx.getStart())
         );
     }
 
     @Override
     public ASTNode visitUnaryExpr(MxstarParser.UnaryExprContext ctx) {
-        UnaryExprNode.Op op;
+        String op;
         switch (ctx.op.getText()) {
             case "++":
-                op = UnaryExprNode.Op.PRE_INC;
-                break;
             case "--":
-                op = UnaryExprNode.Op.PRE_DEC;
+                op = ctx.op.getText() + "i";
                 break;
             case "+":
-                op = UnaryExprNode.Op.POS;
-                break;
             case "-":
-                op = UnaryExprNode.Op.NEG;
-                break;
             case "!":
-                op = UnaryExprNode.Op.LNOT;
-                break;
             case "~":
-                op = UnaryExprNode.Op.NOT;
+                op = ctx.op.getText();
                 break;
             default:
-                throw new CompilationError("Unknown unary operator", new Position(ctx.getStart()));
+                throw new CompilationError("unknown unary operator", new Position(ctx.getStart()));
         }
         return new UnaryExprNode(
                 (ExprNode) visit(ctx.expression()),
@@ -368,18 +314,20 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitSufExpr(MxstarParser.SufExprContext ctx) {
-        UnaryExprNode.Op op;
+        String op;
         switch (ctx.op.getText()) {
             case "++":
-                op = UnaryExprNode.Op.SUF_INC;
-                break;
             case "--":
-                op = UnaryExprNode.Op.SUF_DEC;
+                op = "i" + ctx.op.getText();
                 break;
             default:
-                throw new CompilationError("Unknown unary operator", new Position(ctx.getStart()));
+                throw new CompilationError("unknown unary operator", new Position(ctx.getStart()));
         }
-        return new UnaryExprNode((ExprNode) visit(ctx.expression()), op, new Position(ctx.getStart()));
+        return new UnaryExprNode(
+                (ExprNode) visit(ctx.expression()),
+                op,
+                new Position(ctx.getStart())
+        );
     }
 
     @Override
@@ -409,7 +357,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitParameterList(MxstarParser.ParameterListContext ctx) {
-        throw new CompilationError("Internal Error", new Position(ctx.getStart()));
+        throw new CompilationError("internal error", new Position(ctx.getStart()));
     }
 
     @Override

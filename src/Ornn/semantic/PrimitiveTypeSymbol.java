@@ -14,27 +14,14 @@ public class PrimitiveTypeSymbol extends Symbol implements Type {
     @Override
     public void compatible(Type type, Position position) {
         if (type.getTypeName().equals("void") || !getTypeName().equals(type.getTypeName())) {
-            throw new CompilationError(getTypeName() + "is not assignable by " + type.getTypeName(), position);
+            throw new CompilationError(type.getTypeName() + " can't be converted to " + getTypeName(), position);
         }
     }
 
     @Override
-    public boolean isPrimitiveType() {
-        return true;
-    }
-
-    @Override
-    public boolean isClassType() {
-        return false;
-    }
-
-    @Override
-    public boolean isNullType() {
-        return false;
-    }
-
-    @Override
-    public boolean isArrayType() {
-        return false;
+    public void equable(Type type, Position position) {
+        if (getTypeName().equals("void") || !getTypeName().equals(type.getTypeName())) {
+            throw new CompilationError(type.getTypeName() + " can't evaluate with " + getTypeName(), position);
+        }
     }
 }

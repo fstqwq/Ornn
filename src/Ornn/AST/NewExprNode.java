@@ -3,6 +3,7 @@ package Ornn.AST;
 import Ornn.semantic.Type;
 import Ornn.util.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewExprNode extends ExprNode {
@@ -15,7 +16,7 @@ public class NewExprNode extends ExprNode {
         super(position);
         this.baseType = baseType;
         this.dimension = dimension;
-        this.exprNodeList = exprNodeList;
+        this.exprNodeList = exprNodeList == null ? new ArrayList<>() : exprNodeList;
     }
 
     public TypeNode getBaseType() {

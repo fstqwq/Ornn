@@ -4,6 +4,8 @@ import Ornn.AST.*;
 import Ornn.semantic.*;
 import Ornn.util.CompilationError;
 
+import java.awt.*;
+
 /*
 Resolve:
 1. scope for variable and function
@@ -71,6 +73,7 @@ public class ScopeResolver implements ASTVisitor {
         currentScope.defineVariable(variableSymbol);
         variableSymbol.setScope(currentScope);
         node.setVariableSymbol(variableSymbol);
+        node.setTypeAfterResolve(type);
     }
 
     @Override
@@ -135,7 +138,7 @@ public class ScopeResolver implements ASTVisitor {
 
     @Override
     public void visit(BreakNode node) {
-        if (currentFunctionSymbol == null) {
+        if (currentLoop == null) {
             throw new CompilationError("nothing to break", node.getPosition());
         }
         node.setLoop(currentLoop);
@@ -143,7 +146,7 @@ public class ScopeResolver implements ASTVisitor {
 
     @Override
     public void visit(ContinueNode node) {
-        if (currentFunctionSymbol == null) {
+        if (currentLoop == null) {
             throw new CompilationError("nothing to continue", node.getPosition());
         }
         node.setLoop(currentLoop);
@@ -176,12 +179,14 @@ public class ScopeResolver implements ASTVisitor {
     @Override
     public void visit(FuncCallExprNode node) {
         node.getFunction().accept(this);
+        node.getParameterList().forEach(x -> x.accept(this));
     }
 
     @Override
     public void visit(NewExprNode node) {
         Type type = toplevelScope.resolveType(node.getBaseType());
         node.setBaseTypeAfterResolve(type);
+        node.getExprNodeList().forEach(x -> x.accept(this));
     }
 
     @Override

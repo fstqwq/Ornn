@@ -20,12 +20,14 @@ public class ToplevelScopeBuilder {
     private final static PrimitiveTypeSymbol Int = new PrimitiveTypeSymbol("int");
     private final static PrimitiveTypeSymbol Bool = new PrimitiveTypeSymbol("bool");
     private final static PrimitiveTypeSymbol Void = new PrimitiveTypeSymbol("void");
+    private final static NullType Null = new NullType();
 
     public ToplevelScopeBuilder(ProgramNode ast) {
         // define primitive types
         toplevelScope.defineType(Int);
         toplevelScope.defineType(Bool);
         toplevelScope.defineType(Void);
+        toplevelScope.defineNull(Null);
         // define string
         string.defineFunction(new FunctionSymbol("length", Int, null, string));
         string.defineFunction(new FunctionSymbol("substring", string, null, string) {{
@@ -76,12 +78,14 @@ public class ToplevelScopeBuilder {
                     classSymbol.defineFunction(functionSymbol);
                     if (functionSymbol.getSymbolName().equals(classSymbol.getSymbolName())) {
                         if (returnType != null) {
-                            throw new CompilationError("constructor should return void", node.getPosition());
+                            throw new CompilationError("constructor should not have a return type", node.getPosition());
                         } else if (classSymbol.getConstructor() != null) {
                             throw new CompilationError("multiple constructor in a single class", node.getPosition());
                         } else {
                             classSymbol.setConstructor(functionSymbol);
                         }
+                    } else if (returnType == null) {
+                        throw new CompilationError(String.format("constructor for %s appeared in %s", classSymbol.getSymbolName(), functionSymbol.getSymbolName()), node.getPosition());
                     }
                 }
             }
@@ -127,7 +131,7 @@ public class ToplevelScopeBuilder {
                                                     x.getPosition()
                                             ),
                                             ((VarDeclNode) x).getExpr(),
-                                            BinaryExprNode.Op.ASG,
+                                            "=",
                                             x.getPosition()
                                     ),
                                     x.getPosition()

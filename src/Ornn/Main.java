@@ -3,6 +3,7 @@ package Ornn;
 import Ornn.AST.ProgramNode;
 import Ornn.frontend.ASTBuilder;
 import Ornn.frontend.ScopeResolver;
+import Ornn.frontend.SemanticChecker;
 import Ornn.frontend.ToplevelScopeBuilder;
 import Ornn.parser.ErrorListener;
 import Ornn.parser.MxstarLexer;
@@ -28,6 +29,7 @@ public class Main {
 
             ToplevelScope toplevelScope = (new ToplevelScopeBuilder(ast)).getToplevelScope();
             new ScopeResolver(toplevelScope).visit(ast);
+            new SemanticChecker(toplevelScope).visit(ast);
         } catch (Exception err) {
             err.printStackTrace();
             System.err.println(err.getMessage());

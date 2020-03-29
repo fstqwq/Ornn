@@ -3,13 +3,11 @@ package Ornn.AST;
 import Ornn.util.Position;
 
 public class BinaryExprNode extends ExprNode {
-    private Op op;
+    private String op;
     private ExprNode lhs, rhs;
-    public enum Op {
-        MUL, DIV, MOD, ADD, SUB, SHL, SHR, LT, LEQ, GT, GEQ, EQ, NEQ, AND, XOR, OR, LAND, LOR, ASG
-    }
 
-    public BinaryExprNode(ExprNode lhs, ExprNode rhs, Op op, Position position) {
+
+    public BinaryExprNode(ExprNode lhs, ExprNode rhs, String op, Position position) {
         super(position);
         this.lhs = lhs;
         this.rhs = rhs;
@@ -23,11 +21,11 @@ public class BinaryExprNode extends ExprNode {
         return rhs;
     }
 
-    public Op getOp() {
+    public String getOp() {
         return op;
     }
 
-    public void setOp(Op op) {
+    public void setOp(String op) {
         this.op = op;
     }
 

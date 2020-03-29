@@ -1,14 +1,13 @@
 package Ornn.AST;
 
-import Ornn.semantic.FunctionSymbol;
-import Ornn.semantic.Type;
+import Ornn.semantic.*;
 import Ornn.util.Position;
 
+import static Ornn.semantic.TypeCategory.*;
+
+
 public abstract class ExprNode extends ASTNode {
-    private Category category;
-    public enum Category {
-        LVALUE, RVALUE, CLASS, FUNCTION
-    }
+    private TypeCategory typeCategory;
     private Type type;
     private FunctionSymbol functionSymbol;
 
@@ -16,11 +15,11 @@ public abstract class ExprNode extends ASTNode {
         super(position);
     }
 
-    public Category getCategory() {
-        return category;
+    public TypeCategory getTypeCategory() {
+        return typeCategory;
     }
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setTypeCategory(TypeCategory typeCategory) {
+        this.typeCategory = typeCategory;
     }
     public void setType(Type type) {
         this.type = type;
@@ -35,45 +34,35 @@ public abstract class ExprNode extends ASTNode {
         this.functionSymbol = functionSymbol;
     }
 
-    public boolean isAssignableInteger() {
-        return category == Category.LVALUE && type.getTypeName().equals("int");
-    }
-
     public boolean isString() {
-        return (category == Category.LVALUE || category == Category.RVALUE) && type.getTypeName().equals("string");
+        return (typeCategory == LVALUE || typeCategory == RVALUE) && type.getTypeName().equals("string");
     }
 
-    public boolean isInteger() {
-        return (category == Category.LVALUE || category == Category.RVALUE) && type.getTypeName().equals("int");
+    public boolean isInt() {
+        return (typeCategory == LVALUE || typeCategory == RVALUE) && type.getTypeName().equals("int");
     }
 
-    public boolean isBoolean() {
-        return (category == Category.LVALUE || category == Category.RVALUE) && type.getTypeName().equals("bool");
-    }
-
-    public boolean isAssignable() {
-        return (category == Category.LVALUE);
-    }
-
-    public boolean isCallable() {
-        return (category == Category.FUNCTION);
-    }
-
-    public boolean isAccessable() {
-        return (isValue() && type.isClassType());
-    }
-
-    public boolean isNullable() {
-        return (category == Category.LVALUE && (type.isClassType() || type.isArrayType())) || type.isNullType();
+    public boolean isBool() {
+        return (typeCategory == LVALUE || typeCategory == RVALUE) && type.getTypeName().equals("bool");
     }
 
     public boolean isValue() {
-        return category != Category.CLASS && category != Category.FUNCTION;
+        return typeCategory != CLASS && typeCategory != FUNCTION;
     }
 
-    public boolean isNull() {
-        return type.isNullType();
+    public boolean isLvalue() {
+        return (typeCategory == LVALUE);
     }
 
+    public boolean isFunction() {
+        return (typeCategory == FUNCTION);
+    }
 
+    public boolean isClassValue() {
+        return (isValue() && type instanceof ClassSymbol);
+    }
+
+    public boolean isArray() {
+        return type instanceof ArrayType;
+    }
 }

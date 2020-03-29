@@ -14,5 +14,5 @@ public class Position {
     }
     public int getLine() {return line;}
     public int getCol() {return col;}
-    public String toString() {return "at line " + line + ", " +  col;}
+    public String toString() {return String.format(" at line : %d, col : %d", line, col);}
 }

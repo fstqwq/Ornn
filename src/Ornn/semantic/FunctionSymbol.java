@@ -56,9 +56,4 @@ public class FunctionSymbol extends Symbol implements Scope {
         else return enclosingScope.resolveSymbol(identifier, position);
     }
 
-    @Override
-    public boolean isFunctionSymbol() {
-        return true;
-    }
-
 }

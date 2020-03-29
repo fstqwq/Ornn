@@ -7,15 +7,5 @@ public interface Type  {
 
     void compatible(Type type, Position position);
 
-    boolean isPrimitiveType();
-
-    boolean isClassType();
-
-    boolean isArrayType();
-
-    boolean isNullType();
-
-    /* TODO:
-    int getTypeSize();
- */
+    void equable(Type type, Position position);
 }
