@@ -1,8 +1,0 @@
-buildlimit: 1
-instlimit: 100000
-memlimit: 512
-path:
-  compiler: /mnt/c/code/Ornn/out/production/Ornn
-  dataset: /mnt/c/code/Ornn/Compiler-2020/testcase
-stage: semantic
-timelimit: 15
