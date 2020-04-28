@@ -4,11 +4,11 @@ import Ornn.AST.ASTNode;
 
 public class Symbol {
     private String name;
-    private Type type;
+    private SemanticType type;
     private Scope scope;
     private ASTNode defineNode;
 
-    public Symbol(String name, Type type, ASTNode defineNode) {
+    public Symbol(String name, SemanticType type, ASTNode defineNode) {
         this.name = name;
         this.type = type;
         this.defineNode = defineNode;
@@ -22,7 +22,7 @@ public class Symbol {
         return defineNode;
     }
 
-    public Type getType() {
+    public SemanticType getType() {
         return type;
     }
 

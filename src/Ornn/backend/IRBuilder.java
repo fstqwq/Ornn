@@ -1,0 +1,707 @@
+package Ornn.backend;
+
+import Ornn.AST.*;
+import Ornn.IR.*;
+import Ornn.IR.instruction.*;
+import Ornn.IR.operand.*;
+import Ornn.IR.type.*;
+import Ornn.semantic.*;
+import Ornn.util.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import static Ornn.util.Constant.*;
+
+/*
+Naming of registers : for debug, will rename in the future
+ */
+
+
+public class IRBuilder implements ASTVisitor {
+    public Root root;
+    ClassSymbol currentClass = null;
+    Function currentFunction = null;
+    BasicBlock currentBlock = null;
+    boolean visitingParams = false;
+    ArrayList <Return> returns;
+
+    public IRBuilder (ToplevelScope toplevelScope) {
+        root = new Root(toplevelScope);
+    }
+
+    @Override
+    public void visit(ProgramNode node) {
+        for (DeclNode declNode : node.getDeclNodeList()) {
+            if (declNode instanceof ClassDeclNode) {
+                root.addType(((ClassDeclNode) declNode).getClassSymbol().getTypeName(), new ClassType(((ClassDeclNode) declNode).getClassSymbol().getTypeName()));
+            }
+        }
+        for (DeclNode declNode : node.getDeclNodeList()) {
+            if (declNode instanceof ClassDeclNode) {
+                for (FuncDeclNode funcDeclNode : ((ClassDeclNode) declNode).getFuncDeclNodes()) {
+                    Function function = new Function(((ClassDeclNode) declNode).getIdentifier() + "." + funcDeclNode.getIdentifier(), true);
+                    function.returnType = root.resolveType(funcDeclNode.getFunctionSymbol().getType(), false);
+                    funcDeclNode.getFunctionSymbol().function = function;
+                    root.addFunction(function.name, function);
+                }
+                ClassType type = root.getType(((ClassDeclNode) declNode).getClassSymbol().getTypeName());
+                for (VarDeclNode member : ((ClassDeclNode) declNode).getVarDeclNodes()) {
+                    type.addMember(root.resolveType(member.getTypeAfterResolve(), true));
+                    member.getVariableSymbol().index = new ConstInt(type.members.size() - 1, 32);
+                }
+            } else if (declNode instanceof FuncDeclNode) {
+                Function function = new Function(((FuncDeclNode) declNode).getIdentifier(), true);
+                function.returnType = root.resolveType(((FuncDeclNode) declNode).getFunctionSymbol().getType(), false);
+                ((FuncDeclNode) declNode).getFunctionSymbol().function = function;
+                root.addFunction(function.name, function);
+            }
+        }
+        node.getDeclNodeList().forEach(x -> x.accept(this));
+    }
+
+    /*  When we refer to global values, we use the pointer to refer to it.
+        Corner cases: Pointer comparisons, int[] to null, string to string, so on.
+     */
+    private Register loadPointer(Operand operand) {
+        Register dest = new Register("load_" + operand.name, ((Pointer) operand.type).typePointedTo);
+        currentBlock.pushBack(new Load(dest, operand, currentBlock));
+        if (dest.type.isSame(I8)) { // stored bool is i8
+            Register castDest = new Register("i82bool", BOOL);
+            currentBlock.pushBack(new Cast(dest, castDest, currentBlock));
+            return castDest;
+        }
+        return dest;
+    }
+    private Operand matchType(Operand operand, BaseType expectedType) {
+        if (operand.type.isSame(expectedType)) {
+            return operand;
+        }
+        assert operand.type instanceof Pointer && ((Pointer) operand.type).typePointedTo.isSame(expectedType);
+        return loadPointer(operand);
+    }
+    private Operand loadValue(Operand operand) {
+        if (operand.type instanceof Pointer) {
+            return loadPointer(operand);
+        }
+        return operand;
+    }
+    private void insertAssignment(Operand lhs, ExprNode rhsNode) {
+        rhsNode.accept(this);
+        Operand rhs = rhsNode.result;
+        assert lhs.type instanceof Pointer;
+        Operand value;
+        Inst inst;
+        if (rhs.type instanceof BoolType) {
+            if (rhs instanceof ConstBool) {
+                value = ((ConstBool) rhs).value ? I8TRUE : I8FALSE;
+            } else {
+                inst = new Cast((Register) rhs, new Register("bool2i8",I8), currentBlock);
+                value = ((Cast)inst).dest;
+                currentBlock.pushBack(inst);
+            }
+        } else {
+            value = rhs;
+        }
+        inst = new Store(lhs, value, currentBlock);
+        currentBlock.pushBack(inst);
+    }
+
+
+    HashSet <BasicBlock> forwardReachable;
+
+    void forwardDFS(BasicBlock x) {
+        if (forwardReachable.contains(x)) return;
+        forwardReachable.add(x);
+        for (BasicBlock successor : x.successors) {
+            forwardDFS(successor);
+        }
+    }
+
+
+    @Override
+    public void visit(FuncDeclNode node) {
+        FunctionSymbol functionSymbol = node.getFunctionSymbol();
+
+        currentFunction = functionSymbol.function;
+        currentBlock = currentFunction.entryBlock;
+        if (functionSymbol.getType() == null) { // constructor
+            currentFunction.returnType = VOID;
+        }
+        else {
+            currentFunction.returnType = root.resolveType(functionSymbol.getType(), false);
+        }
+        if (functionSymbol.isMember()) {
+            currentFunction.classPtr = new Register(functionSymbol.getSymbolName() + ",this",
+                    new Pointer(root.resolveType(currentClass, false)));
+        }
+
+        visitingParams = true;
+        node.getParameterList().forEach(x -> x.accept(this));
+        visitingParams = false;
+
+        returns.clear();
+        node.getBlock().accept(this);
+        if (!currentBlock.isTerminated) {
+            Return ret;
+            if (currentFunction.returnType instanceof VoidType) {
+                ret = new Return(currentBlock, null);
+            } else {
+                System.err.println("warning: no return statement in function returning non-void : " + currentFunction.name + node.getPosition().toString());
+                if (currentFunction.returnType instanceof IntType) {
+                    ret = new Return(currentBlock, new ConstInt(0, currentFunction.returnType.size()));
+                } else if (currentFunction.returnType instanceof BoolType) {
+                    ret = new Return(currentBlock, FALSE);
+                } else if (currentFunction.returnType instanceof Pointer) {
+                    ret = new Return(currentBlock, new Null());
+                } else {
+                    throw new UnreachableError();
+                }
+            }
+            currentBlock.pushBack(ret);
+            returns.add(ret);
+        }
+
+        forwardReachable = new HashSet<>();
+        forwardDFS(currentFunction.entryBlock);
+
+        for (Iterator<Return> iter = returns.iterator(); iter.hasNext();) {
+            Return ret = iter.next();
+            if (!forwardReachable.contains(ret.basicBlock)) {
+                iter.remove();
+                ret.basicBlock.removeTerminator();
+            }
+        }
+
+        if (returns.size() == 1) {
+            currentFunction.exitBlock = returns.get(0).basicBlock;
+        } else {
+            BasicBlock dest = new BasicBlock(currentFunction, "exit_" + functionSymbol.getSymbolName());
+            Register returnValue = new Register("exit_ret_val", currentFunction.returnType);
+            ArrayList<Operand> values = new ArrayList<>();
+            ArrayList<BasicBlock> blocks = new ArrayList<>();
+            for (Return ret : returns) {
+                ret.basicBlock.removeTerminator();
+                values.add(ret.value);
+                blocks.add(ret.basicBlock);
+            }
+            dest.pushBack(new Phi(returnValue, blocks, values, dest));
+            dest.pushBack(new Return(dest, returnValue));
+            currentFunction.exitBlock = dest;
+        }
+
+    }
+
+    @Override
+    public void visit(ClassDeclNode node) {
+        currentClass = node.getClassSymbol();
+        node.getFuncDeclNodes().forEach(x -> x.accept(this));
+        if (currentClass.getConstructor() != null) {
+            currentClass.getConstructor().getDefineNode().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(BlockStmtNode node) {
+        for (StmtNode stmtNode : node.getStmtList()) {
+            stmtNode.accept(this);
+            if (currentBlock.isTerminated) { // unreachable code after
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void visit(VarDeclStmtNode node) {
+        node.getVarDeclList().getDeclList().forEach(x -> x.accept(this));
+    }
+
+    @Override
+    public void visit(VarDeclNode node) {
+        VariableSymbol symbol = node.getVariableSymbol();
+        BaseType type = root.resolveType(symbol.getType(), true);
+        if (symbol.isGlobal()) {
+            Global var = new Global(new Pointer(type), symbol.getSymbolName());
+            symbol.operand = var;
+            root.addGlobal(var);
+        } else if (visitingParams) {
+            Register param = new Register(symbol.getSymbolName(), type);
+            currentFunction.params.add(param);
+            Register register = new Register("_addr_" + symbol.getSymbolName(), new Pointer(type));
+            symbol.operand = register;
+            currentFunction.allocVar.add(register);
+            currentBlock.pushBack(new Store(register, param, currentBlock));
+        } else if (currentFunction != null) {
+            Register register = new Register("_addr_" + symbol.getSymbolName(), new Pointer(type));
+            if (node.getExpr() != null) {
+                insertAssignment(register, node.getExpr());
+            }
+            currentFunction.allocVar.add(register);
+            symbol.operand = register;
+        } else if (currentClass != null) {
+            if (type instanceof ClassType) {
+                type = new Pointer(type);
+            }
+            symbol.operand = new Register("_addr_" + symbol.getSymbolName(), new Pointer(type));
+        } else {
+            throw new UnreachableError();
+        }
+    }
+
+    @Override
+    public void visit(ExprStmtNode node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(IfStmtNode node) {
+        BasicBlock thenBlock = new BasicBlock(currentFunction, "then_block");
+        BasicBlock elseBlock = new BasicBlock(currentFunction, "else_block");
+        BasicBlock destBlock = node.getElseStmt() == null ? elseBlock : new BasicBlock(currentFunction, "dest_block");
+        node.getExpr().accept(this);
+        Register cond = (Register) matchType(node.getExpr().result, BOOL);
+        currentBlock.pushBack(new Branch(cond, thenBlock, elseBlock, currentBlock));
+        currentBlock = thenBlock;
+        node.getThenStmt().accept(this);
+        currentBlock.pushBack(new Jump(destBlock, currentBlock));
+
+        if (node.getElseStmt() != null) {
+            currentBlock = elseBlock;
+            node.getElseStmt().accept(this);
+            currentBlock.pushBack(new Jump(destBlock, currentBlock));
+        }
+        currentBlock = destBlock;
+    }
+
+    @Override
+    public void visit(WhileStmtNode node) {
+        BasicBlock stmtBlock = new BasicBlock(currentFunction, "while_stmt");
+        BasicBlock condBlock = node.getExpr() == null ? stmtBlock : new BasicBlock(currentFunction, "while_cond");
+        BasicBlock destBlock = new BasicBlock(currentFunction, "while_dest");
+
+        node.destBlock = destBlock;
+        node.condBlock = condBlock;
+
+        currentBlock.pushBack(new Jump(condBlock, currentBlock));
+        if (node.getExpr() != null) {
+            currentBlock = condBlock;
+            node.getExpr().accept(this);
+            Register cond = (Register) matchType(node.getExpr().result, BOOL);
+            currentBlock.pushBack(new Branch(cond, stmtBlock, destBlock, currentBlock));
+        }
+        currentBlock = stmtBlock;
+        node.getStmt().accept(this);
+        if (!currentBlock.isTerminated) {
+            currentBlock.pushBack(new Jump(condBlock, currentBlock));
+        }
+        currentBlock = destBlock;
+    }
+
+    @Override
+    public void visit(ForStmtNode node) {
+        BasicBlock stmtBlock = new BasicBlock(currentFunction, "for_stmt");
+        BasicBlock condBlock = node.getCond() == null ? stmtBlock : new BasicBlock(currentFunction, "for_cond");
+        BasicBlock stepBlock = node.getStep() == null ? condBlock : new BasicBlock(currentFunction, "for_step");
+        BasicBlock destBlock = new BasicBlock(currentFunction, "for_dest");
+
+        node.destBlock = destBlock;
+        node.stepBlock = stepBlock;
+
+        if (node.getInit() != null) {
+            node.getInit().accept(this);
+        }
+
+        currentBlock.pushBack(new Jump(condBlock, currentBlock));
+        if (node.getCond() != null) {
+            currentBlock = condBlock;
+            node.getCond().accept(this);
+            Register cond = (Register) matchType(node.getCond().result, BOOL);
+            currentBlock.pushBack(new Branch(cond, stmtBlock, destBlock, currentBlock));
+        }
+        if (node.getStep() != null) {
+            currentBlock = stepBlock;
+            node.getStep().accept(this);
+            if (!currentBlock.isTerminated) {
+                currentBlock.pushBack(new Jump(condBlock, currentBlock));
+            }
+        }
+        currentBlock = stmtBlock;
+        node.getStmt().accept(this);
+        if (!currentBlock.isTerminated) {
+            currentBlock.pushBack(new Jump(stepBlock, currentBlock));
+        }
+        currentBlock = destBlock;
+    }
+
+    @Override
+    public void visit(ReturnNode node) {
+        Return ret;
+        if (node.getExpr() == null) {
+            ret = new Return(currentBlock, null);
+        } else {
+            node.getExpr().accept(this);
+            Operand value = matchType(node.getExpr().result, currentFunction.returnType);
+            ret = new Return(currentBlock, value);
+        }
+        currentBlock.pushBack(ret);
+        returns.add(ret);
+    }
+
+    @Override public void visit(BreakNode node) {
+        currentBlock.pushBack(new Jump(node.getLoop().getDestBlock(), currentBlock));
+    }
+    @Override public void visit(ContinueNode node) {
+        currentBlock.pushBack(new Jump(node.getLoop().getContinueBlock(), currentBlock));
+    }
+
+    @Override
+    public void visit(IDExprNode node) {
+        VariableSymbol symbol = (VariableSymbol) node.getSymbol();
+        if (symbol.isMember()) { // accessing current function's member variable
+            Register classPtr = currentFunction.classPtr;
+            Register register = new Register("_addr_this." + symbol.getSymbolName(), symbol.operand.type);
+            node.result = register;
+            currentBlock.pushBack(new GEP(((Pointer)classPtr.type).typePointedTo,
+                            classPtr, I32ZERO, symbol.index, register, currentBlock));
+        } else {
+            node.result = symbol.operand;
+        }
+    }
+
+    @Override
+    public void visit(ArrayIndexNode node) {
+        node.getArray().accept(this);
+        node.getIndex().accept(this);
+        Operand array = loadValue(node.getArray().result);
+        Operand index = loadValue(node.getIndex().result);
+        Register register = new Register("_array_access_result",
+                new Pointer(root.resolveType(node.getType(), true)));
+        node.result = register;
+        currentBlock.pushBack(new GEP(
+                ((Pointer) array.type).typePointedTo,
+                array, index,null, register, currentBlock));
+    }
+
+    @Override
+    public void visit(BinaryExprNode node) {
+        String op = node.getOp();
+        Operand lhs, rhs;
+        if (op.equals("||") || op.equals("&&")) {
+            BasicBlock condBlock = new BasicBlock(currentFunction, "logicalCondBlock"),
+                    destBlock = new BasicBlock(currentFunction, "logicalDestBlock"),
+                    thenBlock, elseBlock;
+            node.getLhs().accept(this);
+            lhs = loadValue(node.getLhs().result);
+            ArrayList<BasicBlock> blocks = new ArrayList<>();
+            ArrayList<Operand> values = new ArrayList<>();
+            if (op.equals("||")) {
+                values.add(TRUE);
+                thenBlock = destBlock;
+                elseBlock = condBlock;
+            } else {
+                values.add(FALSE);
+                thenBlock = condBlock;
+                elseBlock = destBlock;
+            }
+            blocks.add(currentBlock);
+            currentBlock.pushBack(new Branch((Register) lhs, thenBlock, elseBlock, currentBlock));
+
+            currentBlock = condBlock;
+            node.getRhs().accept(this);
+            rhs = loadValue(node.getRhs().result);
+            values.add(rhs);
+            blocks.add(currentBlock);
+            currentBlock.pushBack(new Jump(destBlock, condBlock));
+
+            currentBlock = destBlock;
+            node.result = new Register( "logicalResult", BOOL);
+            destBlock.pushBack(new Phi((Register) node.result, blocks, values, destBlock));
+        } else {
+            if (op.equals("=")) {
+                node.getLhs().accept(this);
+                insertAssignment(node.getLhs().result, node.getRhs());
+            }
+            else if (node.getLhs().isString()) {
+                node.getLhs().accept(this);
+                node.getRhs().accept(this);
+                Function function;
+                String instName = Op2Inst.translate(op);
+                if (instName.charAt(0) == 's') { // 'signed' icmp
+                    instName = instName.substring(1);
+                }
+                instName = "string." + instName;
+                function = root.getFunction(instName);
+                node.result = new Register(instName, op.equals("+") ? STR : BOOL);
+                Inst inst = new Call(function, new ArrayList<>() {{
+                    add(node.getLhs().result);
+                    add(node.getRhs().result);
+                }}, (Register) node.result, currentBlock);
+                currentBlock.pushBack(inst);
+            } else {
+                node.getLhs().accept(this);
+                node.getRhs().accept(this);
+                Inst inst;
+                switch (op) {
+                    case "*": case "/": case "%":
+                    case "+": case "-":
+                    case "<<": case ">>":
+                    case "&": case "^": case "|":
+                        lhs = loadValue(node.getLhs().result);
+                        rhs = loadValue(node.getRhs().result);
+                        node.result = new Register("binary_op_" + Op2Inst.translate(op), lhs.type);
+                        inst = new Binary(lhs, rhs, (Register) node.result, op, currentBlock);
+                        currentBlock.pushBack(inst);
+                        break;
+                    case "<": case ">":
+                    case "<=": case ">=":
+                    case "==": case "!=":
+                        node.result = new Register("cmp_op_" + Op2Inst.translate(op), BOOL);
+                        inst = new Cmp(node.getLhs().result, node.getRhs().result, (Register) node.result, op, currentBlock);
+                        currentBlock.pushBack(inst);
+                        break;
+                    default:
+                        throw new UnreachableError();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void visit(UnaryExprNode node) {
+        String op = node.getOp();
+        node.getExpr().accept(this);
+
+        Operand src;
+        switch (op) {
+            case "+":
+                node.result = node.getExpr().result;
+                break;
+            case "-":
+                src = loadValue(node.getExpr().result);
+                node.result = new Register("unary_res", I32);
+                currentBlock.pushBack(new Binary(
+                        I32ZERO, src,
+                        (Register) node.result, "-", currentBlock)
+                );
+                break;
+            case "~":
+                src = loadValue(node.getExpr().result);
+                node.result = new Register("unary_res", I32);
+                currentBlock.pushBack(new Binary(
+                        I32NEGONE, src,
+                        (Register) node.result, "^", currentBlock)
+                );
+                break;
+            case "!":
+                src = loadValue(node.getExpr().result);
+                node.result = new Register("unary_res", BOOL);
+                currentBlock.pushBack(new Binary(
+                        TRUE, src,
+                        (Register) node.result, "^", currentBlock)
+                );
+                break;
+            case "++i": case "--i":
+                src = loadValue(node.getExpr().result);
+                node.result = new Register("unary_res", I32);
+                currentBlock.pushBack(new Binary(
+                        src, I32ONE,
+                        (Register) node.result, op.substring(0, 1), currentBlock)
+                );
+                currentBlock.pushBack(new Store(node.getExpr().result, node.result, currentBlock));
+                break;
+            case "i++": case "i--":
+                src = loadValue(node.getExpr().result);
+                Register tmp = new Register("unary_tmp", I32);
+                currentBlock.pushBack(new Binary(
+                        src, I32ONE,
+                        tmp, op.substring(1, 2), currentBlock)
+                );
+                node.result = src;
+                currentBlock.pushBack(new Store(node.getExpr().result, tmp, currentBlock));
+                break;
+            default:
+                assert false;
+        }
+    }
+
+    @Override
+    public void visit(ClassMemberNode node) {
+        node.getExpr().accept(this);
+        Symbol symbol = node.getSymbol();
+        if (symbol instanceof FunctionSymbol) {
+            node.result = node.getExpr().result; // this for func call
+        } else if (symbol instanceof VariableSymbol){
+            Operand classPtr = loadValue(node.result);
+            Register res = new Register("_this_" + symbol.getSymbolName(), ((VariableSymbol) symbol).operand.type);
+            node.result = res;
+            currentBlock.pushBack(new GEP(((Pointer)classPtr.type).typePointedTo,
+                    classPtr, I32ZERO, ((VariableSymbol) symbol).index,
+                    res, currentBlock));
+        } else {
+            throw new UnreachableError();
+        }
+    }
+
+    @Override
+    public void visit(FuncCallExprNode node) {
+        node.getFunctionNode().accept(this);
+        FunctionSymbol symbol = node.getFunctionSymbol();
+        if (symbol.getSymbolName().equals("array.size")) {
+            Register ret = new Register("array_size", I32);
+            node.result = ret;
+            assert node.getFunctionNode().result.type instanceof Pointer; // *array
+            Register ptr = loadPointer(node.getFunctionNode().result);
+            assert ptr.type instanceof Pointer; // array
+            Register i32Ptr;
+            if (ptr.type.isSame(I32Array)) {
+                i32Ptr = ptr;
+            } else {
+                i32Ptr = new Register("cast_i32_arr", I32Array);
+                currentBlock.pushBack(new Cast(ptr, i32Ptr, currentBlock));
+            }
+            Register sizePtr = new Register("size_addr", new Pointer(I32));
+            currentBlock.pushBack(new GEP(I32, i32Ptr, I32NEGONE, null, sizePtr, currentBlock));
+            currentBlock.pushBack(new Load(ret, sizePtr, currentBlock));
+        } else {
+            node.result = symbol.getType().getTypeName().equals("void") ?
+                    null : new Register("ret_val", root.resolveType(symbol.getType(), false));
+            ArrayList <Operand> params = new ArrayList<>();
+            if (symbol.isMember()) {
+                params.add(loadValue(node.getFunctionNode().result));
+            }
+            for (ExprNode exprNode : node.getParameterList()) {
+                exprNode.accept(this);
+                params.add(loadValue(exprNode.result));
+            }
+            currentBlock.pushBack(new Call(symbol.function, params, (Register) node.result, currentBlock));
+        }
+        currentFunction.callee.add(symbol.function);
+    }
+
+    @Override
+    public void visit(ThisExprNode node) {
+        node.result = currentFunction.classPtr;
+    }
+
+    @Override
+    public void visit(IntLiteralNode node) {
+        node.result = new ConstInt(node.getValue(), 32);
+    }
+    @Override
+    public void visit(BoolLiteralNode node) {
+        node.result = new ConstBool(node.getValue());
+    }
+    @Override
+    public void visit(NullLiteralNode node) {
+        node.result = new Null();
+    }
+    @Override
+    public void visit(StringLiteralNode node) {
+        root.addConstStr(node.getValue());
+        node.result = root.getConstStr(node.getValue());
+    }
+    @Override
+    public void visit(NewExprNode node) {
+        if (node.getBaseTypeAfterResolve() instanceof ArrayType) {
+            Register ret = new Register("new_addr", root.resolveType(node.getBaseTypeAfterResolve(), true));
+            newArray(node, 0, ret);
+            node.result = ret;
+        } else if (node.getBaseTypeAfterResolve() instanceof ClassSymbol){
+            Register mallocAddr = new Register("_addr_malloc", STR);
+            Register castAddr = new Register("_addr_cast", root.resolveType(node.getBaseTypeAfterResolve(), true));
+            currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((Pointer)castAddr.type).typePointedTo.size() / 8, 32), currentBlock));
+            currentBlock.pushBack(new Cast(mallocAddr, castAddr, currentBlock));
+            if (((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor() != null) {
+                currentBlock.pushBack(new Call(((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor().function,
+                        new ArrayList<>() {{ add(castAddr);}}, null, currentBlock));
+            }
+        } else {
+            throw new UnreachableError();
+        }
+    }
+
+
+
+
+    void newArray(NewExprNode node, int cur, Register ret) {
+    /*
+       typeWidth = sizeof type
+       dataWidth = curSize * typeWidth
+       allocWidth = dataWidth + 4
+       mallocAddr = malloc(allocWidth)
+       intArrAddr = (int*) mallocAddr;
+       *intArrAddr = curSize
+       arrayPtr = (type*)(intArrAddr + 1)
+       *ret = arrayPtr;
+
+       // if more dimensions required
+       int cnt = 0
+       while cnt < *intArrAddr:
+           intArrAddr[cnt] = new type
+           cnt += 1
+     */
+        if (cur == node.getDimension()) return;
+        node.getExprNodeList().get(cur).accept(this);
+        Register arrayPtr = cur == 0 ? ret : new Register("malloc_ptr", ((Pointer) ret.type).typePointedTo);
+        BaseType typePointTo = ((Pointer) arrayPtr.type).typePointedTo;
+        Operand curSize = loadValue(node.getExprNodeList().get(cur).result);
+        ConstInt typeWidth = new ConstInt(typePointTo.size() / 8, 32);
+        Register dataWidth = new Register("data_width", I32);
+        Register allocWidth = new Register("alloc_width", I32);
+        Register mallocAddr = new Register("_addr_malloc", STR);
+        Register intArrAddr = new Register("_addr_int", I32Array);
+        currentBlock.pushBack(new Binary(curSize, typeWidth, dataWidth, "*", currentBlock));
+        currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), allocWidth, "+", currentBlock));
+        currentBlock.pushBack(new Malloc(mallocAddr, allocWidth, currentBlock));
+        currentBlock.pushBack(new Cast(mallocAddr, intArrAddr, currentBlock));
+        currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
+        if (typePointTo.isSame(I32)) {
+            currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
+        } else {
+            Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
+            currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, intArrAddr_1, currentBlock));
+            currentBlock.pushBack(new Cast(intArrAddr_1, arrayPtr, currentBlock));
+        }
+        if (cur > 0) {
+            currentBlock.pushBack(new Store(ret, arrayPtr, currentBlock));
+        }
+        if (cur < node.getExprNodeList().size() - 1) {
+            BasicBlock condBlock = new BasicBlock(currentFunction, "new_cond");
+            BasicBlock stmtBlock = new BasicBlock(currentFunction, "new_stmt");
+            BasicBlock destBlock = new BasicBlock(currentFunction, "new_dest");
+            Register typePtr = new Register("_addr_type", arrayPtr.type);
+            Register cnt = new Register("cnt", I32);
+            Register cnt_nxt = new Register("cnt_nxt", I32);
+            Register cond = new Register("cnt", BOOL);
+            ArrayList<Operand> values = new ArrayList<>() {{ add(I32ZERO); }};
+            ArrayList<BasicBlock> blocks = new ArrayList<>() {{ add(currentBlock); }};
+
+            currentBlock.pushBack(new Jump(condBlock, currentBlock));
+
+            currentBlock = condBlock;
+            currentBlock.pushBack(new Cmp(cnt, curSize, cond,"<", currentBlock));
+            currentBlock.pushBack(new Branch(cond, stmtBlock, destBlock, currentBlock));
+
+            currentBlock = stmtBlock;
+            currentBlock.pushBack(new GEP(arrayPtr.type, arrayPtr, cnt, null, typePtr, currentBlock));
+            newArray(node, cur + 1, typePtr);
+            currentBlock.pushBack(new Binary(cnt, I32ONE, cnt_nxt, "+", currentBlock));
+            values.add(cnt_nxt);
+            blocks.add(currentBlock);
+            currentBlock.pushBack(new Jump(condBlock, currentBlock));
+
+            condBlock.pushFront(new Phi(cnt, blocks, values, currentBlock));
+
+            currentBlock = destBlock;
+        }
+
+    }
+
+    @Override public void visit(ArrayTypeNode node) {}
+    @Override public void visit(ClassTypeNode node) {}
+    @Override public void visit(BoolTypeNode node) {}
+    @Override public void visit(IntTypeNode node) {}
+    @Override public void visit(VoidTypeNode node) {}
+    @Override public void visit(StringTypeNode node) {}
+}

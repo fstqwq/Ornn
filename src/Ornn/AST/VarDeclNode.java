@@ -1,12 +1,12 @@
 package Ornn.AST;
 
-import Ornn.semantic.Type;
+import Ornn.semantic.SemanticType;
 import Ornn.semantic.VariableSymbol;
 import Ornn.util.Position;
 
 public class VarDeclNode extends DeclNode {
     private TypeNode type;
-    private Type typeAfterResolve;
+    private SemanticType typeAfterResolve;
     private ExprNode expr;
     private String identifier;
     private VariableSymbol variableSymbol;
@@ -43,11 +43,11 @@ public class VarDeclNode extends DeclNode {
         this.identifier = identifier;
     }
 
-    public Type getTypeAfterResolve() {
+    public SemanticType getTypeAfterResolve() {
         return typeAfterResolve;
     }
 
-    public void setTypeAfterResolve(Type typeAfterResolve) {
+    public void setTypeAfterResolve(SemanticType typeAfterResolve) {
         this.typeAfterResolve = typeAfterResolve;
     }
 

@@ -10,7 +10,6 @@ import java.util.Map;
 import static Ornn.semantic.TypeCategory.*;
 
 public class SemanticChecker implements ASTVisitor {
-    private ToplevelScope toplevelScope;
     private PrimitiveTypeSymbol Int;
     private PrimitiveTypeSymbol Void;
     private PrimitiveTypeSymbol Bool;
@@ -18,13 +17,12 @@ public class SemanticChecker implements ASTVisitor {
     private NullType Null;
     private FunctionSymbol arraySize;
     public SemanticChecker(ToplevelScope toplevelScope) {
-        this.toplevelScope = toplevelScope;
         Int = (PrimitiveTypeSymbol) toplevelScope.resolveType("int", null);
         Void = (PrimitiveTypeSymbol) toplevelScope.resolveType("void", null);
         Bool = (PrimitiveTypeSymbol) toplevelScope.resolveType("bool", null);
         string = (ClassSymbol) toplevelScope.resolveType("string", null);
         Null = (NullType) toplevelScope.resolveType("null", null);
-        arraySize = (FunctionSymbol) toplevelScope.resolveSymbol("<size>", null);
+        arraySize = (FunctionSymbol) toplevelScope.resolveSymbol("array.size", null);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(VarDeclNode node) {
-        Type type = node.getTypeAfterResolve();
+        SemanticType type = node.getTypeAfterResolve();
         if (node.getExpr() != null) {
             node.getExpr().accept(this);
             type.compatible(node.getExpr().getType(), node.getPosition());
@@ -66,6 +64,11 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(ExprStmtNode node) {
         node.getExpr().accept(this);
+        if (node.getExpr().getTypeCategory() == FUNCTION) {
+            throw new CompilationError("not a proper call of function", node.getPosition());
+        } else if (node.getExpr().getTypeCategory() == CLASS) {
+            throw new CompilationError("declaration does not declare anything", node.getPosition());
+        }
     }
 
     @Override
@@ -100,7 +103,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(ReturnNode node) {
-        Type returnType = node.getFunctionSymbol().getType();
+        SemanticType returnType = node.getFunctionSymbol().getType();
         if (node.getExpr() == null) {
             if (returnType != null && returnType != Void) {
                 throw new CompilationError("return expression expected", node.getPosition());
@@ -136,18 +139,18 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(ArrayIndexNode node) {
         node.getArray().accept(this);
         node.getIndex().accept(this);
-        if (!(node.getArray().getType() instanceof ArrayType)) {
+        if (!(node.getArray().getType() instanceof SemanticArrayType)) {
             throw new CompilationError("non-array can't be indexed", node.getPosition());
         }
         if (!node.getIndex().isInt()) {
             throw new CompilationError("only int can be index", node.getPosition());
         }
         node.setTypeCategory(LVALUE);
-        ArrayType type = (ArrayType) node.getArray().getType();
+        SemanticArrayType type = (SemanticArrayType) node.getArray().getType();
         if (type.getDimension() == 1) {
             node.setType(type.getBaseType());
         } else {
-            node.setType(new ArrayType(type.getBaseType(), type.getDimension() - 1));
+            node.setType(new SemanticArrayType(type.getBaseType(), type.getDimension() - 1));
         }
     }
 
@@ -287,7 +290,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(FuncCallExprNode node) {
-        ExprNode function = node.getFunction();
+        ExprNode function = node.getFunctionNode();
         function.accept(this);
         if (!function.isFunction()) {
             throw new CompilationError("calling expression which is not a function", node.getPosition());
@@ -317,7 +320,7 @@ public class SemanticChecker implements ASTVisitor {
                 throw new CompilationError("only int can be subscript", node.getPosition());
             }
         }
-        Type type = node.getBaseTypeAfterResolve();
+        SemanticType type = node.getBaseTypeAfterResolve();
         if (node.getDimension() == 0) {
             if (type instanceof ClassSymbol) {
                 if (((ClassSymbol) type).getConstructor() != null){
@@ -326,7 +329,7 @@ public class SemanticChecker implements ASTVisitor {
             }
             node.setType(type);
         } else {
-            node.setType(new ArrayType(type, node.getDimension()));
+            node.setType(new SemanticArrayType(type, node.getDimension()));
         }
         node.setTypeCategory(RVALUE);
     }

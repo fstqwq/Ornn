@@ -5,8 +5,8 @@ import Ornn.parser.MxstarBaseVisitor;
 import Ornn.parser.MxstarParser;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
+import Ornn.util.StringParser;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
         if (null != ctx.functionDeclaration()) return visit(ctx.functionDeclaration());
         if (null != ctx.variableDeclaration()) return visit(ctx.variableDeclaration());
         if (null != ctx.classDeclaration()) return visit(ctx.classDeclaration());
-        throw new CompilationError("Internal Error", new Position(ctx.getStart()));
+        throw new RuntimeException("unreachable");
     }
 
     @Override
@@ -225,7 +225,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitRejectCreator(MxstarParser.RejectCreatorContext ctx) {
-        throw new CompilationError("Invalid new creator", new Position(ctx.getStart()));
+        throw new CompilationError("invalid new creator", new Position(ctx.getStart()));
     }
 
     @Override
@@ -278,7 +278,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
             case "=":
                 break;
             default:
-                throw new CompilationError("unknown binary operator", new Position(ctx.getStart()));
+                throw new RuntimeException("unreachable");
         }
         return new BinaryExprNode(
                 (ExprNode) visit(ctx.src1),
@@ -303,7 +303,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
                 op = ctx.op.getText();
                 break;
             default:
-                throw new CompilationError("unknown unary operator", new Position(ctx.getStart()));
+                throw new RuntimeException("unreachable");
         }
         return new UnaryExprNode(
                 (ExprNode) visit(ctx.expression()),
@@ -321,7 +321,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
                 op = "i" + ctx.op.getText();
                 break;
             default:
-                throw new CompilationError("unknown unary operator", new Position(ctx.getStart()));
+                throw new RuntimeException("unreachable");
         }
         return new UnaryExprNode(
                 (ExprNode) visit(ctx.expression()),
@@ -357,7 +357,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitParameterList(MxstarParser.ParameterListContext ctx) {
-        throw new CompilationError("internal error", new Position(ctx.getStart()));
+        throw new RuntimeException("unreachable");
     }
 
     @Override
@@ -405,7 +405,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitStrLiteral(MxstarParser.StrLiteralContext ctx) {
-        return new StringLiteralNode(ctx.StringConstant().getText(), new Position(ctx.getStart()));
+        return new StringLiteralNode(StringParser.parse(ctx.StringConstant().getText(), new Position(ctx.getStart())), new Position(ctx.getStart()));
     }
 
     @Override

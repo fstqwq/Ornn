@@ -3,6 +3,7 @@ package Ornn.frontend;
 import Ornn.AST.*;
 import Ornn.semantic.*;
 import Ornn.util.CompilationError;
+import Ornn.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +16,12 @@ Toplevel Scope Builder: to do some nasty stuff
 4. Explicitly state all initializations
 */
 public class ToplevelScopeBuilder {
-    private final static ToplevelScope toplevelScope = new ToplevelScope();
-    private final static ClassSymbol string = new ClassSymbol("string", null, toplevelScope);
-    private final static PrimitiveTypeSymbol Int = new PrimitiveTypeSymbol("int");
-    private final static PrimitiveTypeSymbol Bool = new PrimitiveTypeSymbol("bool");
-    private final static PrimitiveTypeSymbol Void = new PrimitiveTypeSymbol("void");
-    private final static NullType Null = new NullType();
+    public final static ToplevelScope toplevelScope = new ToplevelScope();
+    public final static ClassSymbol string = new ClassSymbol("string", null, toplevelScope);
+    public final static PrimitiveTypeSymbol Int = new PrimitiveTypeSymbol("int");
+    public final static PrimitiveTypeSymbol Bool = new PrimitiveTypeSymbol("bool");
+    public final static PrimitiveTypeSymbol Void = new PrimitiveTypeSymbol("void");
+    public final static NullType Null = new NullType();
 
     public ToplevelScopeBuilder(ProgramNode ast) {
         // define primitive types
@@ -40,7 +41,7 @@ public class ToplevelScopeBuilder {
         }});
         toplevelScope.defineClass(string);
         // define builtin functions
-        toplevelScope.defineFunction(new FunctionSymbol("<size>", Int, null, toplevelScope));
+        toplevelScope.defineFunction(new FunctionSymbol("array.size", Int, null, toplevelScope));
         toplevelScope.defineFunction(new FunctionSymbol("print", Void, null, toplevelScope) {{
             defineVariable(new VariableSymbol("str", string, null));
         }});
@@ -72,7 +73,7 @@ public class ToplevelScopeBuilder {
             if (x instanceof ClassDeclNode) {
                 ClassSymbol classSymbol = ((ClassDeclNode) x).getClassSymbol();
                 for (FuncDeclNode node : ((ClassDeclNode) x).getFuncDeclNodes()) {
-                    Type returnType = node.getReturnType() == null ? null : toplevelScope.resolveType(node.getReturnType());
+                    SemanticType returnType = node.getReturnType() == null ? null : toplevelScope.resolveType(node.getReturnType());
                     FunctionSymbol functionSymbol = new FunctionSymbol(node.getIdentifier(), returnType, node, classSymbol);
                     node.setFunctionSymbol(functionSymbol);
                     classSymbol.defineFunction(functionSymbol);
@@ -151,30 +152,19 @@ public class ToplevelScopeBuilder {
         if (mainFunc.getType() != Int) {
             throw new CompilationError("main function should return int" , mainFunc.getDefineNode().getPosition());
         }
+        ((FuncDeclNode) mainFunc.getDefineNode()).getBlock().getStmtList().add(
+                new ReturnNode(new IntLiteralNode(0, Position.nowhere), mainFunc, Position.nowhere)
+        );
 
-        // add init
-        initStmts.add(new ReturnNode(
-                new FuncCallExprNode(
-                        new IDExprNode("main", ast.getPosition()),
-                        new ArrayList<>(),
-                        ast.getPosition()
-                ),
-                null,
-                ast.getPosition()
-        ));
+        // add init to check global initialization in semantic
         FuncDeclNode initFuncNode = new FuncDeclNode(
-                new IntTypeNode(ast.getPosition()),
-                "<init>",
+                new VoidTypeNode(Position.nowhere),
+                "__init",
                 new ArrayList<>(),
                 new BlockStmtNode(initStmts, ast.getPosition()),
-                ast.getPosition()
+                Position.nowhere
         );
-        FunctionSymbol initFuncSymbol = new FunctionSymbol(
-                "<init>",
-                Int,
-                initFuncNode,
-                toplevelScope
-        );
+        FunctionSymbol initFuncSymbol = new FunctionSymbol("__init", Int, initFuncNode, toplevelScope);
         initFuncNode.setFunctionSymbol(initFuncSymbol);
         toplevelScope.defineFunction(initFuncSymbol);
         initFuncSymbol.setScope(toplevelScope);

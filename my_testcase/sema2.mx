@@ -1,0 +1,15 @@
+/*
+Author: 18' Zonghan YANG
+Time: 2020-04-25
+Verdict: Failed
+Comment: "f;" is not a proper statement
+*/
+
+int f() {
+	return 0;
+}
+
+int main() {
+	f;
+	return f();
+}

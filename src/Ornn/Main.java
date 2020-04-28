@@ -31,9 +31,9 @@ public class Main {
             new ScopeResolver(toplevelScope).visit(ast);
             new SemanticChecker(toplevelScope).visit(ast);
         } catch (Exception err) {
-            err.printStackTrace();
+            //err.printStackTrace();
             System.err.println(err.getMessage());
-            throw new RuntimeException();
+            throw err;
         }
     }
 

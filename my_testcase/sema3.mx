@@ -1,0 +1,14 @@
+/*
+Author: 18' Zonghan YANG
+Time: 2020-04-25
+Verdict: Failed
+Comment: duplicate identifier f
+*/
+
+class f {
+
+};
+int main() {
+	f;
+	return 0;
+}

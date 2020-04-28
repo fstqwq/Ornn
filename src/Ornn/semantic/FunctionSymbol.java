@@ -1,9 +1,7 @@
 package Ornn.semantic;
 
-import Ornn.AST.ASTNode;
 import Ornn.AST.FuncDeclNode;
-import Ornn.AST.TypeNode;
-import Ornn.AST.VarDeclNode;
+import Ornn.IR.Function;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
 
@@ -14,10 +12,17 @@ public class FunctionSymbol extends Symbol implements Scope {
     private Scope enclosingScope;
     private Map<String, VariableSymbol> arguments;
 
-    public FunctionSymbol(String name, Type returnType, FuncDeclNode funcDeclNode, Scope enclosingScope) {
+
+    public Function function;
+
+    public FunctionSymbol(String name, SemanticType returnType, FuncDeclNode funcDeclNode, Scope enclosingScope) {
         super(name, returnType, funcDeclNode);
         this.enclosingScope = enclosingScope;
         arguments = new LinkedHashMap<>();
+    }
+
+    public boolean isMember() {
+        return enclosingScope instanceof ClassSymbol;
     }
 
     @Override

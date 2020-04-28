@@ -1,0 +1,16 @@
+/*
+Author: 18' Zonghan YANG
+Time: 2020-04-28
+Verdict: Failed
+Comment: return type specification for constructor invalid
+*/
+
+class f{
+	void f() {
+	
+	}
+};
+
+int main() {
+
+}

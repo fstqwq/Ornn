@@ -1,15 +1,13 @@
 package Ornn.semantic;
 
 import Ornn.AST.ClassDeclNode;
-import Ornn.AST.TypeNode;
-import Ornn.AST.VarDeclNode;
 import Ornn.util.CompilationError;
 import Ornn.util.Position;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ClassSymbol extends Symbol implements Scope, Type{
+public class ClassSymbol extends Symbol implements Scope, SemanticType {
     private Scope enclosingScope;
     private FunctionSymbol constructor;
     private Map<String, VariableSymbol> variableSymbolMap = new LinkedHashMap<>();
@@ -80,7 +78,7 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     }
 
     @Override
-    public void compatible(Type type, Position position) {
+    public void compatible(SemanticType type, Position position) {
         if (!type.getTypeName().equals(getTypeName()))
             if (type.getTypeName().equals("string") || !(type instanceof NullType)) {
                 throw new CompilationError(getTypeName() + " is not compatible with " + type.getTypeName(), position);
@@ -88,7 +86,7 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     }
 
     @Override
-    public void equable(Type type, Position position) {
+    public void equable(SemanticType type, Position position) {
         if (!type.getTypeName().equals(getTypeName()))
             if (!(type instanceof NullType)) {
                 throw new CompilationError(getTypeName() + " can't compare equality with " + type.getTypeName(), position);

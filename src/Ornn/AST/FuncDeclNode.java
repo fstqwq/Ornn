@@ -1,5 +1,6 @@
 package Ornn.AST;
 
+import Ornn.IR.Function;
 import Ornn.semantic.FunctionSymbol;
 import Ornn.util.Position;
 

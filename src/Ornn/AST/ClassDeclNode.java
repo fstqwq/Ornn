@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassDeclNode extends DeclNode {
-    String Identifier;
-    List<VarDeclNode> varDeclNodes;
-    List<FuncDeclNode> funcDeclNodes;
-    ClassSymbol classSymbol;
+    private String Identifier;
+    private List<VarDeclNode> varDeclNodes;
+    private List<FuncDeclNode> funcDeclNodes;
+    private ClassSymbol classSymbol;
 
     public ClassDeclNode(String Identifier, Position position) {
         super(position);

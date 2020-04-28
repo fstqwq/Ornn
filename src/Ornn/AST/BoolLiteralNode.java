@@ -8,10 +8,10 @@ public class BoolLiteralNode extends ExprNode {
         super(position);
         this.value = value;
     }
-    boolean getValue() {
+    public boolean getValue() {
         return value;
     }
-    void setValue(boolean value) {
+    public void setValue(boolean value) {
         this.value = value;
     }
     @Override

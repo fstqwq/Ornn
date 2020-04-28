@@ -9,7 +9,6 @@ import java.util.Map;
 public abstract class NameScope implements Scope {
     protected Map<String, Symbol> symbolMap = new LinkedHashMap<>();
     private Scope enclosingScope;
-
     NameScope(Scope enclosingScope) {
         this.enclosingScope = enclosingScope;
         symbolMap = new LinkedHashMap<>();

@@ -1,6 +1,5 @@
 package Ornn.AST;
 
-import Ornn.semantic.Type;
 import Ornn.util.Position;
 
 public class ArrayTypeNode extends TypeNode {

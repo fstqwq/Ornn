@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ToplevelScope extends NameScope {
-    private Map<String, Type> typeMap;
+    private Map<String, SemanticType> typeMap;
 
     public ToplevelScope () {
         super(null);
@@ -45,18 +45,18 @@ public class ToplevelScope extends NameScope {
         return symbol;
     }
 
-    public Type resolveType(String identifier, Position position) {
-        Type type = typeMap.get(identifier);
+    public SemanticType resolveType(String identifier, Position position) {
+        SemanticType type = typeMap.get(identifier);
         if (type == null) {
             throw new CompilationError("undefined identifier " + identifier, position);
         }
         return type;
     }
 
-    public Type resolveType(TypeNode typeNode) {
-        Type type = resolveType(typeNode.getTypeIdentifier(), typeNode.getPosition());
+    public SemanticType resolveType(TypeNode typeNode) {
+        SemanticType type = resolveType(typeNode.getTypeIdentifier(), typeNode.getPosition());
         if (typeNode instanceof ArrayTypeNode) {
-            return new ArrayType(type, ((ArrayTypeNode) typeNode).getDimension());
+            return new SemanticArrayType(type, ((ArrayTypeNode) typeNode).getDimension());
         } else {
             return type;
         }

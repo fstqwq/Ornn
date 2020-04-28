@@ -1,5 +1,6 @@
 package Ornn.AST;
 
+import Ornn.IR.BasicBlock;
 import Ornn.util.Position;
 
 public class ForStmtNode extends StmtNode implements Loop {
@@ -7,6 +8,9 @@ public class ForStmtNode extends StmtNode implements Loop {
     private ExprNode cond;
     private ExprNode step;
     private StmtNode stmt;
+
+    public BasicBlock stepBlock;
+    public BasicBlock destBlock;
 
     public ForStmtNode(ExprNode init, ExprNode cond, ExprNode step, StmtNode stmt, Position position) {
         super(position);
@@ -34,6 +38,16 @@ public class ForStmtNode extends StmtNode implements Loop {
 
     public StmtNode getStmt() {
         return stmt;
+    }
+
+    @Override
+    public BasicBlock getDestBlock() {
+        return destBlock;
+    }
+
+    @Override
+    public BasicBlock getContinueBlock() {
+        return stepBlock;
     }
 
     @Override

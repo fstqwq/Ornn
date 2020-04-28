@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.semantic.Type;
+import Ornn.semantic.SemanticType;
 import Ornn.util.Position;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NewExprNode extends ExprNode {
     private TypeNode baseType;
-    private Type typeAfterResolve;
+    private SemanticType typeAfterResolve;
     private int dimension;
     private List<ExprNode> exprNodeList;
 
@@ -31,11 +31,11 @@ public class NewExprNode extends ExprNode {
         return exprNodeList;
     }
 
-    public Type getBaseTypeAfterResolve() {
+    public SemanticType getBaseTypeAfterResolve() {
         return typeAfterResolve;
     }
 
-    public void setBaseTypeAfterResolve(Type baseTypeAfterResolve) {
+    public void setBaseTypeAfterResolve(SemanticType baseTypeAfterResolve) {
         this.typeAfterResolve = baseTypeAfterResolve;
     }
 

@@ -1,0 +1,36 @@
+/*
+Test Package: Codegen
+Author: 18' Zonghan YANG
+Time: 2020-04-28
+Input:
+=== input ===
+2 1
+=== end ===
+Output:
+=== output ===
+21
+=== end ===
+ExitCode: 0
+InstLimit: -1
+Origin Package: Test add proper return statement
+*/
+
+int a, b;
+
+void f() {
+	if (a < b) return;
+	// should return properly to main
+}
+
+void g() {
+	print("gg");
+}
+
+int main() {
+	a = getInt();
+	b = getInt();
+	f();
+	println(a); println(b);
+	if (a < b) return 0;
+	int c = 114514; // should not return 114514
+}

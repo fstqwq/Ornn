@@ -4,7 +4,6 @@ import Ornn.AST.*;
 import Ornn.semantic.*;
 import Ornn.util.CompilationError;
 
-import java.awt.*;
 
 /*
 Resolve:
@@ -68,7 +67,7 @@ public class ScopeResolver implements ASTVisitor {
         if (node.getExpr() != null) {
             node.getExpr().accept(this);
         }
-        Type type = toplevelScope.resolveType(node.getType());
+        SemanticType type = toplevelScope.resolveType(node.getType());
         VariableSymbol variableSymbol = new VariableSymbol(node.getIdentifier(), type, node);
         currentScope.defineVariable(variableSymbol);
         variableSymbol.setScope(currentScope);
@@ -178,13 +177,13 @@ public class ScopeResolver implements ASTVisitor {
 
     @Override
     public void visit(FuncCallExprNode node) {
-        node.getFunction().accept(this);
+        node.getFunctionNode().accept(this);
         node.getParameterList().forEach(x -> x.accept(this));
     }
 
     @Override
     public void visit(NewExprNode node) {
-        Type type = toplevelScope.resolveType(node.getBaseType());
+        SemanticType type = toplevelScope.resolveType(node.getBaseType());
         node.setBaseTypeAfterResolve(type);
         node.getExprNodeList().forEach(x -> x.accept(this));
     }

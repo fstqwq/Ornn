@@ -3,6 +3,7 @@ package Ornn.util;
 import org.antlr.v4.runtime.Token;
 
 public class Position {
+    public static final Position nowhere = new Position(-1, -1);
     private int line, col;
     public Position(int Line, int Col) {
         line    = Line;
@@ -14,5 +15,5 @@ public class Position {
     }
     public int getLine() {return line;}
     public int getCol() {return col;}
-    public String toString() {return String.format(" at line : %d, col : %d", line, col);}
+    public String toString() {return String.format(" (at line : %d, col : %d)", line, col);}
 }

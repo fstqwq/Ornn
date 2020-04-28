@@ -2,21 +2,20 @@ package Ornn.AST;
 
 import Ornn.util.Position;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FuncCallExprNode extends ExprNode {
-    private ExprNode function;
+    private ExprNode functionNode;
     private List<ExprNode> parameterList;
 
-    public FuncCallExprNode(ExprNode function, List<ExprNode> parameterList, Position position) {
+    public FuncCallExprNode(ExprNode functionNode, List<ExprNode> parameterList, Position position) {
         super(position);
-        this.function = function;
+        this.functionNode = functionNode;
         this.parameterList = parameterList;
     }
 
-    public ExprNode getFunction() {
-        return function;
+    public ExprNode getFunctionNode() {
+        return functionNode;
     }
 
     public List<ExprNode> getParameterList() {

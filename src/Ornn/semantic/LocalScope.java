@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class LocalScope extends NameScope {
-
     public LocalScope(Scope enclosingScope) {
         super(enclosingScope);
     }

@@ -1,5 +1,6 @@
 package Ornn.AST;
 
+import Ornn.IR.operand.Operand;
 import Ornn.semantic.*;
 import Ornn.util.Position;
 
@@ -8,8 +9,10 @@ import static Ornn.semantic.TypeCategory.*;
 
 public abstract class ExprNode extends ASTNode {
     private TypeCategory typeCategory;
-    private Type type;
+    private SemanticType type;
     private FunctionSymbol functionSymbol;
+
+    public Operand result;
 
     public ExprNode(Position position) {
         super(position);
@@ -21,10 +24,10 @@ public abstract class ExprNode extends ASTNode {
     public void setTypeCategory(TypeCategory typeCategory) {
         this.typeCategory = typeCategory;
     }
-    public void setType(Type type) {
+    public void setType(SemanticType type) {
         this.type = type;
     }
-    public Type getType() {
+    public SemanticType getType() {
         return type;
     }
     public FunctionSymbol getFunctionSymbol() {
@@ -63,6 +66,6 @@ public abstract class ExprNode extends ASTNode {
     }
 
     public boolean isArray() {
-        return type instanceof ArrayType;
+        return type instanceof SemanticArrayType;
     }
 }

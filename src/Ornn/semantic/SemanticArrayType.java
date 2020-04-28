@@ -4,10 +4,10 @@ import Ornn.util.CompilationError;
 import Ornn.util.Position;
 
 
-public class ArrayType implements Type {
-    private Type baseType;
+public class SemanticArrayType implements SemanticType {
+    private SemanticType baseType;
     private int dimension;
-    public ArrayType(Type baseType, int dimension) {
+    public SemanticArrayType(SemanticType baseType, int dimension) {
         this.baseType = baseType;
         this.dimension = dimension;
     }
@@ -17,12 +17,12 @@ public class ArrayType implements Type {
     }
 
     @Override
-    public void compatible(Type type, Position position) {
+    public void compatible(SemanticType type, Position position) {
         if (type instanceof NullType) {
 
-        } else if (type instanceof ArrayType) {
-            baseType.compatible(((ArrayType) type).getBaseType(), position);
-            if (dimension != ((ArrayType) type).getDimension()) {
+        } else if (type instanceof SemanticArrayType) {
+            baseType.compatible(((SemanticArrayType) type).getBaseType(), position);
+            if (dimension != ((SemanticArrayType) type).getDimension()) {
                 throw new CompilationError("array assigned with different dimensions", position);
             }
         } else {
@@ -31,17 +31,17 @@ public class ArrayType implements Type {
     }
 
     @Override
-    public void equable(Type type, Position position) {
+    public void equable(SemanticType type, Position position) {
         if (type instanceof NullType) {
 
-        } else if (type instanceof ArrayType) {
+        } else if (type instanceof SemanticArrayType) {
             throw new CompilationError("strangely, comparision between arrays are not allowed", position);
         } else {
             throw new CompilationError("comparision between array and non-array", position);
         }
     }
 
-    public Type getBaseType() {
+    public SemanticType getBaseType() {
         return baseType;
     }
 
