@@ -10,7 +10,7 @@ import Ornn.IR.type.VoidType;
 public class Constant {
     public static final IntType I8 = new IntType(8);
     public static final IntType I32 = new IntType(32);
-    public static final IntType I32Array = new IntType(32);
+    public static final Pointer I32Array = new Pointer(I32);
     public static final Pointer STR = new Pointer(I8);
     public static final BoolType BOOL = new BoolType();
     public static final VoidType VOID = new VoidType();

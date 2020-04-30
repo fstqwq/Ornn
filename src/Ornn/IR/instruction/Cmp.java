@@ -9,7 +9,8 @@ import java.util.HashSet;
 
 public class Cmp extends Inst { // return boolean
     public String op;
-    public Operand src1, src2, dest;
+    public Operand src1, src2;
+    Register dest;
     public Cmp(Operand src1, Operand src2, Register dest, String op, BasicBlock block) {
         super(block);
         this.src1 = src1;
@@ -25,8 +26,8 @@ public class Cmp extends Inst { // return boolean
     public String toString() {
         return dest.toString() + " = "
                 + "icmp " + Op2Inst.translate(op) + " "
-                + src1.type.toString() + " " + src1.toString()
-                + src2.type.toString() + " " + src2.toString();
+                + src1.type.toString() + " " + src1.toString() + ", "
+                + src2.toString();
     }
     @Override
     public HashSet<Operand> getUses() {
@@ -35,5 +36,9 @@ public class Cmp extends Inst { // return boolean
     @Override
     public boolean isTerminal() {
         return false;
+    }
+    @Override
+    public Register getDest() {
+        return dest;
     }
 }

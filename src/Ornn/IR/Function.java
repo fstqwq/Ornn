@@ -5,6 +5,7 @@ import Ornn.IR.type.BaseType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class Function {
     public String name;
@@ -14,9 +15,9 @@ public class Function {
     public BasicBlock entryBlock;
     public BasicBlock exitBlock;
 
-    public HashSet<Function> callee = new HashSet<>();
-    public HashSet<Register> allocVar = new HashSet<>();
-    public HashSet<BasicBlock> blocks = new HashSet<>();
+    public HashSet<Function> callee = new LinkedHashSet<>();
+    public HashSet<Register> allocVar = new LinkedHashSet<>();
+    public HashSet<BasicBlock> blocks = new LinkedHashSet<>();
     public boolean hasSideEffect;
 
     public Function(String name, boolean hasSideEffect) {

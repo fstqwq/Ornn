@@ -5,7 +5,7 @@ import Ornn.util.Position;
 
 public class IDExprNode extends ExprNode {
     private String identifier;
-    private Symbol symbol;
+    private Symbol variableSymbol;
 
     public IDExprNode(String identifier, Position position) {
         super(position);
@@ -16,12 +16,12 @@ public class IDExprNode extends ExprNode {
         return identifier;
     }
 
-    public Symbol getSymbol() {
-        return symbol;
+    public Symbol getVariableSymbol() {
+        return variableSymbol;
     }
 
-    public void setSymbol(Symbol symbol) {
-        this.symbol = symbol;
+    public void setVariableSymbol(Symbol variableSymbol) {
+        this.variableSymbol = variableSymbol;
     }
 
     @Override

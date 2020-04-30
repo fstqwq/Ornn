@@ -41,7 +41,7 @@ public class ToplevelScopeBuilder {
         }});
         toplevelScope.defineClass(string);
         // define builtin functions
-        toplevelScope.defineFunction(new FunctionSymbol("array.size", Int, null, toplevelScope));
+        toplevelScope.defineFunction(new FunctionSymbol("array_size", Int, null, toplevelScope));
         toplevelScope.defineFunction(new FunctionSymbol("print", Void, null, toplevelScope) {{
             defineVariable(new VariableSymbol("str", string, null));
         }});
@@ -141,6 +141,19 @@ public class ToplevelScopeBuilder {
                 }
             }
         }
+        // add init to check global initialization in semantic
+        FuncDeclNode initFuncNode = new FuncDeclNode(
+                new VoidTypeNode(Position.nowhere),
+                "__init",
+                new ArrayList<>(),
+                new BlockStmtNode(initStmts, ast.getPosition()),
+                Position.nowhere
+        );
+        FunctionSymbol initFuncSymbol = new FunctionSymbol("__init", Void, initFuncNode, toplevelScope);
+        initFuncNode.setFunctionSymbol(initFuncSymbol);
+        toplevelScope.defineFunction(initFuncSymbol);
+        initFuncSymbol.setScope(toplevelScope);
+        ast.getDeclNodeList().add(initFuncNode);
 
         // check main
         if (mainFunc == null) {
@@ -152,23 +165,11 @@ public class ToplevelScopeBuilder {
         if (mainFunc.getType() != Int) {
             throw new CompilationError("main function should return int" , mainFunc.getDefineNode().getPosition());
         }
+        ((FuncDeclNode) mainFunc.getDefineNode()).getBlock().getStmtList().
+                add(0, new ExprStmtNode(new FuncCallExprNode(new IDExprNode("__init", Position.nowhere), new ArrayList<>(), Position.nowhere), Position.nowhere));
         ((FuncDeclNode) mainFunc.getDefineNode()).getBlock().getStmtList().add(
                 new ReturnNode(new IntLiteralNode(0, Position.nowhere), mainFunc, Position.nowhere)
         );
-
-        // add init to check global initialization in semantic
-        FuncDeclNode initFuncNode = new FuncDeclNode(
-                new VoidTypeNode(Position.nowhere),
-                "__init",
-                new ArrayList<>(),
-                new BlockStmtNode(initStmts, ast.getPosition()),
-                Position.nowhere
-        );
-        FunctionSymbol initFuncSymbol = new FunctionSymbol("__init", Int, initFuncNode, toplevelScope);
-        initFuncNode.setFunctionSymbol(initFuncSymbol);
-        toplevelScope.defineFunction(initFuncSymbol);
-        initFuncSymbol.setScope(toplevelScope);
-        ast.getDeclNodeList().add(initFuncNode);
     }
 
     public ToplevelScope getToplevelScope() {

@@ -38,4 +38,8 @@ public class Phi extends Inst {
     public boolean isTerminal() {
         return false;
     }
+    @Override
+    public Register getDest() {
+        return dest;
+    }
 }

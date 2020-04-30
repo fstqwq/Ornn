@@ -32,4 +32,8 @@ public class Malloc extends Inst {
     public HashSet<Operand> getUses() {
         return new HashSet<>();
     }
+    @Override
+    public Register getDest() {
+        return dest;
+    }
 }

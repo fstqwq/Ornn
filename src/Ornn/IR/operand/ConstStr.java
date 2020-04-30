@@ -6,7 +6,7 @@ public class ConstStr extends Operand {
     public String value;
 
     public ConstStr(String name, String value) {
-        super(name, new Pointer(new ArrayType(value.length() + 1, new IntType(8))));
+        super(name, new Pointer(new ArrayType(value.length(), new IntType(8))));
         this.value = value;
     }
 

@@ -2,6 +2,7 @@ package Ornn.IR.instruction;
 
 import Ornn.IR.*;
 import Ornn.IR.operand.Operand;
+import Ornn.IR.operand.Register;
 
 import java.util.HashSet;
 
@@ -17,6 +18,7 @@ public abstract class Inst {
     public abstract String toString();
     public abstract HashSet<Operand> getUses();
     public abstract boolean isTerminal();
+    public abstract Register getDest();
 
     public boolean hasNext() {
         return next != null;

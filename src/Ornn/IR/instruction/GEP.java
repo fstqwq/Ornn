@@ -39,4 +39,8 @@ public class GEP extends Inst {
                 + arrayOffset.type.toString() + " " + arrayOffset.toString() +
                 (elementOffset == null ? "" : ", " + elementOffset.type.toString() + " " + elementOffset.toString());
     }
+    @Override
+    public Register getDest() {
+        return dest;
+    }
 }

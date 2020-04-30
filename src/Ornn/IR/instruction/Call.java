@@ -19,6 +19,7 @@ public class Call extends Inst {
         this.params = params;
         params.forEach(param -> param.uses.add(this));
         if (dest != null) {
+            this.dest = dest;
             dest.def = this;
         }
     }
@@ -27,7 +28,9 @@ public class Call extends Inst {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         if (dest != null) {
-            ret.append(dest.toString()).append(" = ").append(dest.type.toString()).append(" ");
+            ret.append(dest.toString()).append(" = call ").append(dest.type.toString()).append(" ");
+        } else {
+            ret.append("call void ");
         }
         ret.append(callee.toString());
         if (params.size() != 0) {
@@ -56,5 +59,10 @@ public class Call extends Inst {
     @Override
     public HashSet<Operand> getUses() {
         return new HashSet<>(params);
+    }
+
+    @Override
+    public Register getDest() {
+        return dest;
     }
 }

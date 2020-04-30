@@ -2,6 +2,7 @@ package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
+import Ornn.IR.operand.Register;
 
 import java.util.HashSet;
 
@@ -25,5 +26,9 @@ public class Jump extends Inst{
     @Override
     public boolean isTerminal() {
         return true;
+    }
+    @Override
+    public Register getDest() {
+        return null;
     }
 }

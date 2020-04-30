@@ -6,9 +6,9 @@ import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.type.ClassType;
 import Ornn.IR.type.Pointer;
-import Ornn.IR.type.VoidType;
 import Ornn.frontend.ToplevelScopeBuilder;
 import Ornn.semantic.*;
+import Ornn.util.Position;
 import Ornn.util.UnreachableError;
 
 import static Ornn.util.Constant.*;
@@ -18,12 +18,113 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class Root {
-    public HashMap<String, Function> builtinFunctions = new HashMap<>();
-    public HashMap<String, Function> functions = new HashMap<>();
-    public HashMap<String, ConstStr> constStrings = new HashMap<>();
+    public HashMap<String, Function> builtinFunctions = new LinkedHashMap<>();
+    public HashMap<String, Function> functions = new LinkedHashMap<>();
+    public HashMap<String, ConstStr> constStrings = new LinkedHashMap<>();
     public ArrayList<Global> globals = new ArrayList<>();
     public HashMap<String, ClassType> types = new LinkedHashMap<>();
+    public void addFunction(String name, Function func) {
+        functions.put(name, func);
+    }
+    public Function getFunction(String name) {
+        if (functions.containsKey(name)) {
+            return functions.get(name);
+        }
+        else {
+            return builtinFunctions.get(name);
+        }
+    }
+    public void addConstStr(String value) {
+        if (constStrings.containsKey(value)) {
+
+        }
+        else {
+           constStrings.put(value, new ConstStr(".str." + constStrings.size(), value));
+        }
+    }
+    public ConstStr getConstStr(String value) {
+        return constStrings.get(value);
+    }
+    public void addType(String name, ClassType type) {
+        types.put(name, type);
+    }
+    public ClassType getType(String name) {
+        return types.get(name);
+    }
+    public void addGlobal(Global global) {
+        globals.add(global);
+    }
+    public boolean isBuiltin(String name) {
+        return builtinFunctions.containsKey(name);
+    }
+
+    public BaseType resolveType(SemanticType semanticType, boolean inMemory) {
+        if (semanticType instanceof SemanticArrayType) {
+            BaseType ret = resolveType(((SemanticArrayType) semanticType).getBaseType(), inMemory);
+            for (int i = 0; i < ((SemanticArrayType) semanticType).getDimension(); i++)
+                ret = new Pointer(ret);
+            return ret;
+        } else if (semanticType instanceof PrimitiveTypeSymbol) {
+            switch (semanticType.getTypeName()) {
+                case "int":
+                    return I32;
+                case "bool":
+                    return inMemory ? I8 : BOOL;
+                case "void":
+                    return VOID;
+                default:
+                    assert false;
+            }
+        } else if (semanticType instanceof ClassSymbol) {
+            if (semanticType.getTypeName().equals("string")) {
+                return new Pointer(STR);
+            } else {
+                return new Pointer(getType(semanticType.getTypeName()));
+            }
+        } else if (semanticType instanceof NullType) {
+            return VOID;
+        } else if (semanticType == null) {
+            return VOID;
+        }
+        throw new UnreachableError();
+    }
     public Root(ToplevelScope toplevelScope) {
+        // tricky way to print elegantly in LLVM IR
+        FunctionSymbol printFunc = (FunctionSymbol) toplevelScope.resolveSymbol("print", null);
+        printFunc.setType(ToplevelScopeBuilder.Int);
+        builtinFunctions.put("print", builtinPuts);
+        builtinPuts.returnType = I32;
+        builtinPuts.params.add(new Register("str", STR));
+        printFunc.function = builtinPuts;
+
+        builtinFunctions.put(builtinPrintln.name, builtinPrintln);
+        builtinPrintln.returnType = VOID;
+        builtinPrintln.params.add(new Register("n", I32));
+        ((FunctionSymbol) toplevelScope.resolveSymbol("println", null)).function = builtinPrintln;
+
+        builtinFunctions.put(builtinPrintInt.name, builtinPrintInt);
+        builtinPrintInt.returnType = VOID;
+        builtinPrintInt.params.add(new Register("n", I32));
+        ((FunctionSymbol) toplevelScope.resolveSymbol("printInt", null)).function = builtinPrintInt;
+
+        builtinFunctions.put(builtinPrintlnInt.name, builtinPrintlnInt);
+        builtinPrintlnInt.returnType = VOID;
+        builtinPrintlnInt.params.add(new Register("n", I32));
+        ((FunctionSymbol) toplevelScope.resolveSymbol("printlnInt", null)).function = builtinPrintlnInt;
+
+        builtinFunctions.put(builtinGetString.name, builtinGetString);
+        builtinGetString.returnType = STR;
+        ((FunctionSymbol) toplevelScope.resolveSymbol("getString", null)).function = builtinGetString;
+
+        builtinFunctions.put(builtinGetInt.name, builtinGetInt);
+        builtinGetInt.returnType = I32;
+        ((FunctionSymbol) toplevelScope.resolveSymbol("getInt", null)).function = builtinGetInt;
+
+        builtinFunctions.put(builtinToString.name, builtinToString);
+        builtinToString.returnType = STR;
+        builtinToString.params.add(new Register("i", I32));
+        ((FunctionSymbol) toplevelScope.resolveSymbol("toString", null)).function = builtinToString;
+
         ClassSymbol string = ToplevelScopeBuilder.string;
 
         builtinFunctions.put(builtinStringLength.name, builtinStringLength);
@@ -83,104 +184,9 @@ public class Root {
         builtinOrd.params.add(new Register("s", STR));
         builtinOrd.params.add(new Register("i", I32));
         ((FunctionSymbol) string.resolveSymbol("ord", null)).function = builtinOrd;
-
-        builtinFunctions.put(builtinPrint.name, builtinPrint);
-        builtinPrint.returnType = VOID;
-        builtinPrint.params.add(new Register("str", STR));
-        ((FunctionSymbol) toplevelScope.resolveSymbol("print", null)).function = builtinPrint;
-
-        builtinFunctions.put(builtinPrintln.name, builtinPrintln);
-        builtinPrintln.returnType = VOID;
-        builtinPrintln.params.add(new Register("n", I32));
-        ((FunctionSymbol) toplevelScope.resolveSymbol("println", null)).function = builtinPrintln;
-
-        builtinFunctions.put(builtinPrintInt.name, builtinPrintInt);
-        builtinPrintInt.returnType = VOID;
-        builtinPrintInt.params.add(new Register("n", I32));
-        ((FunctionSymbol) toplevelScope.resolveSymbol("printInt", null)).function = builtinPrintInt;
-
-        builtinFunctions.put(builtinPrintlnInt.name, builtinPrintlnInt);
-        builtinPrintlnInt.returnType = VOID;
-        builtinPrintlnInt.params.add(new Register("n", I32));
-        ((FunctionSymbol) toplevelScope.resolveSymbol("printlnInt", null)).function = builtinPrintlnInt;
-
-        builtinFunctions.put(builtinGetString.name, builtinGetString);
-        builtinGetString.returnType = STR;
-        ((FunctionSymbol) toplevelScope.resolveSymbol("getString", null)).function = builtinGetString;
-
-        builtinFunctions.put(builtinGetInt.name, builtinGetInt);
-        builtinGetInt.returnType = I32;
-        ((FunctionSymbol) toplevelScope.resolveSymbol("getInt", null)).function = builtinGetInt;
-
-        builtinFunctions.put(builtinToString.name, builtinToString);
-        builtinToString.returnType = STR;
-        builtinToString.params.add(new Register("i", I32));
-        ((FunctionSymbol) toplevelScope.resolveSymbol("toString", null)).function = builtinToString;
     }
-    public void addFunction(String name, Function func) {
-        functions.put(name, func);
-    }
-    public Function getFunction(String name) {
-        if (functions.containsKey(name)) {
-            return functions.get(name);
-        }
-        else {
-            return builtinFunctions.get(name);
-        }
-    }
-    public void addConstStr(String value) {
-        if (constStrings.containsKey(value)) {
-
-        }
-        else {
-           constStrings.put(value, new ConstStr(".str." + constStrings.size(), value));
-        }
-    }
-    public ConstStr getConstStr(String value) {
-        return constStrings.get(value);
-    }
-    public void addType(String name, ClassType type) {
-        types.put(name, type);
-    }
-    public ClassType getType(String name) {
-        return types.get(name);
-    }
-    public void addGlobal(Global global) {
-        globals.add(global);
-    }
-    public boolean isBuiltin(String name) {
-        return builtinFunctions.containsKey(name);
-    }
-
-    public BaseType resolveType(SemanticType semanticType, boolean inMemory) {
-        if (semanticType instanceof SemanticArrayType) {
-            BaseType ret = resolveType(((SemanticArrayType) semanticType).getBaseType(), inMemory);
-            for (int i = 0; i < ((SemanticArrayType) semanticType).getDimension(); i++)
-                ret = new Pointer(ret);
-            return ret;
-        } else if (semanticType instanceof PrimitiveTypeSymbol) {
-            switch (semanticType.getTypeName()) {
-                case "int":
-                    return I32;
-                case "bool":
-                    return inMemory ? I8 : BOOL;
-                case "void":
-                    return VOID;
-                default:
-                    assert false;
-            }
-        } else if (semanticType instanceof ClassType) {
-            if (semanticType.getTypeName().equals("string")) {
-                return new Pointer(STR);
-            } else {
-                return new Pointer(getType(semanticType.getTypeName()));
-            }
-        } else if (semanticType instanceof NullType) {
-            return VOID;
-        }
-        throw new UnreachableError();
-    }
-    public static final Function builtinPrint = new Function("print", true);
+    /* Replace print with puts, for ir gen convenience */
+    public static final Function builtinPuts = new Function("puts", true);
     public static final Function builtinPrintln = new Function("println", true);
     public static final Function builtinPrintInt = new Function("printInt", true);
     public static final Function builtinPrintlnInt = new Function("printlnInt", true);

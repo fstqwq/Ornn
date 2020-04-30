@@ -22,7 +22,7 @@ public class SemanticChecker implements ASTVisitor {
         Bool = (PrimitiveTypeSymbol) toplevelScope.resolveType("bool", null);
         string = (ClassSymbol) toplevelScope.resolveType("string", null);
         Null = (NullType) toplevelScope.resolveType("null", null);
-        arraySize = (FunctionSymbol) toplevelScope.resolveSymbol("array.size", null);
+        arraySize = (FunctionSymbol) toplevelScope.resolveSymbol("array_size", null);
     }
 
     @Override
@@ -119,10 +119,11 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(IDExprNode node) {
-        Symbol symbol = node.getSymbol();
+        Symbol symbol = node.getVariableSymbol();
         if (symbol instanceof VariableSymbol) {
             node.setTypeCategory(LVALUE);
             node.setType(symbol.getType());
+            node.setVariableSymbol(symbol);
         } else if (symbol instanceof ClassSymbol) {
             node.setTypeCategory(CLASS);
             node.setType((ClassSymbol) symbol);

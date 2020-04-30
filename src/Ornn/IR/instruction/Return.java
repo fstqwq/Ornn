@@ -2,6 +2,7 @@ package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
+import Ornn.IR.operand.Register;
 
 import java.util.HashSet;
 
@@ -18,7 +19,7 @@ public class Return extends Inst {
 
     @Override
     public String toString() {
-        return "ret " + (value == null ? "void" : value.toString());
+        return "ret " + (value == null ? "void" : value.type.toString() + " " + value.toString());
     }
 
     @Override
@@ -29,5 +30,9 @@ public class Return extends Inst {
     @Override
     public boolean isTerminal() {
         return true;
+    }
+    @Override
+    public Register getDest() {
+        return null;
     }
 }

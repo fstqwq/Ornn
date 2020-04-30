@@ -26,6 +26,10 @@ public class Symbol {
         return type;
     }
 
+    public void setType(SemanticType type) {
+        this.type = type;
+    }
+
     public Scope getScope() {
         return scope;
     }

@@ -154,7 +154,7 @@ public class ScopeResolver implements ASTVisitor {
     @Override
     public void visit(IDExprNode node) {
         Symbol symbol = currentScope.resolveSymbol(node.getIdentifier(), node.getPosition());
-        node.setSymbol(symbol);
+        node.setVariableSymbol(symbol);
     }
 
     @Override

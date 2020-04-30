@@ -19,8 +19,7 @@ public class Store extends Inst {
     @Override
     public String toString() {
         return "store "
-                + value.type.toString() + ", "
-                + value.toString() + ", "
+                + value.type.toString() + " " + value.toString() + ", "
                 + addr.type.toString() + " " + addr.toString()
                 + ", align " + value.type.size() / 8;
     }
@@ -33,5 +32,10 @@ public class Store extends Inst {
     @Override
     public boolean isTerminal() {
         return false;
+    }
+
+    @Override
+    public Register getDest() {
+        return null;
     }
 }

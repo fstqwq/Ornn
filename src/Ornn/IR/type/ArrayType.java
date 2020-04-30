@@ -16,7 +16,7 @@ public class ArrayType extends BaseType {
 
     @Override
     public String toString() {
-        return "[" + num + " * " + baseType.toString() + "]";
+        return "[" + num + " x " + baseType.toString() + "]";
     }
 
     @Override

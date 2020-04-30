@@ -8,8 +8,8 @@ import java.util.HashSet;
 
 public class Branch extends Inst{
     public  BasicBlock thenDest, elseDest;
-    public Register cond;
-    public Branch(Register cond, BasicBlock thenDest, BasicBlock elseDest, BasicBlock block) {
+    public Operand cond;
+    public Branch(Operand cond, BasicBlock thenDest, BasicBlock elseDest, BasicBlock block) {
         super(block);
         this.cond = cond;
         this.thenDest = thenDest;
@@ -32,5 +32,10 @@ public class Branch extends Inst{
     @Override
     public boolean isTerminal() {
         return true;
+    }
+
+    @Override
+    public Register getDest() {
+        return null;
     }
 }

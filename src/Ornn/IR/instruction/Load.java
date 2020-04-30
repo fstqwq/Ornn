@@ -33,4 +33,8 @@ public class Load extends Inst {
     public boolean isTerminal() {
         return false;
     }
+    @Override
+    public Register getDest() {
+        return dest;
+    }
 }
