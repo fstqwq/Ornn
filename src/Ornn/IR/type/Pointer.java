@@ -12,6 +12,11 @@ public class Pointer extends BaseType {
     }
 
     @Override
+    public int getDim() {
+        return dim;
+    }
+
+    @Override
     public int size() {
         return PointerSize;
     }

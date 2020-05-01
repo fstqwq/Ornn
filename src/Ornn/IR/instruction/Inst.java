@@ -11,6 +11,9 @@ public abstract class Inst {
     public Inst next;
     public BasicBlock basicBlock;
 
+    // for debug
+    public String comment;
+
     public Inst(BasicBlock basicBlock) {
         this.basicBlock = basicBlock;
     }
@@ -69,7 +72,7 @@ public abstract class Inst {
         if (hasNext()) {
             next.prev = prev;
         } else {
-            basicBlock.back = next;
+            basicBlock.back = prev;
         }
     }
 }

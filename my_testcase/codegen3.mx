@@ -8,7 +8,9 @@ Input:
 === end ===
 Output:
 === output ===
-21
+2 1
+321
+114
 === end ===
 ExitCode: 0
 InstLimit: -1
@@ -19,6 +21,7 @@ int a, b;
 
 void f() {
 	if (a < b) return;
+	printInt(a + b);
 	// should return properly to main
 }
 
@@ -30,7 +33,12 @@ int main() {
 	a = getInt();
 	b = getInt();
 	f();
-	println(a); println(b);
+	printInt(a); printlnInt(b);
 	if (a < b) return 0;
+	if ("a" > "b") {
+		print("a" + "b");
+	} else {
+		print("114");
+	}
 	int c = 114514; // should not return 114514
 }

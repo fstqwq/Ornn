@@ -25,17 +25,20 @@ public class IRPrinter {
         this.root = root;
     }
     void renameBlock(BasicBlock block) {
-        if (true) { // debug
-            block.name = String.format("%d", nSymbol++);
-            block.phiInst.forEach((reg, phi) -> reg.name = String.format("%d", nSymbol++));
-            for (Inst inst = block.front; inst != null; inst = inst.next) {
-                if (inst.getDest() != null) {
-                    inst.getDest().name = String.format("%d", nSymbol++);
-                }
+        block.name = String.format("%d", nSymbol++);
+        block.phiInst.forEach((reg, phi) -> reg.name = String.format("%d", nSymbol++));
+        for (Inst inst = block.front; inst != null; inst = inst.next) {
+            if (inst.getDest() != null) {
+                inst.getDest().name = String.format("%d", nSymbol++);
             }
         }
     }
+
+    HashSet <Function> printedFunctions = new HashSet<>(); // for alias
+
     void printHeader(Function function, boolean isBuiltin) {
+        if (function == null || printedFunctions.contains(function)) return;
+        printedFunctions.add(function);
         nSymbol = 0;
         out.print(isBuiltin ? "declare " : "define ");
         out.print(function.returnType.toString() + " @" + function.name + "(");
@@ -45,6 +48,9 @@ public class IRPrinter {
             out.print(divider);
             divider = ", ";
             out.print(param.type.toString() + " " + param.toString());
+        }
+        if (isBuiltin && function.name.charAt(function.name.length() - 1) == 'f') {
+            out.print(", ...");
         }
         out.print(")");
         if (isBuiltin) {
@@ -70,14 +76,14 @@ public class IRPrinter {
     void printConstStr(String value, ConstStr str) {
         out.println("@" + str.name + " = private unnamed_addr constant "
                 + "[" + value.length() + " x i8] c"
-                + "\"" + StringParser.llvmTransform(value) + "\", align 1");;
+                + "\"" + StringParser.llvmTransform(value) + "\", align 1");
     }
 
     private void printBlock(BasicBlock block) {
         out.println(block.name + ":");
         block.phiInst.forEach((reg, phi) -> out.println("\t" + phi.toString()));
         for (Inst inst = block.front; inst != null; inst = inst.next) {
-            out.println("\t" + inst.toString());
+            out.println("\t" + inst.toString() + (inst.comment == null ? "" : "\t\t\t; " + inst.comment));
         }
     }
 

@@ -66,7 +66,9 @@ public class BasicBlock {
     }
 
     public void pushBack(Inst inst) {
-        if (inst.isTerminal() && isTerminated) return;
+        if (inst.isTerminal() && isTerminated) {
+            return;
+        }
         if (inst instanceof Phi) {
             phiInst.put(((Phi) inst).dest, (Phi) inst);
             return;
@@ -82,6 +84,7 @@ public class BasicBlock {
 
     public void removeTerminator() {
         assert isTerminated;
+        isTerminated = false;
         Inst terminator = back;
         terminator.delete();
         splitSuccessors();

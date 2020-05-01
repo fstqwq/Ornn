@@ -32,6 +32,13 @@ public class Call extends Inst {
         } else {
             ret.append("call void ");
         }
+        switch (callee.name) {
+            case "printf": case "scanf": case "ssacanf":
+                ret.append("(i8*, ...) ");
+                break;
+            default:
+                break;
+        }
         ret.append(callee.toString());
         if (params.size() != 0) {
             ret.append("(");

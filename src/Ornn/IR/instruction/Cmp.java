@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.operand.Null;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.util.Op2Inst;
@@ -15,6 +16,8 @@ public class Cmp extends Inst { // return boolean
         super(block);
         this.src1 = src1;
         this.src2 = src2;
+        if (src1 instanceof Null) src1.type = src2.type;
+        if (src2 instanceof Null) src2.type = src1.type;
         this.dest = dest;
         this.op = op;
         src1.uses.add(this);

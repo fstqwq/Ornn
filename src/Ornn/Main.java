@@ -25,9 +25,9 @@ public class Main {
         boolean runCodegenOnly = false;
 
         if (args.length > 0) {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].charAt(0) == '-') {
-                    switch (args[i]) {
+            for (String arg : args) {
+                if (arg.charAt(0) == '-') {
+                    switch (arg) {
                         case "-semantic":
                             runSemanticOnly = true;
                             break;
@@ -35,10 +35,10 @@ public class Main {
                             runCodegenOnly = true;
                             break;
                         default:
-                            throw new RuntimeException("unknown option " + args[i]);
+                            throw new RuntimeException("unknown option " + arg);
                     }
                 } else {
-                    fileName = args[i];
+                    fileName = arg;
                 }
             }
         } else {
@@ -53,6 +53,8 @@ public class Main {
             ToplevelScope toplevelScope = (new ToplevelScopeBuilder(ast)).getToplevelScope();
             new ScopeResolver(toplevelScope).visit(ast);
             new SemanticChecker(toplevelScope).visit(ast);
+
+            if (runSemanticOnly) return;
 
             IRBuilder irBuilder = new IRBuilder(toplevelScope);
             irBuilder.visit(ast);

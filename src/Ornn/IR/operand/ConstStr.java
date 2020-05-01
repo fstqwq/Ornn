@@ -2,11 +2,13 @@ package Ornn.IR.operand;
 
 import Ornn.IR.type.*;
 
+import static Ornn.util.Constant.I8;
+
 public class ConstStr extends Operand {
     public String value;
 
     public ConstStr(String name, String value) {
-        super(name, new Pointer(new ArrayType(value.length(), new IntType(8))));
+        super(name, new Pointer(new ArrayType(value.length(), I8)));
         this.value = value;
     }
 

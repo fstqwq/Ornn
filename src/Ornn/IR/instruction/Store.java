@@ -2,6 +2,7 @@ package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.*;
+import Ornn.IR.type.Pointer;
 
 import java.util.HashSet;
 
@@ -10,8 +11,10 @@ public class Store extends Inst {
     public Operand addr;
     public Store(Operand addr, Operand value, BasicBlock block) {
         super(block);
+        assert addr.type instanceof Pointer;
         this.value = value;
         this.addr = addr;
+        if (value instanceof Null) value.type = ((Pointer) addr.type).typePointedTo;
         value.uses.add(this);
         addr.uses.add(this);
     }

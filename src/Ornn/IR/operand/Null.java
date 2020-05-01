@@ -2,9 +2,12 @@ package Ornn.IR.operand;
 
 import Ornn.IR.type.*;
 
+import static Ornn.util.Constant.VOID;
+
+
 public class Null extends Operand {
     public Null() {
-        super("0", new Pointer(new VoidType()));
+        super("null", new Pointer(VOID));
     }
 
     @Override
@@ -14,6 +17,6 @@ public class Null extends Operand {
 
     @Override
     public String toString() {
-        return "0";
+        return "null";
     }
 }

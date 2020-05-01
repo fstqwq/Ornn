@@ -8,6 +8,7 @@ import Ornn.IR.type.*;
 import Ornn.semantic.*;
 import Ornn.util.*;
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,22 +42,34 @@ public class IRBuilder implements ASTVisitor {
         }
         for (DeclNode declNode : node.getDeclNodeList()) {
             if (declNode instanceof ClassDeclNode) {
+                ClassType type = root.getType(((ClassDeclNode) declNode).getClassSymbol().getTypeName());
                 for (FuncDeclNode funcDeclNode : ((ClassDeclNode) declNode).getFuncDeclNodes()) {
                     Function function = new Function(((ClassDeclNode) declNode).getIdentifier() + "." + funcDeclNode.getIdentifier(), true);
+                    root.addFunction(function);
                     function.returnType = root.resolveType(funcDeclNode.getFunctionSymbol().getType(), false);
+                    function.paramTypes.add(type);
+                    for (VarDeclNode param : funcDeclNode.getParameterList()) {
+                        function.paramTypes.add(root.resolveType(param.getTypeAfterResolve(), false));
+                    }
                     funcDeclNode.getFunctionSymbol().function = function;
-                    root.addFunction(function.name, function);
                 }
-                ClassType type = root.getType(((ClassDeclNode) declNode).getClassSymbol().getTypeName());
                 for (VarDeclNode member : ((ClassDeclNode) declNode).getVarDeclNodes()) {
-                    type.addMember(root.resolveType(member.getTypeAfterResolve(), true));
+                    BaseType memberType = root.resolveType(member.getTypeAfterResolve(), true);
+                    type.addMember(memberType);
+                    member.getVariableSymbol().operand = new Register(member.getIdentifier(), memberType);
                     member.getVariableSymbol().index = new ConstInt(type.members.size() - 1, 32);
+                }
+                if (type.size == 0) {
+                    type.size = 8; // malloc works
                 }
             } else if (declNode instanceof FuncDeclNode) {
                 Function function = new Function(((FuncDeclNode) declNode).getIdentifier(), true);
+                root.addFunction(function);
                 function.returnType = root.resolveType(((FuncDeclNode) declNode).getFunctionSymbol().getType(), false);
+                for (VarDeclNode param : ((FuncDeclNode)declNode).getParameterList()) {
+                    function.paramTypes.add(root.resolveType(param.getTypeAfterResolve(), false));
+                }
                 ((FuncDeclNode) declNode).getFunctionSymbol().function = function;
-                root.addFunction(function.name, function);
             }
         }
         node.getDeclNodeList().forEach(x -> x.accept(this));
@@ -85,8 +98,11 @@ public class IRBuilder implements ASTVisitor {
     private Operand matchType(Operand operand, BaseType expectedType) {
         if (operand.type.isSame(expectedType)) {
             return operand;
+        } else if (expectedType instanceof Pointer && operand instanceof Null) {
+            return operand;
         }
-        assert operand.type instanceof Pointer && ((Pointer) operand.type).typePointedTo.isSame(expectedType);
+        assert operand.type instanceof Pointer;
+        assert ((Pointer) operand.type).typePointedTo.isSame(expectedType);
         return loadPointer(operand);
     }
     private Operand loadValue(Operand operand) {
@@ -110,7 +126,7 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.pushBack(inst);
             }
         } else {
-            value = rhs;
+            value = matchType(rhs, ((Pointer) lhs.type).typePointedTo);
         }
         inst = new Store(lhs, value, currentBlock);
         currentBlock.pushBack(inst);
@@ -134,15 +150,10 @@ public class IRBuilder implements ASTVisitor {
 
         currentFunction = functionSymbol.function;
         currentBlock = currentFunction.entryBlock;
-        if (functionSymbol.getType() == null) { // constructor
-            currentFunction.returnType = VOID;
-        }
-        else {
-            currentFunction.returnType = root.resolveType(functionSymbol.getType(), false);
-        }
+        assert currentFunction.exitBlock == null;
         if (functionSymbol.isMember()) {
             currentFunction.classPtr = new Register(functionSymbol.getSymbolName() + ".this",
-                    new Pointer(root.resolveType(currentClass, false)));
+                    root.resolveType(currentClass, false));
             currentFunction.params.add(currentFunction.classPtr);
         }
 
@@ -194,16 +205,22 @@ public class IRBuilder implements ASTVisitor {
             currentFunction.exitBlock = returns.get(0).basicBlock;
         } else {
             BasicBlock dest = new BasicBlock(currentFunction, "exit_" + functionSymbol.getSymbolName());
+            currentFunction.blocks.add(dest);
             Register returnValue = new Register("exit_ret_val", currentFunction.returnType);
             ArrayList<Operand> values = new ArrayList<>();
             ArrayList<BasicBlock> blocks = new ArrayList<>();
             for (Return ret : returns) {
                 ret.basicBlock.removeTerminator();
+                ret.basicBlock.pushBack(new Jump(dest, ret.basicBlock));
                 values.add(ret.value);
                 blocks.add(ret.basicBlock);
             }
-            dest.pushBack(new Phi(returnValue, blocks, values, dest));
-            dest.pushBack(new Return(dest, returnValue));
+            if (currentFunction.returnType != VOID) {
+                dest.pushBack(new Phi(returnValue, blocks, values, dest));
+                dest.pushBack(new Return(dest, returnValue));
+            } else {
+                dest.pushBack(new Return(dest, null));
+            }
             currentFunction.exitBlock = dest;
         }
 
@@ -213,9 +230,12 @@ public class IRBuilder implements ASTVisitor {
     public void visit(ClassDeclNode node) {
         currentClass = node.getClassSymbol();
         node.getFuncDeclNodes().forEach(x -> x.accept(this));
+        /*
         if (currentClass.getConstructor() != null) {
             currentClass.getConstructor().getDefineNode().accept(this);
         }
+        // You had done it in Toplevel Scope Building, idiot.
+         */
     }
 
     @Override
@@ -373,11 +393,17 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IDExprNode node) {
+        VariableSymbol variableSymbol;
+        FunctionSymbol functionSymbol;
         switch (node.getTypeCategory()) {
             case FUNCTION:
+                functionSymbol = node.getFunctionSymbol();
+                if (functionSymbol.isMember()) {
+                    node.result = currentFunction.classPtr;
+                }
                 break;
             case LVALUE: case RVALUE:
-                VariableSymbol variableSymbol = (VariableSymbol) (node.getVariableSymbol());
+                variableSymbol = (VariableSymbol) (node.getVariableSymbol());
                 if (variableSymbol.isMember()) { // accessing current function's member variable
                     Register classPtr = currentFunction.classPtr;
                     Register register = new Register("_addr_this." + variableSymbol.getSymbolName(), new Pointer(root.resolveType(variableSymbol.getType(), false)));
@@ -388,6 +414,18 @@ public class IRBuilder implements ASTVisitor {
                     node.result = variableSymbol.operand;
                 }
                 break;
+            /*
+                variableSymbol = (VariableSymbol) (node.getVariableSymbol());
+                if (variableSymbol.isMember()) { // accessing current function's member variable
+                    Register classPtr = currentFunction.classPtr;
+                    Register register = new Register("_addr_this." + variableSymbol.getSymbolName(), new Pointer(root.resolveType(variableSymbol.getType(), false)));
+                    currentBlock.pushBack(new GEP(((Pointer)classPtr.type).typePointedTo,
+                            classPtr, I32ZERO, variableSymbol.index, register, currentBlock));
+                    node.result = loadValue(register);
+                } else {
+                    node.result = loadValue(variableSymbol.operand);
+                }
+                break;*/
             case CLASS:
                 throw new UnreachableError();
         }
@@ -430,7 +468,7 @@ public class IRBuilder implements ASTVisitor {
                 elseBlock = destBlock;
             }
             blocks.add(currentBlock);
-            currentBlock.pushBack(new Branch((Register) lhs, thenBlock, elseBlock, currentBlock));
+            currentBlock.pushBack(new Branch(lhs, thenBlock, elseBlock, currentBlock));
 
             currentBlock = condBlock;
             node.getRhs().accept(this);
@@ -455,14 +493,17 @@ public class IRBuilder implements ASTVisitor {
                 if (instName.charAt(0) == 's') { // 'signed' icmp
                     instName = instName.substring(1);
                 }
-                instName = "string." + instName;
+                instName = "string_" + instName;
                 function = root.getFunction(instName);
                 node.result = new Register(instName, op.equals("+") ? STR : BOOL);
+                lhs = matchType(node.getLhs().result, STR);
+                rhs = matchType(node.getRhs().result, STR);
                 Inst inst = new Call(function, new ArrayList<>() {{
-                    add(node.getLhs().result);
-                    add(node.getRhs().result);
+                    add(lhs);
+                    add(rhs);
                 }}, (Register) node.result, currentBlock);
                 currentBlock.pushBack(inst);
+                currentFunction.callee.add(function);
             } else {
                 node.getLhs().accept(this);
                 node.getRhs().accept(this);
@@ -481,8 +522,15 @@ public class IRBuilder implements ASTVisitor {
                     case "<": case ">":
                     case "<=": case ">=":
                     case "==": case "!=":
-                        lhs = loadValue(node.getLhs().result);
-                        rhs = loadValue(node.getRhs().result);
+                        /*
+                        No pointer operations. So, if a pointer comes, possibly:
+                        1. It's a int / bool operation, so load it.
+                        2. It's a comparision to null, but since no pointer operation, currently we hold the
+                        name of the register, say, the pointer of the pointer. So load it.
+                        3. It's null. Should not load it, and change it's type when instruction issues.
+                        */
+                        lhs = node.getLhs().result instanceof Null ? node.getLhs().result : loadValue(node.getLhs().result);
+                        rhs = node.getRhs().result instanceof Null ? node.getRhs().result : loadValue(node.getRhs().result);
                         node.result = new Register("cmp_op_" + Op2Inst.translate(op), BOOL);
                         inst = new Cmp(lhs, rhs, (Register) node.result, op, currentBlock);
                         currentBlock.pushBack(inst);
@@ -562,11 +610,11 @@ public class IRBuilder implements ASTVisitor {
             case LVALUE:
             case RVALUE:
                 VariableSymbol variableSymbol = (VariableSymbol) (node.getSymbol());
-                Operand classPtr = node.getExpr().result;
-                Register res = new Register("_this_" + variableSymbol.getSymbolName(), new Pointer(((VariableSymbol) variableSymbol).operand.type));
+                Operand classPtr = matchType(node.getExpr().result,   root.resolveType(node.getExpr().getType(), true));
+                Register res = new Register("_this_" + variableSymbol.getSymbolName(), new Pointer((variableSymbol).operand.type));
                 node.result = res;
                 currentBlock.pushBack(new GEP(((Pointer) classPtr.type).typePointedTo,
-                        classPtr, I32ZERO, ((VariableSymbol) variableSymbol).index,
+                        classPtr, I32ZERO, variableSymbol.index,
                         res, currentBlock));
                 break;
             case CLASS:
@@ -582,7 +630,7 @@ public class IRBuilder implements ASTVisitor {
             Register ret = new Register("array_size", I32);
             node.result = ret;
             assert node.getFunctionNode().result.type instanceof Pointer; // *array
-            Register ptr = loadPointer(node.getFunctionNode().result);
+            Register ptr = (Register) loadValue(node.getFunctionNode().result);
             assert ptr.type instanceof Pointer; // array
             Register i32Ptr;
             if (ptr.type.isSame(I32Array)) {
@@ -595,19 +643,23 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.pushBack(new GEP(I32, i32Ptr, I32NEGONE, null, sizePtr, currentBlock));
             currentBlock.pushBack(new Load(ret, sizePtr, currentBlock));
         } else {
-            node.result = symbol.getType().getTypeName().equals("void") ?
-                    null : new Register("ret_val", root.resolveType(symbol.getType(), false));
+            node.result = symbol.function.returnType.isSame(VOID) ?
+                    null : new Register("ret_val", symbol.function.returnType);
             ArrayList <Operand> params = new ArrayList<>();
+            int base = 0;
             if (symbol.isMember()) {
-                params.add(loadValue(node.getFunctionNode().result));
+                base = 1;
+                params.add(matchType(node.getFunctionNode().result, symbol.function.classPtr.type));
             }
-            for (ExprNode exprNode : node.getParameterList()) {
+            for (int i = 0; i < node.getParameterList().size(); i++) {
+                ExprNode exprNode = node.getParameterList().get(i);
                 exprNode.accept(this);
-                params.add(loadValue(exprNode.result));
+//                System.err.println(String.format("ltype : %s rtype : %s", exprNode.result.type, symbol.function.params.get(base + i).type));
+                params.add(matchType(exprNode.result, symbol.function.getParamType(base + i)));
             }
             currentBlock.pushBack(new Call(symbol.function, params, (Register) node.result, currentBlock));
+            currentFunction.callee.add(symbol.function);
         }
-        currentFunction.callee.add(symbol.function);
     }
 
     @Override
@@ -630,10 +682,13 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(StringLiteralNode node) {
         root.addConstStr(node.getValue());
-        node.result = root.getConstStr(node.getValue());
+        ConstStr constStr = root.getConstStr(node.getValue());
+        node.result = new Register("str_literal_addr", STR);
+        currentBlock.pushBack(new GEP(((Pointer)constStr.type).typePointedTo, constStr, I32ZERO, I32ZERO, (Register) node.result, currentBlock));
     }
     @Override
     public void visit(NewExprNode node) {
+        currentFunction.callee.add(Root.builtinMalloc);
         if (node.getDimension() > 0) {
             BaseType type = root.resolveType(node.getBaseTypeAfterResolve(), true);
             for (int i = 0; i < node.getDimension(); i++) {
@@ -646,11 +701,12 @@ public class IRBuilder implements ASTVisitor {
             Register mallocAddr = new Register("_addr_malloc", STR);
             Register castAddr = new Register("_addr_cast", root.resolveType(node.getBaseTypeAfterResolve(), true));
             node.result = castAddr;
-            currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((Pointer)castAddr.type).typePointedTo.size() / 8, 32), currentBlock));
+            currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8, 32), currentBlock));
             currentBlock.pushBack(new Cast(mallocAddr, castAddr, currentBlock));
             if (((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor() != null) {
-                currentBlock.pushBack(new Call(((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor().function,
-                        new ArrayList<>() {{ add(castAddr);}}, null, currentBlock));
+                Function constructFunction = ((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor().function;
+                currentBlock.pushBack(new Call(constructFunction, new ArrayList<>() {{ add(castAddr);}}, null, currentBlock));
+                currentFunction.callee.add(constructFunction);
             }
         } else {
             throw new UnreachableError();
@@ -688,10 +744,15 @@ public class IRBuilder implements ASTVisitor {
         Register mallocAddr = new Register("_addr_malloc", STR);
         Register intArrAddr = new Register("_addr_int", I32Array);
         currentBlock.pushBack(new Binary(curSize, typeWidth, dataWidth, "*", currentBlock));
+        currentBlock.back.comment = "Binary *";
         currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), allocWidth, "+", currentBlock));
+        currentBlock.back.comment = "Binary +";
         currentBlock.pushBack(new Malloc(mallocAddr, allocWidth, currentBlock));
+        currentBlock.back.comment = "Malloc";
         currentBlock.pushBack(new Cast(mallocAddr, intArrAddr, currentBlock));
+        currentBlock.back.comment = "Cast";
         currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
+        currentBlock.back.comment = "Store";
         if (typePointTo.isSame(I32)) {
             currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
         } else {
@@ -720,7 +781,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.pushBack(new Branch(cond, stmtBlock, destBlock, currentBlock));
 
             currentBlock = stmtBlock;
-            currentBlock.pushBack(new GEP(arrayPtr.type, arrayPtr, cnt, null, typePtr, currentBlock));
+            currentBlock.pushBack(new GEP(typePointTo, arrayPtr, cnt, null, typePtr, currentBlock));
             newArray(node, cur + 1, typePtr);
             currentBlock.pushBack(new Binary(cnt, I32ONE, cnt_nxt, "+", currentBlock));
             values.add(cnt_nxt);

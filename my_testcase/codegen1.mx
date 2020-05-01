@@ -4,33 +4,51 @@ Author: 18' Zonghan YANG
 Time: 2020-04-28
 Input:
 === input ===
-2 1
 === end ===
 Output:
 === output ===
-21
+114514
+1919810
 === end ===
 ExitCode: 0
 InstLimit: -1
-Origin Package: Test add proper return statement
+Origin Package: size function work properly
 */
 
-int a, b;
+class ARRAY {
+	int size() {
+		return 1919;
+	}
+};
 
-void f() {
-	if (a < b) return;
-	// should return properly to main
-}
+class array {
+	int size() {
+		return 8;
+	}
+};
 
-void g() {
-	print("gg");
+class Array {
+	int sz;
+	Array() {
+		sz = 10;
+	}
+	int size() {
+		return sz;
+	}
+};
+
+int size() {
+	return 114;
 }
 
 int main() {
-	a = getInt();
-	b = getInt();
-	f();
-	println(a); println(b);
-	if (a < b) return 0;
-	int c = 114514; // should not return 114514
+	int[] a = new int[514];
+	ARRAY b = new ARRAY();
+	array c = new array;
+	Array d = new Array();
+	print(toString(size()));
+	println(toString(a.size()));
+	print(toString(b.size()));
+	print(toString(c.size()));
+	println(toString(d.size()));
 }

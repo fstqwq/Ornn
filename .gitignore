@@ -1,0 +1,11 @@
+.idea/
+.DS_Store
+test.mx
+test.in
+test.ans
+test.out
+test.s
+test.ll
+builtin.s
+diff.out
+ravel.out

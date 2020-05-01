@@ -18,6 +18,6 @@ public class IntType extends BaseType {
 
     @Override
     public boolean isSame(BaseType type) {
-        return type instanceof IntType && size == ((IntType) type).size;
+        return type instanceof IntType && size == type.size();
     }
 }

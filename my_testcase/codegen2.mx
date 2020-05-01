@@ -4,33 +4,67 @@ Author: 18' Zonghan YANG
 Time: 2020-04-28
 Input:
 === input ===
-2 1
 === end ===
 Output:
 === output ===
-21
+114514
+87
+1[puts]
+2[printf]
+3[putchar]
+2
 === end ===
 ExitCode: 0
 InstLimit: -1
-Origin Package: Test add proper return statement
+Origin Package:libc name functions
 */
 
-int a, b;
+int cnt = 0;
 
-void f() {
-	if (a < b) return;
-	// should return properly to main
+string malloc(int size) {
+	cnt++;
+	if (size == 1) {
+		return "114514";
+	} else if (size % 2 == 0) {
+		malloc(1); // count twice!
+		return malloc(size / 2);
+	} else {
+		malloc(2); // count thrice!
+		return malloc(size * 3 + 1);
+	}
 }
 
-void g() {
-	print("gg");
+int puts(string s) {
+	print(s); println("[puts]");
+}
+
+int printf(string s) {
+	print(s); println("[printf]");
+}
+
+int putchar(int x) {
+	print(toString(x)); println("[putchar]");
+}
+int strlenans = 0, lenlimit = 0;
+
+int strlen(string s) {
+	if (strlenans == 0) {
+		lenlimit = s.length();
+	}
+	if (lenlimit == strlenans) {
+		int ans = strlenans;
+		strlenans = 0;
+		return ans + 1;
+	}
+	strlenans++;
+	return strlen(s);
 }
 
 int main() {
-	a = getInt();
-	b = getInt();
-	f();
-	println(a); println(b);
-	if (a < b) return 0;
-	int c = 114514; // should not return 114514
+	println(malloc(114));
+	println(toString(cnt));
+	puts("1");
+	printf("2");
+	putchar(3);
+	println(toString(strlen("4")));
 }
