@@ -1,5 +1,5 @@
 .idea/
-.DS_Store
+bin/
 test.mx
 test.in
 test.ans

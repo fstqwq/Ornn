@@ -16,17 +16,46 @@ List of things I shall done:
  Init
  
 ![](https://opgg-static.akamaized.net/images/lol/item/1054.png?image=q_auto,w_42&v=1583298869)
- Parser (with help of ANTLR4)
+ Parser
+ * with help of ANTLR4
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3373.png?image=q_auto,w_42&v=1583298869)
 AST
 
-![](https://opgg-static.akamaized.net/images/lol/item/3111.png?image=q_auto,w_42&v=1583298869) Sematic Checker
+![](https://opgg-static.akamaized.net/images/lol/item/3111.png?image=q_auto,w_42&v=1583298869)
+Sematic Checker
+* Structural design mainly refer to [Daedalus of Bohan Hou](https://github.com/spectrometerHBH/Daedalus), which is quite elegant.
 
-![](https://opgg-static.akamaized.net/images/lol/item/3379.png?image=q_auto,w_42&v=1583298869) IR Builder
+![](https://opgg-static.akamaized.net/images/lol/item/3379.png?image=q_auto,w_42&v=1583298869)
+IR Builder
+* Build LLVM IR. Able to compile using llc-10.
+    * >  If you are toying with some language ideas, using LLVM will be like hauling your backpack with a truck. --[QBE](http://c9x.me/compile/doc/llvm.html)
+    
+     *(But yes, if you choose to drive a truck, you don't have to learn how to maintain balance while riding a bicycle)*
+
+* No so good solution of pointer loading.
+    
+   * Well, a better solution is to keep track the type of lvalue and rvalue to insert load. If time permit I will rewrite IRBuilder.
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3386.png?image=q_auto,w_42&v=1583298869) Optim
 
+(TODO)
+* Front End Optimize
+    * Print Reconstruct
+        * Boring but highly effective optimization to the bad implementation of string
+    * Constant Folding
+        * Redundant with MIR, but it's quite easy to implement when I am not ready to write backend optimizations.
+* MIR Optimize
+    * Mem2Reg
+        * Actually it's also SSA construction
+    * (Aggressive) Dead Code Eliminate
+    * CFG Simplify
+    * Sparse Conditional Constant Propagation
+    * Common subexpression elimination
+* Consider to do
+    * Function inlining
+    * constexpr
+        
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3374.png?image=q_auto,w_42&v=1583298869) Black magic

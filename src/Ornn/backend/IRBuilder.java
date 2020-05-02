@@ -8,7 +8,6 @@ import Ornn.IR.type.*;
 import Ornn.semantic.*;
 import Ornn.util.*;
 
-import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
