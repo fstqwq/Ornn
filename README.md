@@ -4,6 +4,7 @@
 ![](https://universe-meeps.leagueoflegends.com/v1/assets/images/ornn-splash.jpg)
 
 
+![](https://opgg-static.akamaized.net/images/lol/item/2420.png?image=q_auto,w_42&v=1586932751)
 ![](https://opgg-static.akamaized.net/images/lol/item/1054.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/2033.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3373.png?image=q_auto,w_42&v=1583298869)
@@ -33,19 +34,21 @@ IR Builder
     
      *(But yes, if you choose to drive a truck, you don't have to learn how to maintain balance while riding a bicycle)*
 
-* No so good solution of pointer loading.
+* Not so good implementation of pointer loading.
     
    * Well, a better solution is to keep track the type of lvalue and rvalue to insert load. If time permit I will rewrite IRBuilder.
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3386.png?image=q_auto,w_42&v=1583298869) Optim
 
-(TODO)
-* Front End Optimize
-    * Print Reconstruct
-        * Boring but highly effective optimization to the bad implementation of string
+* HIR Optimization
     * Constant Folding
         * Redundant with MIR, but it's quite easy to implement when I am not ready to write backend optimizations.
-* MIR Optimize
+
+    * Print Reconstruct
+        * Boring but highly effective optimization to the bad implementation of string
+
+(TODO)
+* MIR Optimization
     * Mem2Reg
         * Actually it's also SSA construction
     * (Aggressive) Dead Code Eliminate
@@ -53,7 +56,7 @@ IR Builder
     * Sparse Conditional Constant Propagation
     * Common subexpression elimination
 * Consider to do
-    * Function inlining
+    * Function inlining (Where to do?)
     * constexpr
         
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen

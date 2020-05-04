@@ -4,7 +4,6 @@ import Ornn.AST.*;
 import Ornn.semantic.PrimitiveTypeSymbol;
 import Ornn.semantic.SemanticArrayType;
 import Ornn.semantic.Symbol;
-import Ornn.semantic.VariableSymbol;
 import Ornn.util.CompilationError;
 
 import java.util.HashMap;
@@ -19,6 +18,14 @@ import static Ornn.frontend.ToplevelScopeBuilder.*;
 
     1. It's easy and fast
     2. strings are able to fold quickly at HIR stage
+
+    How?
+    1. Find all variable that are never modified after initialization
+    2. Fold binary and unary expressions, also toString calls
+
+    Todo?
+    1. inline functions?
+    2. complete constexpr?
  */
 
 public class ConstantFolding implements ASTVisitor {
@@ -27,14 +34,14 @@ public class ConstantFolding implements ASTVisitor {
     HashMap<Symbol, Literal> declMap = new HashMap<>();
     HashSet<Symbol> modified = new HashSet<>();
 
-    boolean collectConst;
+    boolean collectingConstDecl;
     @Override
     public void visit(ProgramNode node) {
-        collectConst = true;
+        collectingConstDecl = true;
         for (DeclNode declNode : node.getDeclNodeList()) {
             declNode.accept(this);
         }
-        collectConst = false;
+        collectingConstDecl = false;
         for (DeclNode declNode : node.getDeclNodeList()) {
             declNode.accept(this);
         }
@@ -55,11 +62,10 @@ public class ConstantFolding implements ASTVisitor {
     public void visit(VarDeclNode node) {
         if (node.getExpr() != null) {
             node.getExpr().accept(this);
-            if (node.getExpr().isPureConstant()
+            if (collectingConstDecl
+            && node.getExpr().isPureConstant()
             && !(node.getTypeAfterResolve() instanceof SemanticArrayType)
-            && (node.getTypeAfterResolve() instanceof PrimitiveTypeSymbol
-                    || node.getTypeAfterResolve().getTypeName().equals("string")
-            )) {
+            && (node.getTypeAfterResolve() instanceof PrimitiveTypeSymbol || node.getTypeAfterResolve().getTypeName().equals("string"))) {
                 declMap.put(node.getVariableSymbol(), node.getExpr().equivalentConstant);
             }
         }
@@ -120,7 +126,7 @@ public class ConstantFolding implements ASTVisitor {
 
     @Override
     public void visit(IDExprNode node) {
-        if (!collectConst) {
+        if (!collectingConstDecl) {
             if (declMap.containsKey(node.getVariableSymbol()) && !modified.contains(node.getVariableSymbol())) {
                 node.equivalentConstant = declMap.get(node.getVariableSymbol());
             }
@@ -139,7 +145,7 @@ public class ConstantFolding implements ASTVisitor {
         node.getRhs().accept(this);
         ExprNode lhs = node.getLhs();
         ExprNode rhs = node.getRhs();
-        if (collectConst) {
+        if (collectingConstDecl) {
             if (node.getOp().equals("=")) {
                 if (lhs instanceof IDExprNode) {
                     modified.add(((IDExprNode) lhs).getVariableSymbol());
@@ -267,17 +273,26 @@ public class ConstantFolding implements ASTVisitor {
     @Override
     public void visit(UnaryExprNode node) {
         node.getExpr().accept(this);
-        if (node.getExpr().isPureConstant()) {
+        if (collectingConstDecl) {
             switch (node.getOp()) {
                 case "++i":
                 case "--i":
                 case "i++":
                 case "i--":
-                    if (node.getExpr() instanceof IDExprNode) {
-                        modified.add(((IDExprNode) node.getExpr()).getVariableSymbol());
-                    }
-                    break;
+                if (node.getExpr() instanceof IDExprNode) {
+                    modified.add(((IDExprNode) node.getExpr()).getVariableSymbol());
+                }
+                break;
+            }
+        }
+        else if (node.getExpr().isPureConstant()) {
+            switch (node.getOp()) {
+                case "++i":
+                case "--i":
+                case "i++":
+                case "i--":
                 case "+":
+                    node.equivalentConstant = node.getExpr().equivalentConstant;
                     break;
                 case "-":
                     node.equivalentConstant = new IntLiteralNode(-node.getExpr().equivalentConstant.getInt(), node.getPosition());
@@ -303,7 +318,7 @@ public class ConstantFolding implements ASTVisitor {
     public void visit(FuncCallExprNode node) {
         node.getFunctionNode().accept(this);
         node.getParameterList().forEach(x -> x.accept(this));
-        if ("toString".equals(node.getFunctionSymbol().getSymbolName())) {
+        if (!collectingConstDecl && "toString".equals(node.getFunctionSymbol().getSymbolName())) {
             if (node.getParameterList().get(0).isPureConstant()) {
                 node.equivalentConstant = new StringLiteralNode(Long.toString(node.getParameterList().get(0).equivalentConstant.getInt()), node.getPosition());
             }
