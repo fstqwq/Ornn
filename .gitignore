@@ -1,5 +1,6 @@
 .idea/
 bin/
+out/
 test.mx
 test.in
 test.ans
@@ -9,3 +10,7 @@ test.ll
 builtin.s
 diff.out
 ravel.out
+a.ll
+a.s
+code.mx
+code.ll

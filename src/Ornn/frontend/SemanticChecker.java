@@ -165,12 +165,22 @@ public class SemanticChecker implements ASTVisitor {
             case "*": case "/":  case "%":
             case "-":
             case "<<": case ">>":
-            case "&":
-            case "^":
-            case "|":
                 Int.compatible(lhs.getType(), node.getPosition());
                 Int.compatible(rhs.getType(), node.getPosition());
                 node.setType(Int);
+                node.setTypeCategory(RVALUE);
+            case "&":
+            case "^":
+            case "|":
+                if (lhs.getType().equals(Bool)) {
+                    Bool.compatible(lhs.getType(), node.getPosition());
+                    Bool.compatible(rhs.getType(), node.getPosition());
+                    node.setType(Bool);
+                } else {
+                    Int.compatible(lhs.getType(), node.getPosition());
+                    Int.compatible(rhs.getType(), node.getPosition());
+                    node.setType(Int);
+                }
                 node.setTypeCategory(RVALUE);
                 break;
             case "&&":

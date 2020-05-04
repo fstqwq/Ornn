@@ -26,7 +26,6 @@ public class StringParser {
             }
             else ret.append(in.charAt(i));
         }
-        ret.append('\0');
         return ret.toString();
     }
     public static String llvmTransform(String in) {
@@ -45,14 +44,12 @@ public class StringParser {
                 case '"':
                     ret.append("\\22");
                     break;
-                case '\0':
-                    ret.append("\\00");
-                    break;
                 default:
                     ret.append(in.charAt(i));
                     break;
             }
         }
+        ret.append("\\00");
         return ret.toString();
     }
     public static String asmTransform(String in) {
@@ -70,8 +67,6 @@ public class StringParser {
                     break;
                 case '"':
                     ret.append("\\\"");
-                    break;
-                case '\0':
                     break;
                 default:
                     ret.append(in.charAt(i));

@@ -12,6 +12,7 @@ public abstract class ExprNode extends ASTNode {
     private SemanticType type;
     private FunctionSymbol functionSymbol;
 
+    public Literal equivalentConstant = null;
     public Operand result;
 
     public ExprNode(Position position) {
@@ -67,5 +68,9 @@ public abstract class ExprNode extends ASTNode {
 
     public boolean isArray() {
         return type instanceof SemanticArrayType;
+    }
+
+    public boolean isPureConstant() {
+        return equivalentConstant != null;
     }
 }

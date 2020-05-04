@@ -8,7 +8,7 @@ public class ConstStr extends Operand {
     public String value;
 
     public ConstStr(String name, String value) {
-        super(name, new Pointer(new ArrayType(value.length(), I8)));
+        super(name, new Pointer(new ArrayType(value.length() + 1, I8)));
         this.value = value;
     }
 

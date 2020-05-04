@@ -18,13 +18,16 @@ public class BlockStmtNode extends StmtNode {
         if (stmt instanceof BlockStmtNode) {
             stmtList = new ArrayList<>(((BlockStmtNode) stmt).getStmtList());
         } else {
-            this.stmtList = new ArrayList<>();
-            this.stmtList.add(stmt);
+            this.stmtList = new ArrayList<>() {{add(stmt);}};
         }
     }
 
     public List<StmtNode> getStmtList() {
         return stmtList;
+    }
+
+    public void setStmtList(List<StmtNode> stmtList) {
+        this.stmtList = stmtList;
     }
 
     @Override

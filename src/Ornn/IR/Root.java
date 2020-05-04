@@ -114,20 +114,17 @@ public class Root {
         builtinFunctions.put("malloc", builtinMalloc);
 
         // alias to print elegantly in LLVM IR
-
-        FunctionSymbol printFunc = (FunctionSymbol) toplevelScope.resolveSymbol("print", null);
-        printFunc.setType(ToplevelScopeBuilder.Void);
-        printFunc.function = builtinPrint;
-        builtinFunctions.put("printf", builtinPrint);
-        builtinPrint.returnType = VOID;
-        builtinPrint.params.add(new Register("str", STR));
-
-        printFunc = (FunctionSymbol) toplevelScope.resolveSymbol("println", null);
+        FunctionSymbol printFunc = (FunctionSymbol) toplevelScope.resolveSymbol("println", null);
         printFunc.setType(ToplevelScopeBuilder.Int);
         printFunc.function = builtinPrintln;
         builtinFunctions.put("puts", builtinPrintln);
         builtinPrintln.returnType = I32;
         builtinPrintln.params.add(new Register("str", STR));
+
+        builtinFunctions.put(builtinPrint.name, builtinPrint);
+        builtinPrint.returnType = VOID;
+        builtinPrint.params.add(new Register("str", STR));
+        ((FunctionSymbol) toplevelScope.resolveSymbol("print", null)).function = builtinPrint;
 
         builtinFunctions.put(builtinPrintInt.name, builtinPrintInt);
         builtinPrintInt.returnType = VOID;
@@ -218,7 +215,7 @@ public class Root {
     }
     /* Replace println with puts, print with printf */
     public static final Function builtinMalloc = new Function("malloc", true);
-    public static final Function builtinPrint = new Function("printf", true);
+    public static final Function builtinPrint = new Function("print", true);
     public static final Function builtinPrintln = new Function("puts", true);
     public static final Function builtinPrintInt = new Function("printInt", true);
     public static final Function builtinPrintlnInt = new Function("printlnInt", true);

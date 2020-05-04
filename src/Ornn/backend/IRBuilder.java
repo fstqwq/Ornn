@@ -286,7 +286,11 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(ExprStmtNode node) {
-        node.getExpr().accept(this);
+        if (node.getExpr().isPureConstant()) {
+            System.err.println("warning: result is not used" + node.getPosition());
+        } else {
+            node.getExpr().accept(this);
+        }
     }
 
     @Override
@@ -447,6 +451,11 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(BinaryExprNode node) {
+        if (node.isPureConstant()) {
+            node.equivalentConstant.accept(this);
+            node.result = node.equivalentConstant.getResult();
+            return;
+        }
         String op = node.getOp();
         Operand lhs, rhs;
         if (op.equals("||") || op.equals("&&")) {
@@ -543,6 +552,12 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(UnaryExprNode node) {
+        if (node.isPureConstant()) {
+            node.equivalentConstant.accept(this);
+            node.result = node.equivalentConstant.getResult();
+            return;
+        }
+
         String op = node.getOp();
         node.getExpr().accept(this);
 
@@ -668,7 +683,7 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IntLiteralNode node) {
-        node.result = new ConstInt(node.getValue(), 32);
+        node.result = new ConstInt((int)(node.getValue()), 32);
     }
     @Override
     public void visit(BoolLiteralNode node) {

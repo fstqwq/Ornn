@@ -1,7 +1,7 @@
 /*
 Test Package: Codegen
 Author: 18' Zonghan YANG
-Time: 2020-04-28
+Time: 2020-05-05
 Input:
 === input ===
 2 1
@@ -10,11 +10,11 @@ Output:
 === output ===
 2 1
 321
-114
+114%d
 === end ===
 ExitCode: 0
 InstLimit: -1
-Origin Package: Test add proper return statement
+Origin Package: Test print("%d") and add proper return statement
 */
 
 int a, b;
@@ -40,5 +40,6 @@ int main() {
 	} else {
 		print("114");
 	}
+	print("%d");
 	int c = 114514; // should not return 114514
 }

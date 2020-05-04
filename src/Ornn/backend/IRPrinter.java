@@ -75,7 +75,7 @@ public class IRPrinter {
 
     void printConstStr(String value, ConstStr str) {
         out.println("@" + str.name + " = private unnamed_addr constant "
-                + "[" + value.length() + " x i8] c"
+                + "[" + (value.length() + 1) + " x i8] c"
                 + "\"" + StringParser.llvmTransform(value) + "\", align 1");
     }
 

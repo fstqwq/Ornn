@@ -3,10 +3,7 @@ package Ornn;
 import Ornn.AST.ProgramNode;
 import Ornn.backend.IRBuilder;
 import Ornn.backend.IRPrinter;
-import Ornn.frontend.ASTBuilder;
-import Ornn.frontend.ScopeResolver;
-import Ornn.frontend.SemanticChecker;
-import Ornn.frontend.ToplevelScopeBuilder;
+import Ornn.frontend.*;
 import Ornn.parser.ErrorListener;
 import Ornn.parser.MxstarLexer;
 import Ornn.parser.MxstarParser;
@@ -45,7 +42,6 @@ public class Main {
             fileName = "code.mx";
         }
         String pureName = fileName .substring(0, fileName.lastIndexOf("."));
-//        System.err.println("File name = " + fileName);
         try {
             InputStream file = new FileInputStream(fileName);
             ProgramNode ast = buildAST(file);
@@ -55,6 +51,9 @@ public class Main {
             new SemanticChecker(toplevelScope).visit(ast);
 
             if (runSemanticOnly) return;
+
+            new ConstantFolding().visit(ast);
+            new PrintOptimization(toplevelScope).visit(ast);
 
             IRBuilder irBuilder = new IRBuilder(toplevelScope);
             irBuilder.visit(ast);

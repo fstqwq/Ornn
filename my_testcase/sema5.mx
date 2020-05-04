@@ -1,0 +1,11 @@
+/*
+Author: 18' Zonghan YANG
+Time: 2020-05-04
+Verdict: Failed
+Comment: bitwise or/and should also apply to bool 
+*/
+
+int main() {
+	bool a = true, b = false;
+	if (a | b) if (a & b) a = a ^ b;
+}
