@@ -40,12 +40,18 @@ public class SemanticChecker implements ASTVisitor {
         for (FuncDeclNode funcDeclNode : node.getFuncDeclNodes()) {
             funcDeclNode.accept(this);
         }
+        for (VarDeclNode varDeclNode : node.getVarDeclNodes()) {
+            varDeclNode.accept(this);
+        }
     }
 
     @Override
     public void visit(VarDeclNode node) {
         SemanticType type = node.getTypeAfterResolve();
         if (node.getExpr() != null) {
+            if (node.getVariableSymbol().isMember()) {
+                throw new CompilationError("members should not have initialization", node.getPosition());
+            }
             node.getExpr().accept(this);
             type.compatible(node.getExpr().getType(), node.getPosition());
         }

@@ -1,7 +1,7 @@
 /*
 Author: 18' Zonghan YANG
 Time: 2020-04-28
-Verdict: Failed
+Verdict: Fail
 Comment: return type specification for constructor invalid
 */
 

@@ -1,0 +1,14 @@
+/*
+Author: 18' Zonghan YANG
+Time: 2020-05-05
+Verdict: Fail
+Comment: members should not have initialization
+*/
+
+class no {
+    int a = 1;
+};
+
+int main() {
+    no n;
+}

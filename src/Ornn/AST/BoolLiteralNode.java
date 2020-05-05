@@ -9,6 +9,7 @@ public class BoolLiteralNode extends ExprNode implements Literal{
     public BoolLiteralNode (boolean value, Position position) {
         super(position);
         this.value = value;
+        equivalentConstant = this;
     }
     public boolean getValue() {
         return value;

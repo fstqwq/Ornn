@@ -2,6 +2,7 @@ package Ornn.frontend;
 
 import Ornn.AST.*;
 import Ornn.semantic.FunctionSymbol;
+import Ornn.semantic.Symbol;
 import Ornn.semantic.ToplevelScope;
 import Ornn.semantic.TypeCategory;
 import Ornn.util.CompilationError;
@@ -22,6 +23,7 @@ import static Ornn.semantic.TypeCategory.RVALUE;
 public class PrintOptimization implements ASTVisitor {
     FunctionSymbol print, println, printInt, printlnInt, toString;
     HashMap<FunctionSymbol, FunctionSymbol> asInt = new HashMap<>();
+    HashMap<FunctionSymbol, FunctionSymbol> asStr = new HashMap<>();
     public PrintOptimization(ToplevelScope toplevelScope) {
         print = (FunctionSymbol) toplevelScope.resolveSymbol("print", null);
         println = (FunctionSymbol) toplevelScope.resolveSymbol("println", null);
@@ -30,6 +32,8 @@ public class PrintOptimization implements ASTVisitor {
         toString = (FunctionSymbol) toplevelScope.resolveSymbol("toString", null);
         asInt.put(print, printInt);
         asInt.put(println, printlnInt);
+        asStr.put(printInt, print);
+        asStr.put(printlnInt, println);
     }
 
     private FuncCallExprNode newFuncCall(FunctionSymbol symbol, ExprNode arg) {
@@ -74,7 +78,7 @@ public class PrintOptimization implements ASTVisitor {
             newList.add(newFuncCall(print, ((BinaryExprNode) arg).getLhs()));
             newList.add(newFuncCall(symbol, ((BinaryExprNode) arg).getRhs()));
             return true;
-        } else if (arg instanceof FuncCallExprNode && arg.getFunctionSymbol().getSymbolName().equals("toString")) {
+        } else if (arg instanceof FuncCallExprNode && arg.getFunctionSymbol().equals(toString)) {
             newList.add(newFuncCall(symbolAsInt, ((FuncCallExprNode) arg).getParameterList().get(0)));
             return true;
         } else {
@@ -112,11 +116,17 @@ public class PrintOptimization implements ASTVisitor {
                 ExprNode expr = ((ExprStmtNode) stmtNode).getExpr();
                 if (expr instanceof FuncCallExprNode) {
                     FunctionSymbol functionSymbol = expr.getFunctionSymbol();
-                    switch (functionSymbol.getSymbolName()) {
-                        case "print": case "println":
-                            ArrayList<FuncCallExprNode> ret = reprint((FuncCallExprNode)expr);
-                            ret.forEach(x -> list.add(new ExprStmtNode(x, stmtNode.getPosition())));
+                    if (functionSymbol.equals(print) || functionSymbol.equals(println)) {
+                        ArrayList<FuncCallExprNode> ret = reprint((FuncCallExprNode)expr);
+                        ret.forEach(x -> list.add(new ExprStmtNode(x, stmtNode.getPosition())));
+                        success = true;
+                    } else if (functionSymbol.equals(printInt) || functionSymbol.equals(printlnInt)) {
+                        if (((FuncCallExprNode) expr).getParameterList().get(0).isPureConstant()) {
+                            FuncCallExprNode funcCall = newFuncCall(asStr.get(functionSymbol),
+                                    new StringLiteralNode("" + ((FuncCallExprNode) expr).getParameterList().get(0).equivalentConstant.getInt(), stmtNode.getPosition()));
+                            list.add(new ExprStmtNode(funcCall, stmtNode.getPosition()));
                             success = true;
+                        }
                     }
                 }
             } else {
@@ -124,6 +134,33 @@ public class PrintOptimization implements ASTVisitor {
             }
             if (!success) {
                 list.add(stmtNode);
+            }
+        }
+        ArrayList<StmtNode> prelist = new ArrayList<>(list);
+        list.clear();
+        for (StmtNode stmtNode : prelist) {
+            list.add(stmtNode);
+            if (list.size() > 1) { // combine contiguous print const str
+                int last = list.size() - 1;
+                if (list.get(last) instanceof ExprStmtNode && list.get(last - 1) instanceof ExprStmtNode
+                        && ((ExprStmtNode) list.get(last)).getExpr() instanceof FuncCallExprNode
+                        && ((ExprStmtNode) list.get(last - 1)).getExpr() instanceof FuncCallExprNode) {
+                    FuncCallExprNode las = ((FuncCallExprNode)((ExprStmtNode) list.get(last)).getExpr());
+                    FuncCallExprNode sec = ((FuncCallExprNode)((ExprStmtNode) list.get(last - 1)).getExpr());
+                    if ((las.getFunctionSymbol().equals(print) || las.getFunctionSymbol().equals(println))
+                            && (sec.getFunctionSymbol().equals(print) || sec.getFunctionSymbol().equals(println))
+                            && las.getParameterList().get(0).isPureConstant()
+                            && sec.getParameterList().get(0).isPureConstant()) {
+                        String newStr = sec.getParameterList().get(0).equivalentConstant.getStr()
+                                + (sec.getFunctionSymbol().equals(print) ? "" : "\n")
+                                + las.getParameterList().get(0).equivalentConstant.getStr();
+                        FunctionSymbol symbol = las.getFunctionSymbol();
+                        ((StringLiteralNode)(las.getParameterList().get(0)).equivalentConstant).setValue(newStr);
+                        list.remove(last);
+                        list.remove(last - 1);
+                        list.add(new ExprStmtNode(newFuncCall(symbol, new StringLiteralNode(newStr, node.getPosition())), node.getPosition()));
+                    }
+                }
             }
         }
         node.setStmtList(list);

@@ -7,6 +7,7 @@ import Ornn.util.UnreachableError;
 public class NullLiteralNode extends ExprNode implements Literal {
     public NullLiteralNode(Position position) {
         super(position);
+        equivalentConstant = this;
     }
 
     @Override

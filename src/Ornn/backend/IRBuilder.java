@@ -46,7 +46,7 @@ public class IRBuilder implements ASTVisitor {
                     Function function = new Function(((ClassDeclNode) declNode).getIdentifier() + "." + funcDeclNode.getIdentifier(), true);
                     root.addFunction(function);
                     function.returnType = root.resolveType(funcDeclNode.getFunctionSymbol().getType(), false);
-                    function.paramTypes.add(type);
+                    function.paramTypes.add(new Pointer(type));
                     for (VarDeclNode param : funcDeclNode.getParameterList()) {
                         function.paramTypes.add(root.resolveType(param.getTypeAfterResolve(), false));
                     }
@@ -409,7 +409,7 @@ public class IRBuilder implements ASTVisitor {
                 variableSymbol = (VariableSymbol) (node.getVariableSymbol());
                 if (variableSymbol.isMember()) { // accessing current function's member variable
                     Register classPtr = currentFunction.classPtr;
-                    Register register = new Register("_addr_this." + variableSymbol.getSymbolName(), new Pointer(root.resolveType(variableSymbol.getType(), false)));
+                    Register register = new Register("_addr_this." + variableSymbol.getSymbolName(), new Pointer(root.resolveType(variableSymbol.getType(), true)));
                     node.result = register;
                     currentBlock.pushBack(new GEP(((Pointer)classPtr.type).typePointedTo,
                             classPtr, I32ZERO, variableSymbol.index, register, currentBlock));
@@ -439,7 +439,7 @@ public class IRBuilder implements ASTVisitor {
     public void visit(ArrayIndexNode node) {
         node.getArray().accept(this);
         node.getIndex().accept(this);
-        Operand array = loadValue(node.getArray().result);
+        Operand array = matchType(node.getArray().result, root.resolveType(node.getArray().getType(), true));
         Operand index = loadValue(node.getIndex().result);
         Register register = new Register("_array_access_result",
                 new Pointer(root.resolveType(node.getType(), true)));
@@ -592,12 +592,10 @@ public class IRBuilder implements ASTVisitor {
                 break;
             case "++i": case "--i":
                 src = loadValue(node.getExpr().result);
-                node.result = new Register("unary_res", I32);
-                currentBlock.pushBack(new Binary(
-                        src, I32ONE,
-                        (Register) node.result, op.substring(0, 1), currentBlock)
-                );
-                currentBlock.pushBack(new Store(node.getExpr().result, node.result, currentBlock));
+                Register ans = new Register("unary_res", I32);
+                currentBlock.pushBack(new Binary(src, I32ONE, ans, op.substring(0, 1), currentBlock));
+                currentBlock.pushBack(new Store(node.getExpr().result, ans, currentBlock));
+                node.result = node.getExpr().result;
                 break;
             case "i++": case "i--":
                 src = loadValue(node.getExpr().result);
@@ -663,7 +661,7 @@ public class IRBuilder implements ASTVisitor {
             int base = 0;
             if (symbol.isMember()) {
                 base = 1;
-                params.add(matchType(node.getFunctionNode().result, symbol.function.classPtr.type));
+                params.add(matchType(node.getFunctionNode().result, symbol.function.getParamType(0)));
             }
             for (int i = 0; i < node.getParameterList().size(); i++) {
                 ExprNode exprNode = node.getParameterList().get(i);

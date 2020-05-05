@@ -12,6 +12,7 @@ public class IntLiteralNode extends ExprNode implements Literal {
     public IntLiteralNode(long value, Position position) {
         super(position);
         this.value = value;
+        equivalentConstant = this;
     }
 
     public long getValue() {

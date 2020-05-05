@@ -22,5 +22,11 @@ int main() {
 	string a = getString();
 	string b = getString();
 	println(a); println(b);
-	println(toString(-2147483647 - 1));
+	int c = -1, i;
+	for (i = 0; i < 31; i++) {
+		c = c - (1 << i);
+        b = a;
+		a = toString(c);
+	}
+	println(a);
 }

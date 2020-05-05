@@ -111,6 +111,12 @@ public class ToplevelScopeBuilder {
                         throw new CompilationError("duplicate main function", x.getPosition());
                     } else {
                         mainFunc = functionSymbol;
+                        if (!((FuncDeclNode) x).getParameterList().isEmpty()) {
+                            throw new CompilationError("main function supports no arguments", mainFunc.getDefineNode().getPosition());
+                        }
+                        if (mainFunc.getType() != Int) {
+                            throw new CompilationError("main function should return int" , mainFunc.getDefineNode().getPosition());
+                        }
                     }
                 }
             } else if (x instanceof VarDeclNode) {
@@ -159,12 +165,7 @@ public class ToplevelScopeBuilder {
         if (mainFunc == null) {
             throw new CompilationError("no main function", ast.getPosition());
         }
-        if (!mainFunc.getArguments().isEmpty()) {
-            throw new CompilationError("main function supports no arguments", mainFunc.getDefineNode().getPosition());
-        }
-        if (mainFunc.getType() != Int) {
-            throw new CompilationError("main function should return int" , mainFunc.getDefineNode().getPosition());
-        }
+
         ((FuncDeclNode) mainFunc.getDefineNode()).getBlock().getStmtList().
                 add(0, new ExprStmtNode(new FuncCallExprNode(new IDExprNode("__init", Position.nowhere), new ArrayList<>(), Position.nowhere), Position.nowhere));
         ((FuncDeclNode) mainFunc.getDefineNode()).getBlock().getStmtList().add(

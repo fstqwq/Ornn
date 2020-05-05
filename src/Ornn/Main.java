@@ -52,7 +52,7 @@ public class Main {
 
             if (runSemanticOnly) return;
 
-            new ConstantFolding().visit(ast);
+            new ConstantFolding(toplevelScope).visit(ast);
             new PrintOptimization(toplevelScope).visit(ast);
 
             IRBuilder irBuilder = new IRBuilder(toplevelScope);

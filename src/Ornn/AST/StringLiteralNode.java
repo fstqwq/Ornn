@@ -9,6 +9,7 @@ public class StringLiteralNode extends ExprNode implements Literal {
     public StringLiteralNode(String value, Position position) {
         super(position);
         this.value = value;
+        equivalentConstant = this;
     }
 
     public String getValue() {

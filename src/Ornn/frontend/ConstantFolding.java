@@ -1,9 +1,7 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
-import Ornn.semantic.PrimitiveTypeSymbol;
-import Ornn.semantic.SemanticArrayType;
-import Ornn.semantic.Symbol;
+import Ornn.semantic.*;
 import Ornn.util.CompilationError;
 
 import java.util.HashMap;
@@ -30,11 +28,14 @@ import static Ornn.frontend.ToplevelScopeBuilder.*;
 
 public class ConstantFolding implements ASTVisitor {
 
-    public ConstantFolding() {}
     HashMap<Symbol, Literal> declMap = new HashMap<>();
     HashSet<Symbol> modified = new HashSet<>();
-
     boolean collectingConstDecl;
+
+    FunctionSymbol toString;
+    public ConstantFolding(ToplevelScope toplevelScope) {
+        toString = (FunctionSymbol) toplevelScope.resolveSymbol("toString", null);
+    }
     @Override
     public void visit(ProgramNode node) {
         collectingConstDecl = true;
@@ -318,7 +319,7 @@ public class ConstantFolding implements ASTVisitor {
     public void visit(FuncCallExprNode node) {
         node.getFunctionNode().accept(this);
         node.getParameterList().forEach(x -> x.accept(this));
-        if (!collectingConstDecl && "toString".equals(node.getFunctionSymbol().getSymbolName())) {
+        if (!collectingConstDecl && node.getFunctionSymbol().equals(toString)) {
             if (node.getParameterList().get(0).isPureConstant()) {
                 node.equivalentConstant = new StringLiteralNode(Long.toString(node.getParameterList().get(0).equivalentConstant.getInt()), node.getPosition());
             }
@@ -336,16 +337,12 @@ public class ConstantFolding implements ASTVisitor {
 
 
     @Override public void visit(IntLiteralNode node) {
-        node.equivalentConstant = node;
     }
     @Override public void visit(BoolLiteralNode node) {
-        node.equivalentConstant = node;
     }
     @Override public void visit(NullLiteralNode node) {
-        node.equivalentConstant = node;
     }
     @Override public void visit(StringLiteralNode node) {
-        node.equivalentConstant = node;
     }
 
     @Override public void visit(ArrayTypeNode node) {}
