@@ -193,8 +193,8 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitConditionStatement(MxstarParser.ConditionStatementContext ctx) {
-        StmtNode thenStmt = new BlockStmtNode((StmtNode) visit(ctx.thenStmt));
-        StmtNode elseStmt = ctx.elseStmt != null ? new BlockStmtNode((StmtNode) visit(ctx.elseStmt)) : null;
+        BlockStmtNode thenStmt = new BlockStmtNode((StmtNode) visit(ctx.thenStmt));
+        BlockStmtNode elseStmt = ctx.elseStmt != null ? new BlockStmtNode((StmtNode) visit(ctx.elseStmt)) : null;
         return new IfStmtNode(
                 (ExprNode) visit(ctx.expression()),
                 thenStmt,

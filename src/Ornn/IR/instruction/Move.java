@@ -1,33 +1,39 @@
 package Ornn.IR.instruction;
 
+
+/*
+    Fake LLVM IR instruction to denote the MIR after SSA destruction
+ */
+
 import Ornn.IR.BasicBlock;
-import Ornn.IR.operand.*;
-import Ornn.util.UnreachableError;
+import Ornn.IR.operand.Operand;
+import Ornn.IR.operand.Register;
 
 import java.util.HashSet;
 
-public class Load extends Inst {
+public class Move extends Inst {
     public Register dest;
-    public Operand addr;
-    public Load(Register dest, Operand addr, BasicBlock block) {
+    public Operand src;
+    public Move(Register dest, Operand src, BasicBlock block) {
         super(block);
         this.dest = dest;
-        this.addr = addr;
+        this.src = src;
         dest.def = this;
-        addr.uses.add(this);
+    }
+
+    public void completeConstruction() {
+        src.uses.add(this);
     }
 
     @Override
     public String toString() {
-        return dest.toString() + " = load "
-        + dest.type.toString() + ", "
-        + addr.type.toString() + " " + addr.toString()
-        + ", align " + dest.type.size() / 8;
+        return dest.toString() + " = mov "
+                + src.type.toString() + " " + src.toString();
     }
 
     @Override
     public HashSet<Operand> getUses() {
-        return new HashSet<>() {{add(addr); }};
+        return new HashSet<>() {{add(src); }};
     }
 
     @Override
@@ -42,10 +48,11 @@ public class Load extends Inst {
     @Override
     public void replaceUse(Register old, Operand newOpr) {
         boolean success = false;
-        if (addr.equals(old)) {
-            addr = newOpr;
+        if (src.equals(old)) {
+            src = newOpr;
             success = true;
         }
         assert success;
     }
+
 }

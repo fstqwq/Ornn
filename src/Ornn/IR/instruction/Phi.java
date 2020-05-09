@@ -3,6 +3,7 @@ package Ornn.IR.instruction;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.util.UnreachableError;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ public class Phi extends Inst {
         this.dest = dest;
         this.blocks = blocks;
         this.values = values;
+        values.forEach(x -> x.uses.add(this));
+        dest.def = this;
     }
 
     @Override
@@ -42,4 +45,22 @@ public class Phi extends Inst {
     public Register getDest() {
         return dest;
     }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        for (int i = 0; i < values.size(); i++) {
+            if (values.get(i).equals(old)) {
+                values.set(i, newOpr);
+                success = true;
+            }
+        }
+        assert success;
+    }
+    public void add(Operand value, BasicBlock block) {
+        values.add(value);
+        blocks.add(block);
+        value.uses.add(this);
+    }
+
 }

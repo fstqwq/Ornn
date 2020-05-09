@@ -5,6 +5,7 @@ import Ornn.IR.operand.Null;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.util.Op2Inst;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
@@ -43,5 +44,19 @@ public class Cmp extends Inst { // return boolean
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        if (src1.equals(old)) {
+            src1 = newOpr;
+            success = true;
+        }
+        if (src2.equals(old)) {
+            src2 = newOpr;
+            success = true;
+        }
+        assert success;
     }
 }

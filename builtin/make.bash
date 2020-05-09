@@ -1,2 +1,2 @@
-clang-10 -S -emit-llvm -Xclang -disable-O0-optnone builtin.c -O3
+clang-10 -S -emit-llvm --target=riscv32 builtin.c -Ofast
 llc-10 --march=riscv32 --mattr=+m builtin.ll -O3

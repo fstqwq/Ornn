@@ -7,12 +7,12 @@ public class ForStmtNode extends StmtNode implements Loop {
     private ExprNode init;
     private ExprNode cond;
     private ExprNode step;
-    private StmtNode stmt;
+    private BlockStmtNode stmt;
 
     public BasicBlock stepBlock;
     public BasicBlock destBlock;
 
-    public ForStmtNode(ExprNode init, ExprNode cond, ExprNode step, StmtNode stmt, Position position) {
+    public ForStmtNode(ExprNode init, ExprNode cond, ExprNode step, BlockStmtNode stmt, Position position) {
         super(position);
         this.init = init;
         this.cond = cond;
@@ -36,7 +36,7 @@ public class ForStmtNode extends StmtNode implements Loop {
         return step;
     }
 
-    public StmtNode getStmt() {
+    public BlockStmtNode getStmt() {
         return stmt;
     }
 

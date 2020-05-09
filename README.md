@@ -6,7 +6,7 @@
 
 ![](https://opgg-static.akamaized.net/images/lol/item/2420.png?image=q_auto,w_42&v=1586932751)
 ![](https://opgg-static.akamaized.net/images/lol/item/1054.png?image=q_auto,w_42&v=1583298869)
-![](https://opgg-static.akamaized.net/images/lol/item/2033.png?image=q_auto,w_42&v=1583298869)
+![](https://opgg-static.akamaized.net/images/lol/item/3802.png?image=q_auto,w_42&v=1588915771)
 ![](https://opgg-static.akamaized.net/images/lol/item/3373.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3111.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3379.png?image=q_auto,w_42&v=1583298869)

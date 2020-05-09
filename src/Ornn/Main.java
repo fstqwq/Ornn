@@ -2,8 +2,10 @@ package Ornn;
 
 import Ornn.AST.ProgramNode;
 import Ornn.backend.IRBuilder;
-import Ornn.backend.IRPrinter;
+import Ornn.IR.IRPrinter;
 import Ornn.frontend.*;
+import Ornn.optim.Mem2Reg;
+import Ornn.optim.SSADestruction;
 import Ornn.parser.ErrorListener;
 import Ornn.parser.MxstarLexer;
 import Ornn.parser.MxstarParser;
@@ -13,7 +15,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Iterator;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -57,6 +59,9 @@ public class Main {
 
             IRBuilder irBuilder = new IRBuilder(toplevelScope);
             irBuilder.visit(ast);
+
+            new Mem2Reg(irBuilder.root).run();
+            new SSADestruction(irBuilder.root).run();
 
             PrintStream IRFile = new PrintStream(pureName + ".ll");
             new IRPrinter(irBuilder.root, IRFile).run();

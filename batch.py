@@ -79,7 +79,7 @@ def main():
             os.system('mv ./test.s ./test.ll')
             os.system(llc_cmd + ' --march=riscv32 -mattr=+m -o test.s test.ll')
 
-        if os.system('%s --oj-mode < test.in > ravel.out 2>/dev/null'
+        if os.system('%s --oj-mode < test.in 1>ravel.out 2>/dev/null'
                      % ravel_path):
             print(color_red + "Runtime error" + color_none)
             continue
@@ -88,7 +88,15 @@ def main():
             continue
         passed += 1
         continue_fail = 0
-        print(color_green + "Accepted" + color_none)
+
+        ravel_out = open("ravel.out")
+        time_field = ""
+        while True:
+            s = ravel_out.readline()
+            if s.count("time") > 0:
+                time_field = s[5:-1]
+                break
+        print(color_green + "Accepted" + color_none + time_field)
     print("total {}, passed {}, ratio {}".format(total, passed, passed / total))
 
 if __name__ == '__main__':

@@ -3,10 +3,11 @@ package Ornn.IR.instruction;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
-public class Jump extends Inst{
+public class Jump extends Inst implements Terminator {
     public BasicBlock dest;
     public Jump(BasicBlock dest, BasicBlock block) {
         super(block);
@@ -30,5 +31,15 @@ public class Jump extends Inst{
     @Override
     public Register getDest() {
         return null;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        throw new UnreachableError();
+    }
+    @Override
+    public void redirect(BasicBlock from, BasicBlock to) {
+        if (dest.equals(from)) dest = to;
+        else throw new UnreachableError();
     }
 }

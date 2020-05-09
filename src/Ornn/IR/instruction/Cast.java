@@ -6,16 +6,19 @@ import Ornn.IR.operand.Register;
 import Ornn.IR.type.ArrayType;
 import Ornn.IR.type.IntType;
 import Ornn.IR.type.Pointer;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
 public class Cast extends Inst {
-    public Register src, dest;
+    public Register dest;
+    public Operand src;
     public Cast (Register src, Register dest, BasicBlock block) {
         super(block);
         this.src = src;
         this.dest = dest;
         dest.def = this;
+        src.uses.add(this);
     }
 
     @Override
@@ -43,5 +46,11 @@ public class Cast extends Inst {
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        if (src.equals(old)) src = newOpr;
+        else throw new UnreachableError();
     }
 }

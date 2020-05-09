@@ -6,6 +6,7 @@ import Ornn.util.UnreachableError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class BasicBlock {
@@ -19,6 +20,8 @@ public class BasicBlock {
     public HashMap<Register, Phi> phiInst = new LinkedHashMap<>();
     public boolean isTerminated;
 
+    public BasicBlock iDom;
+    public HashSet<BasicBlock> domFrontier;
 
     public BasicBlock (Function function, String name) {
         this.function = function;
@@ -84,10 +87,8 @@ public class BasicBlock {
 
     public void removeTerminator() {
         assert isTerminated;
-        isTerminated = false;
         Inst terminator = back;
         terminator.delete();
-        splitSuccessors();
     }
 
     public void linkSuccessor(BasicBlock block) {
@@ -102,6 +103,16 @@ public class BasicBlock {
 
     public String toString() {
         return "%" + name;
+    }
+
+    public void resetDomInfo() {
+        iDom = null;
+        domFrontier = new HashSet<>();
+    }
+
+    public void redirect(BasicBlock from, BasicBlock to) {
+        assert isTerminated;
+        ((Terminator) back).redirect(from, to);
     }
 
 }

@@ -6,6 +6,7 @@ import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.type.Pointer;
 import Ornn.util.Op2Inst;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
@@ -39,5 +40,10 @@ public class Alloca extends Inst {
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        throw new UnreachableError();
     }
 }

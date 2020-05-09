@@ -4,6 +4,7 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.Function;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.util.UnreachableError;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -71,5 +72,17 @@ public class Call extends Inst {
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        for (int i = 0; i < params.size(); i++) {
+            if (params.get(i).equals(old)) {
+                params.set(i, newOpr);
+                success = true;
+            }
+        }
+        assert success;
     }
 }

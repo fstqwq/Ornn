@@ -22,6 +22,7 @@ public abstract class Inst {
     public abstract HashSet<Operand> getUses();
     public abstract boolean isTerminal();
     public abstract Register getDest();
+    public abstract void replaceUse(Register old, Operand newOpr);
 
     public boolean hasNext() {
         return next != null;
@@ -62,6 +63,8 @@ public abstract class Inst {
         } else {
             basicBlock.back = inst;
         }
+        getUses().forEach(x -> x.uses.remove(this));
+        basicBlock.processRemoveInst(this);
     }
     public void delete() {
         if (hasPrev()) {
@@ -74,5 +77,7 @@ public abstract class Inst {
         } else {
             basicBlock.back = prev;
         }
+        getUses().forEach(x -> x.uses.remove(this));
+        basicBlock.processRemoveInst(this);
     }
 }

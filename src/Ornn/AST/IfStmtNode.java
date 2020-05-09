@@ -4,10 +4,10 @@ import Ornn.util.Position;
 
 public class IfStmtNode extends StmtNode {
     private ExprNode expr;
-    private StmtNode thenStmt;
-    private StmtNode elseStmt;
+    private BlockStmtNode thenStmt;
+    private BlockStmtNode elseStmt;
 
-    public IfStmtNode(ExprNode expr, StmtNode thenStmt, StmtNode elseStmt, Position position) {
+    public IfStmtNode(ExprNode expr, BlockStmtNode thenStmt, BlockStmtNode elseStmt, Position position) {
         super(position);
         this.expr = expr;
         this.thenStmt = thenStmt;
@@ -18,11 +18,11 @@ public class IfStmtNode extends StmtNode {
         return expr;
     }
 
-    public StmtNode getThenStmt() {
+    public BlockStmtNode getThenStmt() {
         return thenStmt;
     }
 
-    public StmtNode getElseStmt() {
+    public BlockStmtNode getElseStmt() {
         return elseStmt;
     }
 

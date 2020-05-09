@@ -1,8 +1,12 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
+extern int scanf(const char *restrict, ...);
+extern int sscanf(const char *restrict, const char *restrict, ...);
+extern int printf(const char *restrict, ...);
+extern int sprintf(char *, const char *, ...);
+extern void* malloc(unsigned int);
+extern unsigned int strlen(const char *);
+extern int strcmp(const char*, const char *);
+extern char* strcat(char*, const char *);
+extern void* memcpy(void*, const void*, unsigned int);
 void print(char* str) {
 	printf("%s", str);
 }
@@ -90,21 +94,21 @@ char* string_add(char *lhs, char *rhs) {
 	strcat(ret, rhs);
 	return ret;
 }
-bool string_eq(char *lhs, char *rhs) {
+_Bool string_eq(char *lhs, char *rhs) {
 	return strcmp(lhs, rhs) == 0;
 }
-bool string_ne(char *lhs, char *rhs) {
+_Bool string_ne(char *lhs, char *rhs) {
 	return strcmp(lhs, rhs) != 0;
 }
-bool string_lt(char *lhs, char *rhs) {
+_Bool string_lt(char *lhs, char *rhs) {
 	return strcmp(lhs, rhs) < 0;
 }
-bool string_le(char *lhs, char *rhs) {
+_Bool string_le(char *lhs, char *rhs) {
 	return strcmp(lhs, rhs) <= 0;
 }
-bool string_gt(char *lhs, char *rhs) {
+_Bool string_gt(char *lhs, char *rhs) {
 	return strcmp(lhs, rhs) > 0;
 }
-bool string_ge(char *lhs, char *rhs) {
+_Bool string_ge(char *lhs, char *rhs) {
 	return strcmp(lhs, rhs) >= 0;
 }

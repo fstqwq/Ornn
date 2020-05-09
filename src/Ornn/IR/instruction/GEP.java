@@ -4,6 +4,7 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
@@ -18,12 +19,17 @@ public class GEP extends Inst {
         this.arrayOffset = arrayOffset;
         this.elementOffset = elementOffset;
         this.dest = dest;
+        ptr.uses.add(this);
+        if (arrayOffset != null) arrayOffset.uses.add(this);
+        if (elementOffset != null) elementOffset.uses.add(this);
         dest.def = this;
     }
 
     @Override
     public HashSet<Operand> getUses() {
-        return new HashSet<>(){{ add(ptr); add(arrayOffset);}};
+        return new HashSet<>(){{ add(ptr);
+            if (arrayOffset != null) add(arrayOffset);
+            if (elementOffset != null) add(elementOffset);}};
     }
 
     @Override
@@ -42,5 +48,25 @@ public class GEP extends Inst {
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        if (ptr.equals(old)) {
+            ptr = newOpr;
+            success = true;
+        }
+        if (old.equals(arrayOffset)) {
+            arrayOffset = newOpr;
+            success = true;
+        }
+        if (old.equals(elementOffset)) {
+            elementOffset = newOpr;
+            success = true;
+        }
+        if (!success) {
+            throw new UnreachableError();
+        }
     }
 }

@@ -4,11 +4,12 @@ import Ornn.IR.instruction.Inst;
 import Ornn.IR.type.BaseType;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 abstract public class Operand {
     public String name;
     public BaseType type;
-    public HashSet<Inst> uses = new HashSet<>();
+    public HashSet<Inst> uses = new LinkedHashSet<>();
 
     public Operand(String name, BaseType type) {
         this.name = name;

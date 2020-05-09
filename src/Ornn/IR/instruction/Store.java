@@ -41,4 +41,18 @@ public class Store extends Inst {
     public Register getDest() {
         return null;
     }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        if (value.equals(old)) {
+            value = newOpr;
+            success = true;
+        }
+        if (addr.equals(old)) {
+            addr = newOpr;
+            success = true;
+        }
+        assert success;
+    }
 }

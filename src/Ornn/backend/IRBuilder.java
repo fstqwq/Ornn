@@ -9,9 +9,9 @@ import Ornn.semantic.*;
 import Ornn.util.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 
 import static Ornn.util.Constant.*;
 
@@ -27,6 +27,11 @@ public class IRBuilder implements ASTVisitor {
     BasicBlock currentBlock = null;
     boolean visitingParams = false;
     ArrayList <Return> returns = new ArrayList<>();
+
+    private static class PhiValue {
+        public ArrayList<BasicBlock> blocks = new ArrayList<>();
+        public ArrayList<Operand> values = new ArrayList<>();
+    };
 
     public IRBuilder (ToplevelScope toplevelScope) {
         root = new Root(toplevelScope);
@@ -131,17 +136,23 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.pushBack(inst);
     }
 
-
-    HashSet <BasicBlock> forwardReachable;
-
-    void forwardDFS(BasicBlock x) {
-        if (forwardReachable.contains(x)) return;
-        forwardReachable.add(x);
-        for (BasicBlock successor : x.successors) {
-            forwardDFS(successor);
+    HashMap<BasicBlock, PhiValue> requestPhi = new HashMap<>();
+    private void solveBranch(ExprNode expr) {
+        if (expr.hasCondition()) {
+            Operand res = matchType(expr.result, BOOL);
+            currentBlock.pushBack(new Branch(res, expr.thenDest, expr.elseDest, currentBlock));
+            if (requestPhi.containsKey(expr.thenDest)) {
+                PhiValue phiValue = requestPhi.get(expr.thenDest);
+                phiValue.values.add(TRUE);
+                phiValue.blocks.add(currentBlock);
+            }
+            if (requestPhi.containsKey(expr.elseDest)) {
+                PhiValue phiValue = requestPhi.get(expr.elseDest);
+                phiValue.values.add(FALSE);
+                phiValue.blocks.add(currentBlock);
+            }
         }
     }
-
 
     @Override
     public void visit(FuncDeclNode node) {
@@ -182,19 +193,22 @@ public class IRBuilder implements ASTVisitor {
             returns.add(ret);
         }
 
-        currentBlock = currentFunction.entryBlock;
         for (Register var : currentFunction.allocVar) {
-            currentBlock.pushFront(new Alloca(var, currentBlock));
+            BaseType type = ((Pointer) var.type).typePointedTo;
+            Operand value;
+            /* Dummy for Mem2Reg */
+            if (type.isSame(I32)) value = I32NEGONE;
+            else if (type.isSame(I8)) value = new ConstInt(233, 8);
+            else value = new Null();
+            currentFunction.entryBlock.pushFront(new Store(var, value, currentFunction.entryBlock));
+            currentFunction.entryBlock.pushFront(new Alloca(var, currentFunction.entryBlock));
         }
 
-        forwardReachable = new LinkedHashSet<>();
-        forwardDFS(currentFunction.entryBlock);
-
-        currentFunction.blocks = forwardReachable;
+        currentFunction.blocks = FunctionBlockCollector.run(currentFunction.entryBlock);
 
         for (Iterator<Return> iter = returns.iterator(); iter.hasNext();) {
             Return ret = iter.next();
-            if (!forwardReachable.contains(ret.basicBlock)) {
+            if (!currentFunction.blocks.contains(ret.basicBlock)) {
                 iter.remove();
                 ret.basicBlock.removeTerminator();
             }
@@ -295,12 +309,14 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IfStmtNode node) {
-        BasicBlock thenBlock = new BasicBlock(currentFunction, "then_block");
-        BasicBlock elseBlock = new BasicBlock(currentFunction, "else_block");
-        BasicBlock destBlock = node.getElseStmt() == null ? elseBlock : new BasicBlock(currentFunction, "dest_block");
+        if (node.getExpr().isPureConstant() && !node.getExpr().equivalentConstant.getBool()) return;
+        BasicBlock destBlock = new BasicBlock(currentFunction, "dest_block");
+        BasicBlock thenBlock = node.getThenStmt() == null || node.getThenStmt().getStmtList().size() == 0 ? destBlock : new BasicBlock(currentFunction, "then_block");
+        BasicBlock elseBlock = node.getElseStmt() == null || node.getElseStmt().getStmtList().size() == 0 ? destBlock : new BasicBlock(currentFunction, "else_block");
+        if (thenBlock == elseBlock) return;
+        node.getExpr().thenDest = thenBlock;
+        node.getExpr().elseDest = elseBlock;
         node.getExpr().accept(this);
-        Operand cond = matchType(node.getExpr().result, BOOL);
-        currentBlock.pushBack(new Branch(cond, thenBlock, elseBlock, currentBlock));
         currentBlock = thenBlock;
         node.getThenStmt().accept(this);
         currentBlock.pushBack(new Jump(destBlock, currentBlock));
@@ -315,9 +331,10 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(WhileStmtNode node) {
-        BasicBlock stmtBlock = new BasicBlock(currentFunction, "while_stmt");
-        BasicBlock condBlock = node.getExpr() == null ? stmtBlock : new BasicBlock(currentFunction, "while_cond");
+        if (node.getExpr().isPureConstant() && !node.getExpr().equivalentConstant.getBool()) return;
         BasicBlock destBlock = new BasicBlock(currentFunction, "while_dest");
+        BasicBlock condBlock = new BasicBlock(currentFunction, "while_cond");
+        BasicBlock stmtBlock = node.getStmt() == null || node.getStmt().getStmtList().size() == 0 ? condBlock : new BasicBlock(currentFunction, "while_stmt");
 
         node.destBlock = destBlock;
         node.condBlock = condBlock;
@@ -325,9 +342,9 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.pushBack(new Jump(condBlock, currentBlock));
         if (node.getExpr() != null) {
             currentBlock = condBlock;
+            node.getExpr().thenDest = stmtBlock;
+            node.getExpr().elseDest = destBlock;
             node.getExpr().accept(this);
-            Operand cond = matchType(node.getExpr().result, BOOL);
-            currentBlock.pushBack(new Branch(cond, stmtBlock, destBlock, currentBlock));
         }
         currentBlock = stmtBlock;
         node.getStmt().accept(this);
@@ -339,6 +356,9 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(ForStmtNode node) {
+        if (node.getCond() != null && node.getCond().isPureConstant() && !node.getCond().equivalentConstant.getBool()) {
+            return;
+        }
         BasicBlock stmtBlock = new BasicBlock(currentFunction, "for_stmt");
         BasicBlock condBlock = node.getCond() == null ? stmtBlock : new BasicBlock(currentFunction, "for_cond");
         BasicBlock stepBlock = node.getStep() == null ? condBlock : new BasicBlock(currentFunction, "for_step");
@@ -354,9 +374,9 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.pushBack(new Jump(condBlock, currentBlock));
         if (node.getCond() != null) {
             currentBlock = condBlock;
+            node.getCond().thenDest = stmtBlock;
+            node.getCond().elseDest = destBlock;
             node.getCond().accept(this);
-            Operand cond = matchType(node.getCond().result, BOOL);
-            currentBlock.pushBack(new Branch(cond, stmtBlock, destBlock, currentBlock));
         }
         if (node.getStep() != null) {
             currentBlock = stepBlock;
@@ -416,6 +436,7 @@ public class IRBuilder implements ASTVisitor {
                 } else {
                     node.result = variableSymbol.operand;
                 }
+                solveBranch(node);
                 break;
             /*
                 variableSymbol = (VariableSymbol) (node.getVariableSymbol());
@@ -447,6 +468,7 @@ public class IRBuilder implements ASTVisitor {
         currentBlock.pushBack(new GEP(
                 ((Pointer) array.type).typePointedTo,
                 array, index,null, register, currentBlock));
+        solveBranch(node);
     }
 
     @Override
@@ -454,40 +476,49 @@ public class IRBuilder implements ASTVisitor {
         if (node.isPureConstant()) {
             node.equivalentConstant.accept(this);
             node.result = node.equivalentConstant.getResult();
+            solveBranch(node);
             return;
         }
         String op = node.getOp();
         Operand lhs, rhs;
         if (op.equals("||") || op.equals("&&")) {
-            BasicBlock condBlock = new BasicBlock(currentFunction, "logicalCondBlock"),
-                    destBlock = new BasicBlock(currentFunction, "logicalDestBlock"),
-                    thenBlock, elseBlock;
-            node.getLhs().accept(this);
-            lhs = loadValue(node.getLhs().result);
-            ArrayList<BasicBlock> blocks = new ArrayList<>();
-            ArrayList<Operand> values = new ArrayList<>();
-            if (op.equals("||")) {
-                values.add(TRUE);
-                thenBlock = destBlock;
-                elseBlock = condBlock;
+            if (node.hasCondition()) {
+                BasicBlock rhsBlock = new BasicBlock(currentFunction, "rhs_block");
+                node.getLhs().thenDest = op.equals("||") ? node.thenDest : rhsBlock;
+                node.getLhs().elseDest = op.equals("||") ? rhsBlock : node.elseDest;
+                node.getLhs().accept(this);
+                currentBlock = rhsBlock;
+                node.getRhs().thenDest = node.thenDest;
+                node.getRhs().elseDest = node.elseDest;
+                node.getRhs().accept(this);
             } else {
-                values.add(FALSE);
-                thenBlock = condBlock;
-                elseBlock = destBlock;
+                BasicBlock condBlock = new BasicBlock(currentFunction, "logicalCondBlock"),
+                        destBlock = new BasicBlock(currentFunction, "logicalDestBlock");
+
+                node.result = new Register("logicalResult", BOOL);
+                PhiValue phiValue = new PhiValue();
+                requestPhi.put(destBlock, phiValue);
+
+                if (op.equals("||")) {
+                    node.getLhs().thenDest = destBlock;
+                    node.getLhs().elseDest = condBlock;
+                } else {
+                    node.getLhs().thenDest = condBlock;
+                    node.getLhs().elseDest = destBlock;
+                }
+
+                node.getLhs().accept(this);
+
+                currentBlock = condBlock;
+                node.getRhs().accept(this);
+                rhs = loadValue(node.getRhs().result);
+                currentBlock.pushBack(new Jump(destBlock, currentBlock));
+                phiValue.blocks.add(currentBlock);
+                phiValue.values.add(rhs);
+
+                currentBlock = destBlock;
+                destBlock.pushBack(new Phi((Register) node.result, phiValue.blocks, phiValue.values, destBlock));
             }
-            blocks.add(currentBlock);
-            currentBlock.pushBack(new Branch(lhs, thenBlock, elseBlock, currentBlock));
-
-            currentBlock = condBlock;
-            node.getRhs().accept(this);
-            rhs = loadValue(node.getRhs().result);
-            values.add(rhs);
-            blocks.add(currentBlock);
-            currentBlock.pushBack(new Jump(destBlock, condBlock));
-
-            currentBlock = destBlock;
-            node.result = new Register( "logicalResult", BOOL);
-            destBlock.pushBack(new Phi((Register) node.result, blocks, values, destBlock));
         } else {
             if (op.equals("=")) {
                 node.getLhs().accept(this);
@@ -547,6 +578,7 @@ public class IRBuilder implements ASTVisitor {
                         throw new UnreachableError();
                 }
             }
+            solveBranch(node);
         }
     }
 
@@ -555,6 +587,7 @@ public class IRBuilder implements ASTVisitor {
         if (node.isPureConstant()) {
             node.equivalentConstant.accept(this);
             node.result = node.equivalentConstant.getResult();
+            solveBranch(node);
             return;
         }
 
@@ -610,6 +643,7 @@ public class IRBuilder implements ASTVisitor {
             default:
                 assert false;
         }
+        solveBranch(node);
     }
 
     @Override
@@ -628,6 +662,7 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.pushBack(new GEP(((Pointer) classPtr.type).typePointedTo,
                         classPtr, I32ZERO, variableSymbol.index,
                         res, currentBlock));
+                solveBranch(node);
                 break;
             case CLASS:
                 throw new UnreachableError();
@@ -672,6 +707,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.pushBack(new Call(symbol.function, params, (Register) node.result, currentBlock));
             currentFunction.callee.add(symbol.function);
         }
+        solveBranch(node);
     }
 
     @Override
@@ -685,7 +721,8 @@ public class IRBuilder implements ASTVisitor {
     }
     @Override
     public void visit(BoolLiteralNode node) {
-        node.result = new ConstBool(node.getValue());
+        node.result = node.getValue() ? TRUE : FALSE;
+        solveBranch(node);
     }
     @Override
     public void visit(NullLiteralNode node) {

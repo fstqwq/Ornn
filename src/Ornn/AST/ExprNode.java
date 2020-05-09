@@ -1,5 +1,6 @@
 package Ornn.AST;
 
+import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.semantic.*;
 import Ornn.util.Position;
@@ -14,6 +15,8 @@ public abstract class ExprNode extends ASTNode {
 
     public Literal equivalentConstant = null;
     public Operand result;
+
+    public BasicBlock thenDest, elseDest;
 
     public ExprNode(Position position) {
         super(position);
@@ -72,5 +75,9 @@ public abstract class ExprNode extends ASTNode {
 
     public boolean isPureConstant() {
         return equivalentConstant != null;
+    }
+
+    public boolean hasCondition() {
+        return thenDest != null;
     }
 }

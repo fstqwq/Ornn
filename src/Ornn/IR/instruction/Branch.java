@@ -3,10 +3,11 @@ package Ornn.IR.instruction;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
-public class Branch extends Inst{
+public class Branch extends Inst implements Terminator {
     public  BasicBlock thenDest, elseDest;
     public Operand cond;
     public Branch(Operand cond, BasicBlock thenDest, BasicBlock elseDest, BasicBlock block) {
@@ -37,5 +38,25 @@ public class Branch extends Inst{
     @Override
     public Register getDest() {
         return null;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        if (cond.equals(old)) cond = newOpr;
+        else throw new UnreachableError();
+    }
+
+    @Override
+    public void redirect(BasicBlock from, BasicBlock to) {
+        boolean success = false;
+        if (thenDest.equals(from)) {
+            thenDest = to;
+            success = true;
+        }
+        if (elseDest.equals(from)) {
+            elseDest = to;
+            success = true;
+        }
+        assert success;
     }
 }

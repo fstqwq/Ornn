@@ -3,6 +3,7 @@ package Ornn.IR.instruction;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.*;
 import Ornn.util.Op2Inst;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
@@ -42,5 +43,19 @@ public class Binary extends Inst { // return int
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        if (src1.equals(old)) {
+            src1 = newOpr;
+            success = true;
+        }
+        if (src2.equals(old)) {
+            src2 = newOpr;
+            success = true;
+        }
+        assert success;
     }
 }

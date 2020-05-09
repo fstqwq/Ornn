@@ -30,10 +30,20 @@ public class Malloc extends Inst {
 
     @Override
     public HashSet<Operand> getUses() {
-        return new HashSet<>();
+        return new HashSet<>() {{ add(size); }};
     }
     @Override
     public Register getDest() {
         return dest;
+    }
+
+    @Override
+    public void replaceUse(Register old, Operand newOpr) {
+        boolean success = false;
+        if (size.equals(old)) {
+            size = newOpr;
+            success = true;
+        }
+        assert success;
     }
 }

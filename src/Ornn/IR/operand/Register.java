@@ -25,4 +25,11 @@ public class Register extends Operand {
     public String toString() {
         return "%" + name;
     }
+
+    public void replaceAll(Operand to) {
+        for (Inst inst : uses) {
+            inst.replaceUse(this, to);
+            to.uses.add(inst);
+        }
+    }
 }

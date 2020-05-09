@@ -5,12 +5,12 @@ import Ornn.util.Position;
 
 public class WhileStmtNode extends StmtNode implements Loop {
     private ExprNode expr;
-    private StmtNode stmt;
+    private BlockStmtNode stmt;
 
     public BasicBlock condBlock;
     public BasicBlock destBlock;
 
-    public WhileStmtNode(ExprNode expr, StmtNode stmt, Position position) {
+    public WhileStmtNode(ExprNode expr, BlockStmtNode stmt, Position position) {
         super(position);
         this.expr = expr;
         this.stmt = stmt;
@@ -20,7 +20,7 @@ public class WhileStmtNode extends StmtNode implements Loop {
         return expr;
     }
 
-    public StmtNode getStmt() {
+    public BlockStmtNode getStmt() {
         return stmt;
     }
 

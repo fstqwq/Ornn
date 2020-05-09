@@ -1,12 +1,7 @@
-package Ornn.backend;
+package Ornn.IR;
 
-import Ornn.IR.BasicBlock;
-import Ornn.IR.Function;
-import Ornn.IR.Root;
 import Ornn.IR.instruction.Inst;
-import Ornn.IR.operand.ConstStr;
-import Ornn.IR.operand.Global;
-import Ornn.IR.operand.Register;
+import Ornn.IR.operand.*;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.type.ClassType;
 import Ornn.IR.type.Pointer;
@@ -24,11 +19,15 @@ public class IRPrinter {
         this.out = out;
         this.root = root;
     }
+
+    HashSet<Register> dest = new HashSet<>(); // for non-SSA printer
+
     void renameBlock(BasicBlock block) {
         block.name = String.format("%d", nSymbol++);
         block.phiInst.forEach((reg, phi) -> reg.name = String.format("%d", nSymbol++));
         for (Inst inst = block.front; inst != null; inst = inst.next) {
-            if (inst.getDest() != null) {
+            if (inst.getDest() != null && !dest.contains(inst.getDest())) {
+                dest.add(inst.getDest());
                 inst.getDest().name = String.format("%d", nSymbol++);
             }
         }
@@ -40,11 +39,13 @@ public class IRPrinter {
         if (function == null || printedFunctions.contains(function)) return;
         printedFunctions.add(function);
         nSymbol = 0;
+        dest.clear();
         out.print(isBuiltin ? "declare " : "define ");
         out.print(function.returnType.toString() + " @" + function.name + "(");
         String divider = "";
         for (Register param : function.params) {
             param.name = String.format("%d", nSymbol++);
+            dest.add(param);
             out.print(divider);
             divider = ", ";
             out.print(param.type.toString() + " " + param.toString());
@@ -108,7 +109,8 @@ public class IRPrinter {
         out.println("}");
     }
 
-    public void run() {
+    public boolean run() {
+        out.println("target triple = \"riscv32\"");
         visited = new HashSet<>();
         FunctionDFS(root.getFunction("main"));
         root.builtinFunctions.forEach((name, func) -> {
@@ -118,5 +120,6 @@ public class IRPrinter {
         root.globals.forEach(this::printGlobal);
         root.constStrings.forEach(this::printConstStr);
         root.functions.forEach(this::printFunction);
+        return true;
     }
 }
