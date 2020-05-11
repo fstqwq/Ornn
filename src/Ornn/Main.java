@@ -21,8 +21,8 @@ public class Main {
     public static void main(String[] args) throws Exception {
         String fileName = "code.mx";
         boolean runSemanticOnly = false;
-        boolean runCodegenOnly = false;
-
+        boolean emitLLVM = false;
+        int optLevel = 2;
         if (args.length > 0) {
             for (String arg : args) {
                 if (arg.charAt(0) == '-') {
@@ -30,8 +30,17 @@ public class Main {
                         case "-semantic":
                             runSemanticOnly = true;
                             break;
-                        case "-codegen":
-                            runCodegenOnly = true;
+                        case "-emit-llvm":
+                            emitLLVM = true;
+                            break;
+                        case "-O0":
+                            optLevel = 0;
+                            break;
+                        case "-O1":
+                            optLevel = 1;
+                            break;
+                        case "-O2":
+                            optLevel = 2;
                             break;
                         default:
                             throw new RuntimeException("unknown option " + arg);
@@ -60,7 +69,14 @@ public class Main {
             IRBuilder irBuilder = new IRBuilder(toplevelScope);
             irBuilder.visit(ast);
 
-            new Mem2Reg(irBuilder.root).run();
+            if (optLevel > 1) {
+                new Mem2Reg(irBuilder.root).run();
+            }
+            if (emitLLVM) {
+                PrintStream IRFile = new PrintStream(pureName + ".ll");
+                new IRPrinter(irBuilder.root, IRFile).run();
+                return;
+            }
             new SSADestruction(irBuilder.root).run();
 
             PrintStream IRFile = new PrintStream(pureName + ".ll");

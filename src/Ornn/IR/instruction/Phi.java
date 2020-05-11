@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.util.UnreachableError;
@@ -61,6 +62,11 @@ public class Phi extends Inst {
         values.add(value);
         blocks.add(block);
         value.uses.add(this);
+    }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        throw new UnreachableError();
     }
 
 }

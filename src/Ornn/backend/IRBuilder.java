@@ -27,6 +27,7 @@ public class IRBuilder implements ASTVisitor {
     BasicBlock currentBlock = null;
     boolean visitingParams = false;
     ArrayList <Return> returns = new ArrayList<>();
+    public HashSet<Symbol> constVars;
 
     private static class PhiValue {
         public ArrayList<BasicBlock> blocks = new ArrayList<>();
@@ -195,11 +196,8 @@ public class IRBuilder implements ASTVisitor {
 
         for (Register var : currentFunction.allocVar) {
             BaseType type = ((Pointer) var.type).typePointedTo;
-            Operand value;
             /* Dummy for Mem2Reg */
-            if (type.isSame(I32)) value = I32NEGONE;
-            else if (type.isSame(I8)) value = new ConstInt(233, 8);
-            else value = new Null();
+            Operand value = new Undef(type);
             currentFunction.entryBlock.pushFront(new Store(var, value, currentFunction.entryBlock));
             currentFunction.entryBlock.pushFront(new Alloca(var, currentFunction.entryBlock));
         }

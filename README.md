@@ -47,14 +47,15 @@ IR Builder
     * Print Reconstruct
         * Boring but highly effective optimization to the bad implementation of string
 
-(TODO)
+
 * MIR Optimization
     * Mem2Reg
         * Actually it's also SSA construction
-    * (Aggressive) Dead Code Eliminate
-    * CFG Simplify
-    * Sparse Conditional Constant Propagation
-    * Common subexpression elimination
+    * (Aggressive) Dead Code Eliminate (TODO)
+        * Correct output is all we need
+    * CFG Simplify (TODO)
+    * Sparse Conditional Constant Propagation (TODO)
+    * Common subexpression elimination (TODO)
 * Consider to do
     * Function inlining (Where to do?)
     * constexpr

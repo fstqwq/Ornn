@@ -104,6 +104,7 @@ public class IRPrinter {
         if (!name.equals("main") && !visited.contains(function)) return;
         printHeader(function, false);
         out.println(" {");
+        function.blocks = FunctionBlockCollector.run(function.entryBlock);
         function.blocks.forEach(this::renameBlock);
         function.blocks.forEach(this::printBlock);
         out.println("}");

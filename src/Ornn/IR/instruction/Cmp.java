@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Null;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
@@ -12,7 +13,7 @@ import java.util.HashSet;
 public class Cmp extends Inst { // return boolean
     public String op;
     public Operand src1, src2;
-    Register dest;
+    public Register dest;
     public Cmp(Operand src1, Operand src2, Register dest, String op, BasicBlock block) {
         super(block);
         this.src1 = src1;
@@ -58,5 +59,9 @@ public class Cmp extends Inst { // return boolean
             success = true;
         }
         assert success;
+    }
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
     }
 }

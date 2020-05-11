@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
 import Ornn.util.UnreachableError;
 
@@ -47,5 +48,9 @@ public class Load extends Inst {
             success = true;
         }
         assert success;
+    }
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
     }
 }

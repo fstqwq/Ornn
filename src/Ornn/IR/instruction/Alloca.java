@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
@@ -44,6 +45,11 @@ public class Alloca extends Inst {
 
     @Override
     public void replaceUse(Register old, Operand newOpr) {
+        throw new UnreachableError();
+    }
+
+    @Override
+    public void accept(IRVisitor visitor) {
         throw new UnreachableError();
     }
 }

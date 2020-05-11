@@ -2,8 +2,7 @@ package Ornn.optim;
 
 import Ornn.IR.BasicBlock;
 import Ornn.IR.DominatorTreeBuilder;
-import Ornn.IR.Function;
-import Ornn.IR.Root;
+import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.*;
 

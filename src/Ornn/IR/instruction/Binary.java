@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
 import Ornn.util.Op2Inst;
 import Ornn.util.UnreachableError;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 public class Binary extends Inst { // return int
     public String op;
     public Operand src1, src2;
-    Register dest;
+    public Register dest;
     public Binary (Operand src1, Operand src2, Register dest, String op, BasicBlock block) {
         super(block);
         this.src1 = src1;
@@ -57,5 +58,10 @@ public class Binary extends Inst { // return int
             success = true;
         }
         assert success;
+    }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
     }
 }

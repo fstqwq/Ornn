@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.ArrayType;
@@ -52,5 +53,9 @@ public class Cast extends Inst {
     public void replaceUse(Register old, Operand newOpr) {
         if (src.equals(old)) src = newOpr;
         else throw new UnreachableError();
+    }
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -6,6 +6,7 @@ package Ornn.IR.instruction;
  */
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 
@@ -55,4 +56,8 @@ public class Move extends Inst {
         assert success;
     }
 
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

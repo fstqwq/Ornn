@@ -6,6 +6,7 @@ import Ornn.util.CompilationError;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import static Ornn.frontend.ToplevelScopeBuilder.*;
 
@@ -43,8 +44,14 @@ public class ConstantFolding implements ASTVisitor {
             declNode.accept(this);
         }
         collectingConstDecl = false;
-        for (DeclNode declNode : node.getDeclNodeList()) {
+        for (Iterator<DeclNode> iter = node.getDeclNodeList().iterator(); iter.hasNext(); ) {
+            DeclNode declNode = iter.next();
             declNode.accept(this);
+            if (declNode instanceof VarDeclNode
+                    && declMap.containsKey(((VarDeclNode) declNode).getVariableSymbol())
+                    && !modified.contains(((VarDeclNode) declNode).getVariableSymbol())) {
+                iter.remove();
+            }
         }
     }
 
@@ -56,18 +63,36 @@ public class ConstantFolding implements ASTVisitor {
     @Override
     public void visit(ClassDeclNode node) {
         node.getFuncDeclNodes().forEach(x -> x.accept(this));
-        node.getVarDeclNodes().forEach(x -> x.accept(this));
+        if (collectingConstDecl) {
+            node.getVarDeclNodes().forEach(x -> x.accept(this));
+        } else {
+            node.getVarDeclNodes().forEach(x -> {
+                declMap.remove(x.getVariableSymbol());
+            });
+        }
     }
 
     @Override
     public void visit(VarDeclNode node) {
-        if (node.getExpr() != null) {
-            node.getExpr().accept(this);
-            if (collectingConstDecl
-            && node.getExpr().isPureConstant()
-            && !(node.getTypeAfterResolve() instanceof SemanticArrayType)
-            && (node.getTypeAfterResolve() instanceof PrimitiveTypeSymbol || node.getTypeAfterResolve().getTypeName().equals("string"))) {
-                declMap.put(node.getVariableSymbol(), node.getExpr().equivalentConstant);
+        if (collectingConstDecl) {
+            if (node.getExpr() != null) {
+                node.getExpr().accept(this);
+                if (node.getExpr().isPureConstant()
+                        && !(node.getTypeAfterResolve() instanceof SemanticArrayType)
+                        && (node.getTypeAfterResolve() instanceof PrimitiveTypeSymbol || node.getTypeAfterResolve().getTypeName().equals("string"))) {
+                    declMap.put(node.getVariableSymbol(), node.getExpr().equivalentConstant);
+                }
+            } else if (node.getVariableSymbol().isGlobal()) {
+                if (node.getType() instanceof IntTypeNode) {
+                    declMap.put(node.getVariableSymbol(), new IntLiteralNode(0, node.getPosition()));
+                } else if (node.getType() instanceof BoolTypeNode) {
+                    declMap.put(node.getVariableSymbol(), new BoolLiteralNode(false, node.getPosition()));
+                } else if (node.getType() instanceof StringTypeNode) {
+                    // string is not able to be null
+                    declMap.put(node.getVariableSymbol(), new StringLiteralNode("", node.getPosition()));
+                } else {
+                    declMap.put(node.getVariableSymbol(), new NullLiteralNode(node.getPosition()));
+                }
             }
         }
     }

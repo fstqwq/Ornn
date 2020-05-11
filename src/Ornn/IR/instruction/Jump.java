@@ -1,6 +1,7 @@
 package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
+import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.util.UnreachableError;
@@ -41,5 +42,9 @@ public class Jump extends Inst implements Terminator {
     public void redirect(BasicBlock from, BasicBlock to) {
         if (dest.equals(from)) dest = to;
         else throw new UnreachableError();
+    }
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
     }
 }

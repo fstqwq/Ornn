@@ -301,7 +301,7 @@ public class SemanticChecker implements ASTVisitor {
                 throw new CompilationError("size is the only member of array", node.getPosition());
             }
         } else {
-            throw new CompilationError("accessing inaccessible expression", node.getPosition());
+            throw new CompilationError("accessing member of " + node.getExpr().getType().getClass().getSimpleName(), node.getPosition());
         }
     }
 

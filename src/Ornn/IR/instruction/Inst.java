@@ -23,6 +23,7 @@ public abstract class Inst {
     public abstract boolean isTerminal();
     public abstract Register getDest();
     public abstract void replaceUse(Register old, Operand newOpr);
+    public abstract void accept(IRVisitor visitor);
 
     public boolean hasNext() {
         return next != null;

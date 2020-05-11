@@ -1,0 +1,62 @@
+/*
+Test Package: Codegen
+Author: 18' Zonghan YANG
+Time: 2020-05-01
+Input:
+=== input ===
+15
+=== end ===
+Output:
+=== output ===
+1 is not even
+3 is not even
+5 is not even
+7 is not even
+9 is not even
+11 is not even
+13 is not even
+1 is not even
+3 is not even
+5 is not even
+7 is not even
+9 is not even
+11 is not even
+13 is not even
+=== end ===
+ExitCode: 0
+InstLimit: -1
+Origin Package: load store phi bools
+*/
+
+int n, i;
+bool[] a;
+bool b;
+int main() {
+	n = getInt();
+	a = new bool[n];
+	for (i = 0; i < n; i++) {
+		if (i % 2 == 0) {
+			a[i] = false;
+		}
+		else {
+			a[i] = true;
+		}
+	}
+	for (i = 0; i < n; i++) {
+		if (a[i]) {
+			println(toString + " is not even");
+		}
+	}
+	for (i = 0; i < n; i++) {
+		bool ans;
+		if (i % 2 == 0) {
+			ans = false;
+		}
+		else {
+			ans = true;
+		}
+		if (ans) {
+			println(toString + " is not even");
+		}
+	}
+}

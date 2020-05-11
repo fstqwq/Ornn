@@ -8,6 +8,7 @@ import Ornn.IR.instruction.Jump;
 import Ornn.IR.instruction.Move;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.IR.operand.Undef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,7 +135,9 @@ public class SSADestruction implements Pass {
                 for (int i = 0; i < phi.blocks.size(); i++) {
                     BasicBlock from = phi.blocks.get(i);
                     Operand operand = phi.values.get(i);
-                    pCopies.get(from).add(new Move(register, operand, from));
+                    if (!(operand instanceof Undef)) {
+                        pCopies.get(from).add(new Move(register, operand, from));
+                    }
                 }
             });
         }
@@ -146,16 +149,16 @@ public class SSADestruction implements Pass {
             if (block.back instanceof Jump) {
                 BasicBlock dest = jumpRedirect(((Jump) block.back).dest);
                 if (!((Jump) block.back).dest.equals(dest)) {
-                    ((Jump) block.back).dest.redirect(((Jump) block.back).dest, dest);
+                    block.redirect(((Jump) block.back).dest, dest);
                 }
             } else if (block.back instanceof Branch) {
                 BasicBlock thenDest = jumpRedirect(((Branch) block.back).thenDest);
                 if (!((Branch) block.back).thenDest.equals(thenDest)) {
-                    ((Branch) block.back).thenDest.redirect(((Branch) block.back).thenDest, thenDest);
+                    block.redirect(((Branch) block.back).thenDest, thenDest);
                 }
                 BasicBlock elseDest = jumpRedirect(((Branch) block.back).elseDest);
                 if (!((Branch) block.back).elseDest.equals(elseDest)) {
-                    ((Branch) block.back).elseDest.redirect(((Branch) block.back).elseDest, elseDest);
+                    block.redirect(((Branch) block.back).elseDest, elseDest);
                 }
             }
         }

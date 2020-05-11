@@ -113,6 +113,9 @@ public class BasicBlock {
     public void redirect(BasicBlock from, BasicBlock to) {
         assert isTerminated;
         ((Terminator) back).redirect(from, to);
+        successors.remove(from);
+        to.precursors.remove(from);
+        linkSuccessor(to);
     }
 
 }
