@@ -3,7 +3,6 @@ package Ornn.RISCV.instrution;
 import Ornn.RISCV.RVBlock;
 import Ornn.RISCV.operand.Imm;
 import Ornn.RISCV.operand.Reg;
-import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
@@ -15,13 +14,22 @@ public class Lui extends RVInst {
         this.rd = rd;
         this.block = block;
     }
+    @Override
     public String toString() {
         return "lui " + rd + ", " + value;
     }
-    public HashSet<Reg> getUses() {
-        return new HashSet<>();
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
     }
-    public void replaceUse(Reg old, Reg newReg) {
-        throw new UnreachableError();
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
+        }
+    }
+    @Override
+    public void applyStackOffset(int stackOffset) {
+        value.applyStackOffset(stackOffset);
     }
 }

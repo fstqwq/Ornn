@@ -17,17 +17,35 @@ public class IType extends RVInst {
         this.rd = rd;
         this.block = rvBlock;
     }
+    @Override
     public String toString() {
         return op + "i " + rd + ", " + rs + ", " + imm.value;
     }
+    @Override
     public HashSet<Reg> getUses() {
-        return new HashSet<>(){{add(rs);}};
+        return new HashSet<>(){{ add(rs); }};
     }
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
+    }
+    @Override
     public void replaceUse(Reg old, Reg newReg) {
         if (rs == old) {
             rs = newReg;
         } else {
             assert false;
         }
+    }
+
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
+        }
+    }
+    @Override
+    public void applyStackOffset(int stackOffset) {
+        imm.applyStackOffset(stackOffset);
     }
 }

@@ -1,0 +1,24 @@
+/*
+Test Package: Codegen
+Author: 18' Zonghan YANG
+Time: 2020-05-12
+Input:
+=== input ===
+-1
+=== end ===
+Output:
+=== output ===
+0
+-1
+=== end ===
+ExitCode: 0
+InstLimit: -1
+Origin Package: -1 >> 1 == -1, -1 / 2 == 0
+*/
+
+int a;
+int main() {
+	a = getInt();
+	printlnInt(a / 2);
+	printlnInt(a >> 1);
+}

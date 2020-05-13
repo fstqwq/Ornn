@@ -19,6 +19,7 @@ public class St extends RVInst {
         this.rs2 = rs2;
         this.width = width;
     }
+    @Override
     public String toString() {
         switch (width) {
             case 1:
@@ -28,20 +29,21 @@ public class St extends RVInst {
         }
         throw new UnreachableError();
     }
+    @Override
     public HashSet<Reg> getUses() {
         return new HashSet<>(){{add(rs1); add(rs2);}};
     }
+    @Override
     public void replaceUse(Reg old, Reg newReg) {
-        boolean success = false;
         if (rs1 == old) {
             rs1 = newReg;
-            success = true;
         }
         if (rs2 == old) {
             rs2 = newReg;
-            success = true;
         }
-        assert success;
     }
-
+    @Override
+    public void applyStackOffset(int stackOffset) {
+        offset.applyStackOffset(stackOffset);
+    }
 }

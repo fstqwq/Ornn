@@ -21,7 +21,7 @@ public class Cl extends RVInst {
 
     @Override
     public String toString() {
-        return "ret " + callee;
+        return "call " + callee;
     }
 
     @Override
@@ -37,4 +37,10 @@ public class Cl extends RVInst {
     public void replaceUse(Reg old, Reg newReg) {
         assert false;
     }
+
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>(rootInfo.callerSavedRegs);
+    }
+
 }

@@ -15,13 +15,18 @@ public class La extends RVInst {
         this.src = src;
         this.block = block;
     }
+    @Override
     public String toString() {
         return "la " + rd + ", " + src;
     }
-    public HashSet<Reg> getUses() {
-        return new HashSet<>();
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
     }
-    public void replaceUse(Reg old, Reg newReg) {
-        throw new UnreachableError();
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
+        }
     }
 }

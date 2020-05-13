@@ -10,8 +10,8 @@ import Ornn.util.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import static Ornn.util.Constant.*;
 
@@ -27,12 +27,11 @@ public class IRBuilder implements ASTVisitor {
     BasicBlock currentBlock = null;
     boolean visitingParams = false;
     ArrayList <Return> returns = new ArrayList<>();
-    public HashSet<Symbol> constVars;
 
     private static class PhiValue {
         public ArrayList<BasicBlock> blocks = new ArrayList<>();
         public ArrayList<Operand> values = new ArrayList<>();
-    };
+    }
 
     public IRBuilder (ToplevelScope toplevelScope) {
         root = new Root(toplevelScope);
@@ -194,7 +193,11 @@ public class IRBuilder implements ASTVisitor {
             returns.add(ret);
         }
 
-        for (Register var : currentFunction.allocVar) {
+
+        ArrayList <Register> allocVars = new ArrayList<>(currentFunction.allocVar);
+
+        for (ListIterator<Register> iter = allocVars.listIterator(allocVars.size()); iter.hasPrevious(); ) {
+            Register var = iter.previous();
             BaseType type = ((Pointer) var.type).typePointedTo;
             /* Dummy for Mem2Reg */
             Operand value = new Undef(type);
@@ -307,7 +310,18 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IfStmtNode node) {
-        if (node.getExpr().isPureConstant() && !node.getExpr().equivalentConstant.getBool()) return;
+        if (node.getExpr().isPureConstant()) {
+            if (node.getExpr().equivalentConstant.getBool()) {
+                if (node.getThenStmt() != null && node.getThenStmt().getStmtList().size() != 0) {
+                    node.getThenStmt().accept(this);
+                }
+            } else {
+                if (node.getElseStmt() != null && node.getElseStmt().getStmtList().size() != 0) {
+                    node.getElseStmt().accept(this);
+                }
+            }
+            return;
+        }
         BasicBlock destBlock = new BasicBlock(currentFunction, "dest_block");
         BasicBlock thenBlock = node.getThenStmt() == null || node.getThenStmt().getStmtList().size() == 0 ? destBlock : new BasicBlock(currentFunction, "then_block");
         BasicBlock elseBlock = node.getElseStmt() == null || node.getElseStmt().getStmtList().size() == 0 ? destBlock : new BasicBlock(currentFunction, "else_block");
@@ -354,6 +368,9 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(ForStmtNode node) {
+        if (node.getInit() != null) {
+            node.getInit().accept(this);
+        }
         if (node.getCond() != null && node.getCond().isPureConstant() && !node.getCond().equivalentConstant.getBool()) {
             return;
         }
@@ -364,10 +381,6 @@ public class IRBuilder implements ASTVisitor {
 
         node.destBlock = destBlock;
         node.stepBlock = stepBlock;
-
-        if (node.getInit() != null) {
-            node.getInit().accept(this);
-        }
 
         currentBlock.pushBack(new Jump(condBlock, currentBlock));
         if (node.getCond() != null) {

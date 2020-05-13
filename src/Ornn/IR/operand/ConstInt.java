@@ -6,6 +6,7 @@ public class ConstInt extends Operand {
     public int value;
     public ConstInt(int value, int size) {
         super(Integer.toString(value), new IntType(size));
+        this.value = value;
     }
 
     @Override

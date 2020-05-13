@@ -1,8 +1,12 @@
 package Ornn;
 
 import Ornn.AST.ProgramNode;
+import Ornn.RISCV.RISCVPrinter;
+import Ornn.RISCV.RVRoot;
 import Ornn.backend.IRBuilder;
 import Ornn.IR.IRPrinter;
+import Ornn.backend.InstSelector;
+import Ornn.backend.RegisterAllocation;
 import Ornn.frontend.*;
 import Ornn.optim.Mem2Reg;
 import Ornn.optim.SSADestruction;
@@ -20,8 +24,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) throws Exception {
         String fileName = "code.mx";
-        boolean runSemanticOnly = false;
-        boolean emitLLVM = false;
+        boolean runSemanticOnly = false, emitLLVM = false, debugCodegen = false;
         int optLevel = 2;
         if (args.length > 0) {
             for (String arg : args) {
@@ -41,6 +44,9 @@ public class Main {
                             break;
                         case "-O2":
                             optLevel = 2;
+                            break;
+                        case "-debug-codegen":
+                            debugCodegen = true;
                             break;
                         default:
                             throw new RuntimeException("unknown option " + arg);
@@ -75,12 +81,23 @@ public class Main {
             if (emitLLVM) {
                 PrintStream IRFile = new PrintStream(pureName + ".ll");
                 new IRPrinter(irBuilder.root, IRFile).run();
-                return;
             }
+
             new SSADestruction(irBuilder.root).run();
 
-            PrintStream IRFile = new PrintStream(pureName + ".ll");
-            new IRPrinter(irBuilder.root, IRFile).run();
+
+            RVRoot rvRoot = (new InstSelector(irBuilder.root)).run();
+
+            if (debugCodegen) {
+                PrintStream asmFile = new PrintStream(pureName + ".s");
+                new RISCVPrinter(rvRoot, asmFile, true).run();
+                return;
+            }
+
+            new RegisterAllocation(rvRoot).run();
+
+            PrintStream asmFile = new PrintStream(pureName + ".s");
+            new RISCVPrinter(rvRoot, asmFile, true).run();
 
         } catch (Exception err) {
             //err.printStackTrace();

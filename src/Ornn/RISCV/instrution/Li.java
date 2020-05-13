@@ -14,13 +14,18 @@ public class Li extends RVInst {
         this.rd = rd;
         this.block = block;
     }
+    @Override
     public String toString() {
         return "li " + rd + ", " + value;
     }
-    public HashSet<Reg> getUses() {
-        return new HashSet<>();
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
     }
-    public void replaceUse(Reg old, Reg newReg) {
-        throw new UnreachableError();
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
+        }
     }
 }

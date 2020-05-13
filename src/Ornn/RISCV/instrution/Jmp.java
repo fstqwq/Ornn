@@ -11,13 +11,8 @@ public class Jmp extends RVInst {
         this.offset = offset;
         this.block = rvBlock;
     }
+    @Override
     public String toString() {
         return "j " + offset;
-    }
-    public HashSet<Reg> getUses() {
-        return new HashSet<>();
-    }
-    public void replaceUse(Reg old, Reg newReg) {
-        assert false;
     }
 }

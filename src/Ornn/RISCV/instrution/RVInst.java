@@ -9,7 +9,7 @@ import java.util.HashSet;
 /* TODO : check use def */
 public abstract class RVInst {
     public enum SCategory {
-        add, sub, slt, sgt, xor, or, sll, srl, sra, mul, div, rem,
+        add, sub, slt, xor, or, and, sll, srl, sra, mul, div, rem,
     }
     public enum BCategory {
         eq, ne, le, ge, lt, gt,
@@ -27,47 +27,58 @@ public abstract class RVInst {
     public RVInst() {}
 
     public abstract String toString();
-    public abstract HashSet<Reg> getUses();
-    public abstract void replaceUse(Reg old, Reg newReg);
+    public HashSet<Reg> getUses() {
+        return new HashSet<>();
+    }
+    public void replaceUse(Reg old, Reg newReg) {
+        assert false;
+    }
 
+    public void replaceRd(Reg old, Reg newReg) {
+        assert false;
+    }
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>();
+    }
+    public void applyStackOffset(int stackOffset) {}
     public boolean hasNext() {
         return next != null;
     }
     public boolean hasPrev() {
         return prev != null;
     }
-    public void insertBefore(RVInst RVInst) {
+    public void insertBefore(RVInst inst) {
         if (hasPrev()) {
-            prev.next = RVInst;
-            RVInst.prev = prev;
+            prev.next = inst;
         } else {
-            block.front = RVInst;
+            block.front = inst;
         }
-        RVInst.next = this;
-        this.prev = RVInst;
+        inst.prev = prev;
+        inst.next = this;
+        this.prev = inst;
     }
-    public void insertAfter(RVInst RVInst) {
+    public void insertAfter(RVInst inst) {
         if (hasNext()) {
-            next.prev = RVInst;
-            RVInst.next = next;
+            next.prev = inst;
         } else {
-            block.back = RVInst;
+            block.back = inst;
         }
-        RVInst.prev = this;
-        this.next = RVInst;
+        inst.next = next;
+        inst.prev = this;
+        this.next = inst;
     }
-    public void replace(RVInst RVInst) {
+    public void replace(RVInst inst) {
         if (hasPrev()) {
-            prev.next = RVInst;
-            RVInst.prev = prev;
+            prev.next = inst;
+            inst.prev = prev;
         } else {
-            block.front = RVInst;
+            block.front = inst;
         }
         if (hasNext()) {
-            next.prev = RVInst;
-            RVInst.next = next;
+            next.prev = inst;
+            inst.next = next;
         } else {
-            block.back = RVInst;
+            block.back = inst;
         }
     }
     public void delete() {

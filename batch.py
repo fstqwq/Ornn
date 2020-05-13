@@ -12,7 +12,7 @@ builtin_path = "./builtin/builtin.s"
 
 # When use_llvm is true, the output should be a .ll file, and we will use llc to
 # compile it into asm. You can test the correctness of your IR-gen with this.
-use_llvm = True
+use_llvm = False
 llc_cmd = 'llc-10'
 
 

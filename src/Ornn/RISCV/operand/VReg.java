@@ -9,6 +9,10 @@ public class VReg extends Reg {
     }
     @Override
     public String toString() {
-        return Integer.toString(name);
+        if (color == null) {
+            return "%" + name;
+        } else {
+            return color.toString();
+        }
     }
 }

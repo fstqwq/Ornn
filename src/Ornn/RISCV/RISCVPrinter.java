@@ -1,0 +1,97 @@
+package Ornn.RISCV;
+
+import Ornn.RISCV.instrution.Br;
+import Ornn.RISCV.instrution.Jmp;
+import Ornn.RISCV.instrution.RVInst;
+import Ornn.RISCV.operand.GReg;
+import Ornn.util.StringParser;
+
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+
+public class RISCVPrinter {
+    RVRoot root;
+    PrintStream file;
+    boolean reschedule;
+    public RISCVPrinter(RVRoot root, PrintStream file, boolean reschedule) {
+        this.root = root;
+        this.file = file;
+        this.reschedule = reschedule;
+    }
+
+    HashSet<RVBlock> visited;
+    int blockCount;
+    RVFunction currentFunction;
+
+    boolean dfsBlock(RVBlock block) {
+        if (visited.contains(block)) return false;
+        visited.add(block);
+        block.comment = block.name;
+        block.name = "." + currentFunction.name + "_." + blockCount++;
+        if (block.back instanceof Jmp) {
+            if (dfsBlock(((Jmp) block.back).offset) && reschedule) {
+                block.back.delete();
+            }
+        }
+        for (RVInst inst = block.front; inst != null; inst = inst.next) {
+            if (inst instanceof Br) {
+                dfsBlock(((Br) inst).offset);
+            }
+        }
+        return true;
+    }
+
+    void renameFunction(RVFunction function) {
+        blockCount = 0;
+        currentFunction = function;
+        visited = new LinkedHashSet<>();
+        dfsBlock(function.entryBlock);
+    }
+
+    void runForBlock(RVBlock block) {
+        file.println(block.name + ": " /*+ " # " + block.comment*/);
+        for (RVInst inst = block.front; inst != null; inst = inst.next)
+            file.println("\t" + inst.toString() /*+ (inst.comment == null ? "" : " # " + inst.comment)*/);
+    }
+
+    void runForFunction(RVFunction function) {
+        file.println("\t.globl\t" + function.name);
+        file.println("\t.p2align\t1");
+        file.println("\t.type\t" + function.name +",@function");
+        file.println(function.name + ":");
+        renameFunction(function);
+        visited.forEach(this::runForBlock);
+        file.println();
+    }
+
+    void runForGlobal(GReg gReg) {
+        file.println("\t.type\t" + gReg.name + ",@object");
+        file.println("\t.section\t.bss");
+        file.println("\t.globl\t" + gReg.name);
+        file.println("\t.p2align\t2");
+        file.println(gReg.name + ":");
+        file.println(".L" + gReg.name + "$local:");
+        file.println("\t.word\t0");
+        file.println("\t.size\t" + gReg.name + ", 4\n");
+    }
+
+    void runForConstStr(GReg gReg, String s) {
+        file.println("\t.type\t" + gReg.name + ",@object");
+        file.println("\t.section\t.rodata");
+        file.println(gReg.name + ":");
+        String str = StringParser.asmTransform(s);
+        file.println("\t.asciz\t\"" + str + "\"");
+        file.println("\t.size\t" + gReg.name + ", " + (s.length() + 1) + "\n");
+    }
+
+    public void run() {
+        file.println("\t.text");
+        root.functions.forEach(this::runForFunction);
+        root.global.forEach(this::runForGlobal);
+        root.constStr.forEach(this::runForConstStr);
+    }
+
+
+
+}

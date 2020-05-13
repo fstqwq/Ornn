@@ -3,6 +3,8 @@ package Ornn.backend;
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.*;
+import Ornn.IR.type.BaseType;
+import Ornn.IR.type.ClassType;
 import Ornn.IR.type.Pointer;
 import Ornn.RISCV.*;
 import Ornn.RISCV.instrution.*;
@@ -16,9 +18,7 @@ import java.util.LinkedHashMap;
 import static Ornn.RISCV.instrution.RVInst.BCategory;
 import static Ornn.RISCV.instrution.RVInst.SCategory;
 import static Ornn.RISCV.instrution.RVInst.SzCategory;
-
-import static java.lang.Integer.max;
-import static java.lang.Integer.min;
+import static java.lang.Integer.*;
 
 /*
 Consider a function f calling a function g:
@@ -61,7 +61,7 @@ public class InstSelector implements IRVisitor {
 
     HashMap<Register, Reg> tmpAlias = new HashMap<>();
 
-    public Reg regTrans(Operand operand) {
+    Reg regTrans(Operand operand) {
         if (operand instanceof Register) {
             Reg ret;
             if (operandMap.containsKey(operand)) {
@@ -77,8 +77,9 @@ public class InstSelector implements IRVisitor {
         if (operand instanceof ConstStr || operand instanceof Global) {
             Reg ret;
             if (!operandMap.containsKey(operand)) {
-                GReg reg = new GReg("." + operand.name, ((Pointer) operand.type).typePointedTo.size() / 8);
+                GReg reg = new GReg(operand.name, ((Pointer) operand.type).typePointedTo.size() / 8);
                 if (operand instanceof Global) {
+                    reg.name = "." + reg.name;
                     rvRoot.global.add(reg);
                 } else {
                     rvRoot.constStr.put(reg, ((ConstStr) operand).value);
@@ -118,12 +119,86 @@ public class InstSelector implements IRVisitor {
         return minImm <= x && x <= maxImm;
     }
 
-    void makeBinary(Operand src1, Operand src2, SCategory op, Reg rd) {
+    boolean isZero(Operand operand) {
+        return
+                (operand instanceof ConstInt && ((ConstInt) operand).value == 0)
+                        ||  (operand instanceof ConstBool && !((ConstBool) operand).value)
+                        ||  (operand instanceof Null)
+                        ||  (operand instanceof Undef);
+    }
 
+    boolean checkOperandConst(Operand operand) {
+        return isZero(operand) ||operand instanceof ConstInt;
+    }
+
+    int getOperandConst(Operand operand) {
+        return isZero(operand) ? 0 : ((ConstInt) operand).value;
+    }
+
+    boolean isPowerOfTwo(int x) {
+        return (x & (x - 1)) == 0;
+    }
+
+    boolean checkOperandImm(Operand operand) {
+        if (isZero(operand)) return true;
+        else return operand instanceof ConstInt && checkImm(((ConstInt) operand).value);
+    }
+
+    Imm getImm(Operand operand) {
+        if (isZero(operand)) return new Imm(0);
+        else if (operand instanceof ConstInt) return new Imm(((ConstInt) operand).value);
+        else throw new UnreachableError();
+    }
+
+    void makeBinary(Operand src1, Operand src2, String op, Reg rd) {
+        SCategory sop;
+        boolean abelian = false, iType = false;
+        switch (op) {
+            case "+": sop = SCategory.add; abelian = true; iType = true; break;
+            case "-": sop = SCategory.sub; break;
+            case "*": sop = SCategory.mul; break;
+            case "/": sop = SCategory.div; break;
+            case "%": sop = SCategory.rem; break;
+            case "^": sop = SCategory.xor; abelian = true; iType = true; break;
+            case "&": sop = SCategory.and; abelian = true; iType = true; break;
+            case "|": sop = SCategory.or; abelian = true; iType = true; break;
+            case "<<": sop = SCategory.sll; iType = true; break;
+            case ">>": sop = SCategory.sra; iType = true; break;
+            default: throw new UnreachableError();
+        }
+        if (isZero(src2)) {
+            if (sop == SCategory.and || sop == SCategory.mul) {
+                currentBlock.add(new Mv(zero, rd, currentBlock));
+            } else {
+                currentBlock.add(new Mv(regTrans(src1), rd, currentBlock));
+            }
+        } else if (isZero(src1)) {
+            if (sop == SCategory.add || sop == SCategory.sub || sop == SCategory.or || sop == SCategory.xor) {
+                currentBlock.add(new RType(zero, regTrans(src2), sop, rd, currentBlock));
+            } else {
+                currentBlock.add(new Mv(zero, rd, currentBlock));
+            }
+        } else if (iType) {
+            if (checkOperandImm(src2)) {
+                currentBlock.add(new IType(regTrans(src1), getImm(src2), sop, rd, currentBlock));
+            } else if (abelian && checkOperandImm(src1)) {
+                currentBlock.add(new IType(regTrans(src2), getImm(src1), sop, rd, currentBlock));
+            } else {
+                currentBlock.add(new RType(regTrans(src1), regTrans(src2), sop, rd, currentBlock));
+            }
+        } else {
+            if (sop == SCategory.mul && checkOperandConst(src1) && isPowerOfTwo(getOperandConst(src1))) {
+                currentBlock.add(new IType(regTrans(src2), new Imm(Integer.numberOfTrailingZeros(getOperandConst(src1))), SCategory.sll, rd, currentBlock));
+            } else if (sop == SCategory.mul && checkOperandConst(src2) && isPowerOfTwo(getOperandConst(src2))) {
+                currentBlock.add(new IType(regTrans(src1), new Imm(Integer.numberOfTrailingZeros(getOperandConst(src2))), SCategory.sll, rd, currentBlock));
+            } else {
+                currentBlock.add(new RType(regTrans(src1), regTrans(src2), sop, rd, currentBlock));
+            }
+        }
     }
     void makeCmp(Operand src1, Operand src2, SCategory op, Reg rd) {
-        if (src2 instanceof ConstInt && checkImm(((ConstInt) src2).value)) {
-            currentBlock.add(new IType(regTrans(src1), new Imm(((ConstInt) src2).value), op, rd, currentBlock));
+        if (checkOperandImm(src2)) {
+            currentBlock.add(new IType(regTrans(src1), getImm(src2), op, rd, currentBlock));
         } else {
             currentBlock.add(new RType(regTrans(src1), regTrans(src2), op, rd, currentBlock));
         }
@@ -133,11 +208,46 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Binary inst) {
-
+        makeBinary(inst.src1, inst.src2, inst.op, regTrans(inst.dest));
     }
     @Override
     public void visit(GEP inst) {
-
+        Reg dest;
+        BaseType type = inst.type;
+        if (inst.arrayOffset instanceof ConstInt) {
+            int index = ((ConstInt) inst.arrayOffset).value;
+            if (index != 0) {
+                dest = new VReg(vRegCount++, 4);
+                makeBinary(inst.ptr, new ConstInt(index * (type.size() / 8), 32), "+", dest);
+            } else {
+                Reg ptr = regTrans(inst.ptr);
+                if (ptr instanceof GReg) {
+                    dest = new VReg(vRegCount++, 4);
+                    currentBlock.add(new La((GReg) ptr, dest, currentBlock));
+                    if (rvRoot.constStr.containsKey(ptr)) {
+                        currentBlock.back.comment = "\"" + rvRoot.constStr.get(ptr) + "\"";
+                    }
+                } else {
+                    dest = ptr;
+                }
+            }
+        } else {
+            VReg tmp = new VReg(vRegCount++, 4);
+            dest = new VReg(vRegCount++, 4);
+            makeBinary(inst.arrayOffset, new ConstInt(type.size() / 8, 4), "*", tmp);
+            currentBlock.add(new RType(regTrans(inst.ptr), tmp, SCategory.add, dest, currentBlock));
+        }
+        if (!(inst.elementOffset == null || inst.elementOffset.value == 0)) {
+            int offset = ((ClassType) ((Pointer) inst.ptr.type).typePointedTo).offsets.get(inst.elementOffset.value).value / 8;
+            Reg newDest = new VReg(vRegCount++, 4);
+            if (checkImm(offset)) {
+                currentBlock.add(new IType(dest, new Imm(offset), SCategory.add, newDest, currentBlock));
+            } else {
+                currentBlock.add(new RType(dest, regTrans(new ConstInt(offset, 32)), SCategory.add, newDest, currentBlock));
+            }
+            dest = newDest;
+        }
+        currentBlock.add(new Mv(dest, regTrans(inst.dest), currentBlock));
     }
     @Override
     public void visit(Cmp inst) {
@@ -149,66 +259,40 @@ public class InstSelector implements IRVisitor {
         VReg tmp;
         switch (inst.op) {
             case "<":
-                if (inst.src1 instanceof ConstInt) {
-                    makeCmp(inst.src2, inst.src1, SCategory.sgt, regTrans(inst.dest));
-                } else {
-                    makeCmp(inst.src1, inst.src2, SCategory.slt, regTrans(inst.dest));
-                }
+                makeCmp(inst.src1, inst.src2, SCategory.slt, regTrans(inst.dest));
                 break;
             case ">":
-                if (inst.src1 instanceof ConstInt) {
-                    makeCmp(inst.src2, inst.src1, SCategory.slt, regTrans(inst.dest));
-                } else {
-                    makeCmp(inst.src1, inst.src2, SCategory.sgt, regTrans(inst.dest));
-                }
+                makeCmp(inst.src2, inst.src1, SCategory.slt, regTrans(inst.dest));
                 break;
             case "<=":
                 tmp = new VReg(vRegCount++, 4);
-                if (inst.src1 instanceof ConstInt) {
-                    makeCmp(inst.src2, inst.src1, SCategory.slt, tmp);
-                } else {
-                    makeCmp(inst.src1, inst.src2, SCategory.sgt, tmp);
-                }
+                makeCmp(inst.src2, inst.src1, SCategory.slt, tmp);
                 currentBlock.add(new IType(tmp, new Imm(1), SCategory.xor, regTrans(inst.dest), currentBlock));
                 break;
             case ">=":
                 tmp = new VReg(vRegCount++, 4);
-                if (inst.src1 instanceof ConstInt) {
-                    makeCmp(inst.src2, inst.src1, SCategory.sgt, tmp);
-                } else {
-                    makeCmp(inst.src1, inst.src2, SCategory.slt, tmp);
-                }
+                makeCmp(inst.src1, inst.src2, SCategory.slt, tmp);
                 currentBlock.add(new IType(tmp, new Imm(1), SCategory.xor, regTrans(inst.dest), currentBlock));
                 break;
             case "==":
-                if ((inst.src1 instanceof ConstInt && ((ConstInt) inst.src1).value == 0)
-                ||  (inst.src1 instanceof ConstBool && !((ConstBool) inst.src1).value)
-                ||  (inst.src1 instanceof Null)) {
+                if (isZero(inst.src1)) {
                     makeCmpz(inst.src2, SzCategory.seqz, regTrans(inst.dest));
-                } else
-                if ((inst.src2 instanceof ConstInt && ((ConstInt) inst.src2).value == 0)
-                        ||  (inst.src2 instanceof ConstBool && !((ConstBool) inst.src2).value)
-                        ||  (inst.src2 instanceof Null)) {
+                } else if (isZero(inst.src2)) {
                     makeCmpz(inst.src1, SzCategory.seqz, regTrans(inst.dest));
                 } else {
                     tmp = new VReg(vRegCount++, 4);
-                    makeBinary(inst.src1, inst.src2, SCategory.xor, tmp);
+                    makeBinary(inst.src1, inst.src2, "^", tmp);
                     currentBlock.add(new Sz(tmp, SzCategory.seqz, regTrans(inst.dest), currentBlock));
                 }
                 break;
             case "!=":
-                if ((inst.src1 instanceof ConstInt && ((ConstInt) inst.src1).value == 0)
-                        ||  (inst.src1 instanceof ConstBool && !((ConstBool) inst.src1).value)
-                        ||  (inst.src1 instanceof Null)) {
+                if (isZero(inst.src1)) {
                     makeCmpz(inst.src2, SzCategory.snez, regTrans(inst.dest));
-                } else
-                if ((inst.src2 instanceof ConstInt && ((ConstInt) inst.src2).value == 0)
-                        ||  (inst.src2 instanceof ConstBool && !((ConstBool) inst.src2).value)
-                        ||  (inst.src2 instanceof Null)) {
+                } else if (isZero(inst.src2)) {
                     makeCmpz(inst.src1, SzCategory.snez, regTrans(inst.dest));
                 } else {
                     tmp = new VReg(vRegCount++, 4);
-                    makeBinary(inst.src1, inst.src2, SCategory.xor, tmp);
+                    makeBinary(inst.src1, inst.src2, "^", tmp);
                     currentBlock.add(new Sz(tmp, SzCategory.snez, regTrans(inst.dest), currentBlock));
                 }
                 break;
@@ -270,8 +354,9 @@ public class InstSelector implements IRVisitor {
         }
         currentFunction.paramInStackOffset = max(currentFunction.paramInStackOffset, paramInStackOffset);
         currentBlock.add(new Cl(rvRoot, functionMap.get(inst.callee), currentBlock));
+        currentBlock.back.comment = inst.toString();
         if (inst.dest != null) {
-            currentBlock.add(new Mv(ra, regTrans(inst.dest), currentBlock));
+            currentBlock.add(new Mv(a.get(0), regTrans(inst.dest), currentBlock));
         }
     }
     @Override
@@ -295,7 +380,9 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Move inst) {
-        if (inst.src instanceof ConstInt) {
+        if (isZero(inst.src)) {
+            currentBlock.add(new Mv(zero, regTrans(inst.dest), currentBlock));
+        } else if (inst.src instanceof ConstInt) {
             currentBlock.add(new Li(((ConstInt) inst.src).value, regTrans(inst.dest), currentBlock));
         } else if (inst.src instanceof ConstBool) {
             currentBlock.add(new Li(((ConstBool) inst.src).value ? 1 : 0, regTrans(inst.dest), currentBlock));
@@ -305,13 +392,15 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Return inst) {
-        if (inst.value instanceof ConstInt) {
+        if (isZero(inst.value)) {
+            currentBlock.add(new Mv(zero, a.get(0), currentBlock));
+        } else if (inst.value instanceof ConstInt) {
             currentBlock.add(new Li(((ConstInt) inst.value).value, a.get(0), currentBlock));
         } else if (inst.value instanceof ConstBool) {
             currentBlock.add(new Li(((ConstBool) inst.value).value ? 1 : 0, a.get(0), currentBlock));
         } else if (inst.value != null) {
             currentBlock.add(new Mv(regTrans(inst.value), a.get(0), currentBlock));
-        } // not possible to be const strings or globals
+        }
     }
     @Override
     public void visit(Store inst) {
@@ -319,15 +408,17 @@ public class InstSelector implements IRVisitor {
         if (addr instanceof GReg) {
             Reg reg = regTrans(inst.value);
             VReg ptr = new VReg(vRegCount++, 4);
-            currentBlock.add(new Lui(new Relocation((GReg) addr, Relocation.RCategory.hi), ptr, currentBlock));
-            currentBlock.add(new St(reg, new Relocation((GReg) addr, Relocation.RCategory.lo), ptr, inst.value.type.size() / 8, currentBlock));
+            currentBlock.add(new Lui(new Reloc((GReg) addr, Reloc.RCategory.hi), ptr, currentBlock));
+            currentBlock.add(new St(ptr, new Reloc((GReg) addr, Reloc.RCategory.lo), reg, inst.value.type.size() / 8, currentBlock));
+        } else {
+            currentBlock.add(new St(addr, new Imm(0), regTrans(inst.value), inst.value.type.size() / 8, currentBlock));
         }
     }
 
     void runForBlock(BasicBlock irBlock) {
         currentBlock = blockMap.get(irBlock);
-        for (BasicBlock successor : irBlock.successors) {
-            currentBlock.precursors.add(blockMap.get(successor));
+        for (BasicBlock precursors : irBlock.precursors) {
+            currentBlock.precursors.add(blockMap.get(precursors));
         }
         for (BasicBlock successor : irBlock.successors) {
             currentBlock.successors.add(blockMap.get(successor));
@@ -344,12 +435,14 @@ public class InstSelector implements IRVisitor {
         tmpAlias.clear();
         SImm stackFrame = new SImm(0, true);
         function.entryBlock.add(new IType(sp, stackFrame, SCategory.add, sp, function.entryBlock));
+
         ArrayList<VReg> calleeVRegs = new ArrayList<>();
         rvRoot.calleeSavedRegs.forEach(pReg -> {
             VReg reg = new VReg(vRegCount++, 4);
             function.entryBlock.add(new Mv(pReg, reg, function.entryBlock));
             calleeVRegs.add(reg);
         });
+
         VReg vRa = new VReg(vRegCount++, 4);
         function.entryBlock.add(new Mv(ra, vRa, function.entryBlock));
         for (int i = 0; i < min(paramRegNum, irFunc.params.size()); i++) {
@@ -372,7 +465,7 @@ public class InstSelector implements IRVisitor {
         }
         function.exitBlock.add(new Mv(vRa, ra, function.exitBlock));
         function.exitBlock.add(new IType(sp, new SImm(0, false), SCategory.add, sp, function.exitBlock));
-        function.exitBlock.add(new Ret(function.exitBlock));
+        function.exitBlock.add(new Ret(rvRoot, function.exitBlock));
         function.vRegCount = vRegCount;
     }
 
@@ -383,11 +476,13 @@ public class InstSelector implements IRVisitor {
             functionMap.put(function, func);
         }));
         root.functions.forEach((s, function) -> {
+            RVFunction rvFunction = new RVFunction(s);
+            functionMap.put(function, rvFunction);
             for (BasicBlock block : function.blocks) {
                 RVBlock rvBlock = new RVBlock("." + function.name + "_" + block.name);
                 blockMap.put(block, rvBlock);
+                rvFunction.blocks.add(rvBlock);
             }
-            RVFunction rvFunction = new RVFunction(s);
             rvFunction.entryBlock = blockMap.get(function.entryBlock);
             rvFunction.exitBlock = blockMap.get(function.exitBlock);
             function.params.forEach(param -> rvFunction.params.add(regTrans(param)));

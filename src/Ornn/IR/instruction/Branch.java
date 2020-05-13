@@ -16,6 +16,7 @@ public class Branch extends Inst implements Terminator {
         this.cond = cond;
         this.thenDest = thenDest;
         this.elseDest = elseDest;
+        cond.uses.add(this);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class Branch extends Inst implements Terminator {
 
     @Override
     public HashSet<Operand> getUses() {
-        return new HashSet<>();
+        return new HashSet<>() {{ add(cond); }};
     }
 
     @Override

@@ -1,12 +1,12 @@
 package Ornn.RISCV.operand;
 
-public class Relocation extends Imm {
+public class Reloc extends Imm {
     public enum RCategory {
         hi, lo,
     }
     GReg global;
     RCategory type;
-    public Relocation(GReg global, RCategory type) {
+    public Reloc(GReg global, RCategory type) {
         super(0);
         this.global = global;
         this.type = type;

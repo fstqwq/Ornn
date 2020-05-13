@@ -17,24 +17,39 @@ public class Ld extends RVInst {
         this.rd = rd;
         this.width = width;
     }
+    @Override
     public String toString() {
         switch (width) {
             case 1:
-                return "lb " + rd + ", " + (rs instanceof GReg ? rd : (offset + "(" + rd + ")"));
+                return "lb " + rd + ", " + (rs instanceof GReg ? rs : (offset + "(" + rs + ")"));
             case 4:
-                return "lw " + rd + ", " + (rs instanceof GReg ? rd : (offset + "(" + rd + ")"));
+                return "lw " + rd + ", " + (rs instanceof GReg ? rs : (offset + "(" + rs + ")"));
         }
         throw new UnreachableError();
     }
+    @Override
     public HashSet<Reg> getUses() {
-        return new HashSet<>(){{add(rd);}};
+        return new HashSet<>(){{ if (!(rs instanceof GReg)) add(rs);}};
     }
+    @Override
     public void replaceUse(Reg old, Reg newReg) {
         if (rs == old) {
             rs = newReg;
-        } else {
-            assert false;
+        }
+    }
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
+    }
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
         }
     }
 
+    @Override
+    public void applyStackOffset(int stackOffset) {
+        offset.applyStackOffset(stackOffset);
+    }
 }

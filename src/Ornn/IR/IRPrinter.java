@@ -13,10 +13,10 @@ import java.util.HashSet;
 public class IRPrinter {
     int nSymbol;
     Root root;
-    PrintStream out;
+    PrintStream file;
 
-    public IRPrinter(Root root, PrintStream out) {
-        this.out = out;
+    public IRPrinter(Root root, PrintStream file) {
+        this.file = file;
         this.root = root;
     }
 
@@ -40,51 +40,51 @@ public class IRPrinter {
         printedFunctions.add(function);
         nSymbol = 0;
         dest.clear();
-        out.print(isBuiltin ? "declare " : "define ");
-        out.print(function.returnType.toString() + " @" + function.name + "(");
+        file.print(isBuiltin ? "declare " : "define ");
+        file.print(function.returnType.toString() + " @" + function.name + "(");
         String divider = "";
         for (Register param : function.params) {
             param.name = String.format("%d", nSymbol++);
             dest.add(param);
-            out.print(divider);
+            file.print(divider);
             divider = ", ";
-            out.print(param.type.toString() + " " + param.toString());
+            file.print(param.type.toString() + " " + param.toString());
         }
         if (isBuiltin && function.name.charAt(function.name.length() - 1) == 'f') {
-            out.print(", ...");
+            file.print(", ...");
         }
-        out.print(")");
+        file.print(")");
         if (isBuiltin) {
-            out.println();
+            file.println();
         }
     }
     void printType(String name, ClassType type) {
-        out.print("%struct." + name + " = " + "type {");
+        file.print("%struct." + name + " = " + "type {");
         String divider = "";
         for (BaseType member : type.members) {
-            out.print(divider);
+            file.print(divider);
             divider = ", ";
-            out.print(member.toString());
+            file.print(member.toString());
         }
-        out.print("}\n");
+        file.print("}\n");
     }
 
     void printGlobal(Global global) {
-        out.println("@" + global.name + " = global " + ((Pointer)global.type).typePointedTo.toString()
+        file.println("@" + global.name + " = global " + ((Pointer)global.type).typePointedTo.toString()
                 + "  zeroinitializer, align " + global.type.size() / 8);
     }
 
     void printConstStr(String value, ConstStr str) {
-        out.println("@" + str.name + " = private unnamed_addr constant "
+        file.println("@" + str.name + " = private unnamed_addr constant "
                 + "[" + (value.length() + 1) + " x i8] c"
                 + "\"" + StringParser.llvmTransform(value) + "\", align 1");
     }
 
     private void printBlock(BasicBlock block) {
-        out.println(block.name + ":");
-        block.phiInst.forEach((reg, phi) -> out.println("\t" + phi.toString()));
+        file.println(block.name + ":");
+        block.phiInst.forEach((reg, phi) -> file.println("\t" + phi.toString()));
         for (Inst inst = block.front; inst != null; inst = inst.next) {
-            out.println("\t" + inst.toString() + (inst.comment == null ? "" : "\t\t\t; " + inst.comment));
+            file.println("\t" + inst.toString() + (inst.comment == null ? "" : "\t\t\t; " + inst.comment));
         }
     }
 
@@ -103,15 +103,15 @@ public class IRPrinter {
     void printFunction(String name, Function function) {
         if (!name.equals("main") && !visited.contains(function)) return;
         printHeader(function, false);
-        out.println(" {");
+        file.println(" {");
         function.blocks = FunctionBlockCollector.run(function.entryBlock);
         function.blocks.forEach(this::renameBlock);
         function.blocks.forEach(this::printBlock);
-        out.println("}");
+        file.println("}");
     }
 
     public boolean run() {
-        out.println("target triple = \"riscv32\"");
+        file.println("target triple = \"riscv32\"");
         visited = new HashSet<>();
         FunctionDFS(root.getFunction("main"));
         root.builtinFunctions.forEach((name, func) -> {

@@ -2,6 +2,7 @@ package Ornn.IR.instruction;
 
 import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
+import Ornn.IR.operand.ConstInt;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
@@ -12,8 +13,9 @@ import java.util.HashSet;
 public class GEP extends Inst {
     public Register dest;
     public BaseType type;
-    public Operand ptr, arrayOffset, elementOffset;
-    public GEP(BaseType type, Operand ptr, Operand arrayOffset, Operand elementOffset, Register dest, BasicBlock block) {
+    public Operand ptr, arrayOffset;
+    public ConstInt elementOffset;
+    public GEP(BaseType type, Operand ptr, Operand arrayOffset, ConstInt elementOffset, Register dest, BasicBlock block) {
         super(block);
         this.type = type;
         this.ptr = ptr;
@@ -60,10 +62,6 @@ public class GEP extends Inst {
         }
         if (old.equals(arrayOffset)) {
             arrayOffset = newOpr;
-            success = true;
-        }
-        if (old.equals(elementOffset)) {
-            elementOffset = newOpr;
             success = true;
         }
         if (!success) {

@@ -12,17 +12,29 @@ public class Mv extends RVInst {
         this.rd = rd;
         this.block = rvBlock;
     }
+    @Override
     public String toString() {
-        return "mv " + rd + ", " + rs + ", ";
+        return "mv " + rd + ", " + rs;
     }
+    @Override
     public HashSet<Reg> getUses() {
         return new HashSet<>(){{add(rs);}};
     }
+    @Override
     public void replaceUse(Reg old, Reg newReg) {
         if (rs == old) {
             rs = newReg;
-        } else {
-            assert false;
+        }
+    }
+
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
+    }
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
         }
     }
 }

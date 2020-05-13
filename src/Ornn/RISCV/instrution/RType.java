@@ -15,12 +15,15 @@ public class RType extends RVInst {
         this.rd = rd;
         this.block = rvBlock;
     }
+    @Override
     public String toString() {
         return op + " " + rd + ", " + rs1 + ", " + rs2;
     }
+    @Override
     public HashSet<Reg> getUses() {
         return new HashSet<>(){{add(rs1); add(rs2);}};
     }
+    @Override
     public void replaceUse(Reg old, Reg newReg) {
         boolean success = false;
         if (rs1 == old) {
@@ -32,5 +35,15 @@ public class RType extends RVInst {
             success = true;
         }
         assert success;
+    }
+    @Override
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>() {{ add(rd); }};
+    }
+    @Override
+    public void replaceRd(Reg old, Reg newReg) {
+        if (rd == old) {
+            rd = newReg;
+        }
     }
 }

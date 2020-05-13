@@ -2,7 +2,7 @@ package Ornn.util;
 
 import java.util.HashMap;
 
-public class Op2Inst {
+public class Op2Inst { // for llvm IR
 
     public static final HashMap<String, String> opTable = new HashMap<>() {
         {
