@@ -98,15 +98,13 @@ public class Main {
             RVRoot rvRoot = (new InstSelector(irBuilder.root)).run();
 
             if (debugCodegen) {
-                PrintStream asmFile = new PrintStream(pureName + ".s");
-                new RISCVPrinter(rvRoot, asmFile, true).run();
+                new RISCVPrinter(rvRoot, System.out, true).run();
                 return;
             }
 
             new RegisterAllocation(rvRoot).run();
 
-            PrintStream asmFile = new PrintStream(pureName + ".s");
-            new RISCVPrinter(rvRoot, asmFile, true).run();
+            new RISCVPrinter(rvRoot, System.out, true).run();
 
         } catch (Exception err) {
             //err.printStackTrace();
