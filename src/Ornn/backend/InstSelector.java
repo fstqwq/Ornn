@@ -109,10 +109,10 @@ public class InstSelector implements IRVisitor {
                 return zero;
             }
         }
-        if (operand instanceof Null) {
-            return zero;
+        if (!(operand instanceof Null)) {
+            System.err.println("warning : undefined");
         }
-        throw new UnreachableError();
+        return zero;
     }
 
     boolean checkImm(int x) {
