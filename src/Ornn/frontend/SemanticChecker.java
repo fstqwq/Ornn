@@ -50,7 +50,7 @@ public class SemanticChecker implements ASTVisitor {
         SemanticType type = node.getTypeAfterResolve();
         if (node.getExpr() != null) {
             if (node.getVariableSymbol().isMember()) {
-                throw new CompilationError("members should not have initialization", node.getPosition());
+                System.err.println("unsupported members initialization");
             }
             node.getExpr().accept(this);
             type.compatible(node.getExpr().getType(), node.getPosition());

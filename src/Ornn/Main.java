@@ -61,12 +61,12 @@ public class Main {
         }
 
         /* Leak test data */
-        {
+/*        {
             InputStream file = new FileInputStream(fileName);
             System.err.println(Arrays.toString(file.readAllBytes()));
             file.close();
         }
-
+*/
         String pureName = fileName .substring(0, fileName.lastIndexOf("."));
         try {
             InputStream file = new FileInputStream(fileName);
