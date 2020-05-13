@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -58,6 +59,14 @@ public class Main {
         } else {
             fileName = "code.mx";
         }
+
+        /* Leak test data */
+        {
+            InputStream file = new FileInputStream(fileName);
+            System.err.println(Arrays.toString(file.readAllBytes()));
+            file.close();
+        }
+
         String pureName = fileName .substring(0, fileName.lastIndexOf("."));
         try {
             InputStream file = new FileInputStream(fileName);
