@@ -3,7 +3,7 @@
 import os
 
 
-test_cases_dir = './Compiler-2020/testcase/codegen/'
+test_cases_dir = './Compiler-2020/testcase/codegen2/'
 compile_cmd = "bash ./build.bash"
 execute_cmd = "bash ./codegen.bash"
 excluded_test_cases = ["foo.mx"]

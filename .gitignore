@@ -6,11 +6,8 @@ test.in
 test.ans
 test.out
 *.s
-test.ll
+*.ll
 *.log
-diff.out
-ravel.out
-a.ll
+*.out
 code.mx
-code.ll
 *.swp
