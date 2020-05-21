@@ -71,7 +71,7 @@ public class RISCVPrinter {
         file.println("\t.globl\t" + gReg.name);
         file.println("\t.p2align\t2");
         file.println(gReg.name + ":");
-        file.println("L" + gReg.name + "$local:");
+        file.println(".L" + gReg.name + "$local:");
         file.println("\t.word\t0");
         file.println("\t.size\t" + gReg.name + ", 4\n");
     }

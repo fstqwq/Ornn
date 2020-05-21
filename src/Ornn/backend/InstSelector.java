@@ -79,7 +79,7 @@ public class InstSelector implements IRVisitor {
             if (!operandMap.containsKey(operand)) {
                 GReg reg = new GReg(operand.name, ((Pointer) operand.type).typePointedTo.size() / 8);
                 if (operand instanceof Global) {
-                    reg.name = "." + reg.name;
+                    reg.name = reg.name;
                     rvRoot.global.add(reg);
                 } else {
                     rvRoot.constStr.put(reg, ((ConstStr) operand).value);
@@ -144,9 +144,19 @@ public class InstSelector implements IRVisitor {
         else return operand instanceof ConstInt && checkImm(((ConstInt) operand).value);
     }
 
+    boolean checkNegOperandImm(Operand operand) {
+        if (isZero(operand)) return true;
+        else return operand instanceof ConstInt && checkImm(-((ConstInt) operand).value);
+    }
+
     Imm getImm(Operand operand) {
         if (isZero(operand)) return new Imm(0);
         else if (operand instanceof ConstInt) return new Imm(((ConstInt) operand).value);
+        else throw new UnreachableError();
+    }
+    Imm getNegImm(Operand operand) {
+        if (isZero(operand)) return new Imm(0);
+        else if (operand instanceof ConstInt) return new Imm(-((ConstInt) operand).value);
         else throw new UnreachableError();
     }
 
@@ -155,7 +165,7 @@ public class InstSelector implements IRVisitor {
         boolean abelian = false, iType = false;
         switch (op) {
             case "+": sop = SCategory.add; abelian = true; iType = true; break;
-            case "-": sop = SCategory.sub; break;
+            case "-": sop = SCategory.sub; iType = true; break;
             case "*": sop = SCategory.mul; break;
             case "/": sop = SCategory.div; break;
             case "%": sop = SCategory.rem; break;
@@ -179,7 +189,9 @@ public class InstSelector implements IRVisitor {
                 currentBlock.add(new Mv(zero, rd, currentBlock));
             }
         } else if (iType) {
-            if (checkOperandImm(src2)) {
+            if (sop.equals(SCategory.sub) && checkNegOperandImm(src2)) {
+                currentBlock.add(new IType(regTrans(src1), getNegImm(src2), SCategory.add, rd, currentBlock));
+            } else if (!sop.equals(SCategory.sub) && checkOperandImm(src2)) {
                 currentBlock.add(new IType(regTrans(src1), getImm(src2), sop, rd, currentBlock));
             } else if (abelian && checkOperandImm(src1)) {
                 currentBlock.add(new IType(regTrans(src2), getImm(src1), sop, rd, currentBlock));
