@@ -3,8 +3,8 @@ package Ornn.IR.instruction;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
-import Ornn.util.Op2Inst;
-import Ornn.util.UnreachableError;
+import Ornn.IR.util.IRReplicator;
+import Ornn.IR.util.Op2Inst;
 
 import java.util.HashSet;
 
@@ -17,6 +17,7 @@ public class Binary extends Inst { // return int
         this.src1 = src1;
         this.src2 = src2;
         this.dest = dest;
+
         this.op = op;
         src1.uses.add(this);
         src2.uses.add(this);
@@ -29,6 +30,11 @@ public class Binary extends Inst { // return int
                 + Op2Inst.translate(op) + " "
                 + src1.type.toString() + " " + src1.toString() + ", "
                 + src2.toString();
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new Binary(replicator.get(src1), replicator.get(src2), (Register) replicator.get(this.dest), op, dest));
     }
 
     @Override

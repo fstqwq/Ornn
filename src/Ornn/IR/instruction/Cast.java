@@ -7,6 +7,7 @@ import Ornn.IR.operand.Register;
 import Ornn.IR.type.ArrayType;
 import Ornn.IR.type.IntType;
 import Ornn.IR.type.Pointer;
+import Ornn.IR.util.IRReplicator;
 import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
@@ -14,12 +15,17 @@ import java.util.HashSet;
 public class Cast extends Inst {
     public Register dest;
     public Operand src;
-    public Cast (Register src, Register dest, BasicBlock block) {
+    public Cast (Operand src, Register dest, BasicBlock block) {
         super(block);
         this.src = src;
         this.dest = dest;
         dest.def = this;
         src.uses.add(this);
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new Cast(replicator.get(src), replicator.get(this.dest), dest));
     }
 
     @Override

@@ -3,7 +3,9 @@ package Ornn.IR.instruction;
 import Ornn.IR.*;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.IRReplicator;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public abstract class Inst {
@@ -22,6 +24,7 @@ public abstract class Inst {
     public abstract HashSet<Operand> getUses();
     public abstract boolean isTerminal();
     public abstract Register getDest();
+    public abstract void copySelfTo(BasicBlock dest, IRReplicator replicator);
     public abstract void replaceUse(Register old, Operand newOpr);
     public abstract void accept(IRVisitor visitor);
 

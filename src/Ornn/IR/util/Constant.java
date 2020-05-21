@@ -1,4 +1,4 @@
-package Ornn.util;
+package Ornn.IR.util;
 
 import Ornn.IR.operand.ConstBool;
 import Ornn.IR.operand.ConstInt;

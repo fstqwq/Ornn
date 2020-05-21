@@ -9,6 +9,8 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.IRReplicator;
+import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 
@@ -30,6 +32,11 @@ public class Move extends Inst {
     public String toString() {
         return dest.toString() + " = mov "
                 + src.type.toString() + " " + src.toString();
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        throw new UnreachableError(); // should only appear after SSA destruction
     }
 
     @Override

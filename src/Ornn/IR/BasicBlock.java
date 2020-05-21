@@ -101,6 +101,12 @@ public class BasicBlock {
         successors.clear();
     }
 
+    public void redirectPrecursor(BasicBlock from, BasicBlock to) {
+        precursors.remove(from);
+        precursors.add(to);
+        phiRedirect(from, to);
+    }
+
     public String toString() {
         return "%" + name;
     }
@@ -116,6 +122,62 @@ public class BasicBlock {
         successors.remove(from);
         to.precursors.remove(from);
         linkSuccessor(to);
+    }
+
+    public void phiRedirect(BasicBlock from, BasicBlock to) {
+        phiInst.forEach((register, phi) -> {
+            for (int i = 0; i < phi.blocks.size(); i++) {
+                if (phi.blocks.get(i).equals(from)) {
+                    phi.blocks.set(i, to);
+                }
+            }
+        });
+    }
+
+    public void spiltAndCopyTo(BasicBlock dest, Inst inst) {
+        assert dest.front == null && dest.back == null;
+        for (BasicBlock successor : successors) {
+            successor.phiRedirect(this, dest);
+            successor.precursors.remove(this);
+            successor.precursors.add(dest);
+        }
+        dest.successors = successors;
+        successors = new ArrayList<>();
+
+        dest.front = inst.next;
+        dest.front.prev = null;
+        dest.back = back;
+        isTerminated = false;
+        dest.isTerminated = true;
+        back = inst.prev;
+        if (back == null) {
+            front = null;
+        } else {
+            back.next = null;
+        }
+
+        for (Inst i = dest.front; i != null; i = i.next) {
+            i.basicBlock = dest;
+        }
+    }
+
+    public void merge(BasicBlock block) {
+        successors = block.successors;
+        block.successors.forEach(x -> x.redirectPrecursor(block, this));
+        for (Inst inst = block.front; inst != null; inst = inst.next) {
+            inst.basicBlock = this;
+        }
+        if (front == null) {
+            front = block.front;
+        }
+        else {
+            back.next = block.front;
+        }
+        if (block.front != null) {
+            block.front.prev = back;
+        }
+        back = block.back;
+        isTerminated = block.isTerminated;
     }
 
 }

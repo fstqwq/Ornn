@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public class BoolTypeNode extends PrimitiveTypeNode {
     public BoolTypeNode(Position position) {

@@ -1,6 +1,6 @@
 package Ornn.semantic;
 
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public interface SemanticType {
     String getTypeName();

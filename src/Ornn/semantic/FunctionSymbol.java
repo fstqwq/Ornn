@@ -3,7 +3,7 @@ package Ornn.semantic;
 import Ornn.AST.FuncDeclNode;
 import Ornn.IR.Function;
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

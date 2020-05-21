@@ -1,4 +1,6 @@
-package Ornn.IR;
+package Ornn.IR.util;
+
+import Ornn.IR.BasicBlock;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;

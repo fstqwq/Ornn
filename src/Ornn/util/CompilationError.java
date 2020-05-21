@@ -1,5 +1,7 @@
 package Ornn.util;
 
+import Ornn.AST.util.Position;
+
 public class CompilationError extends RuntimeException {
     private Position pos;
 

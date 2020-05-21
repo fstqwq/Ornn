@@ -3,12 +3,13 @@ package Ornn;
 import Ornn.AST.ProgramNode;
 import Ornn.RISCV.RISCVPrinter;
 import Ornn.RISCV.RVRoot;
-import Ornn.backend.IRBuilder;
+import Ornn.frontend.IRBuilder;
 import Ornn.IR.IRPrinter;
 import Ornn.backend.InstSelector;
 import Ornn.backend.RegisterAllocation;
 import Ornn.frontend.*;
 import Ornn.optim.Mem2Reg;
+import Ornn.optim.Optimization;
 import Ornn.optim.SSADestruction;
 import Ornn.parser.ErrorListener;
 import Ornn.parser.MxstarLexer;
@@ -19,23 +20,26 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         String fileName = "code.mx";
-        boolean runSemanticOnly = false, emitLLVM = false, debugCodegen = false;
+        String outputFile = "output.s";
+        boolean runSemanticOnly = false, emitLLVM = false, debugCodegen = false, debugPhi = false, outputToStdout = false;
         int optLevel = 2;
         if (args.length > 0) {
+            boolean readFileName = false;
             for (String arg : args) {
                 if (arg.charAt(0) == '-') {
+                    if (readFileName) {
+                        throw new RuntimeException("expect file name, got " + arg);
+                    }
                     switch (arg) {
-                        case "-semantic":
-                            runSemanticOnly = true;
+                        case "-o":
+                            readFileName = true;
                             break;
-                        case "-emit-llvm":
-                            emitLLVM = true;
+                        case "-ostdout":
+                            outputToStdout = true;
                             break;
                         case "-O0":
                             optLevel = 0;
@@ -46,6 +50,15 @@ public class Main {
                         case "-O2":
                             optLevel = 2;
                             break;
+                        case "-semantic":
+                            runSemanticOnly = true;
+                            break;
+                        case "-emit-llvm":
+                            emitLLVM = true;
+                            break;
+                        case "-debug-phi":
+                            debugPhi = true;
+                            break;
                         case "-debug-codegen":
                             debugCodegen = true;
                             break;
@@ -53,13 +66,16 @@ public class Main {
                             throw new RuntimeException("unknown option " + arg);
                     }
                 } else {
-                    fileName = arg;
+                    if (!readFileName) {
+                        fileName = arg;
+                    } else {
+                        outputFile = arg;
+                        readFileName = false;
+                    }
                 }
             }
-        } else {
-            fileName = "code.mx";
         }
-
+        //System.err.println("read from " + fileName + ", output to " + outputFile);
         /* Leak test data */
 /*        {
             InputStream file = new FileInputStream(fileName);
@@ -86,6 +102,7 @@ public class Main {
 
             if (optLevel > 1) {
                 new Mem2Reg(irBuilder.root).run();
+                new Optimization(irBuilder.root).run();
             }
             if (emitLLVM) {
                 PrintStream IRFile = new PrintStream(pureName + ".ll");
@@ -93,19 +110,24 @@ public class Main {
             }
 
             new SSADestruction(irBuilder.root).run();
-
+            if (debugPhi) {
+                PrintStream IRFile = new PrintStream(pureName + ".ll");
+                new IRPrinter(irBuilder.root, IRFile).run();
+            }
 
             RVRoot rvRoot = (new InstSelector(irBuilder.root)).run();
-
             if (debugCodegen) {
-                new RISCVPrinter(rvRoot, new PrintStream("output.s"), true).run();
+                new RISCVPrinter(rvRoot, new PrintStream(outputFile), true).run();
                 return;
             }
 
             new RegisterAllocation(rvRoot).run();
-
-            new RISCVPrinter(rvRoot, new PrintStream("output.s"), true).run();
-
+            if (outputToStdout) {
+                new RISCVPrinter(rvRoot, new PrintStream(System.out), true).run();
+            }
+            else {
+                new RISCVPrinter(rvRoot, new PrintStream(outputFile), true).run();
+            }
         } catch (Exception err) {
             //err.printStackTrace();
             System.err.println(err.getMessage());

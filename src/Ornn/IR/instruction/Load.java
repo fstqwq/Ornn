@@ -3,6 +3,7 @@ package Ornn.IR.instruction;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
+import Ornn.IR.util.IRReplicator;
 import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
@@ -24,6 +25,11 @@ public class Load extends Inst {
         + dest.type.toString() + ", "
         + addr.type.toString() + " " + addr.toString()
         + ", align " + dest.type.size() / 8;
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new Load(replicator.get(this.dest), replicator.get(addr), dest));
     }
 
     @Override

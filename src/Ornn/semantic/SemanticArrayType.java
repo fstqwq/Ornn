@@ -1,7 +1,7 @@
 package Ornn.semantic;
 
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 
 public class SemanticArrayType implements SemanticType {

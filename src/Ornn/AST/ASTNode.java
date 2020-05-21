@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public abstract class ASTNode {
     private Position position;

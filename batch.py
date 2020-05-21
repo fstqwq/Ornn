@@ -3,9 +3,9 @@
 import os
 
 
-test_cases_dir = './Compiler-2020/testcase/codegen2/'
+test_cases_dir = './Compiler-2020/testcase/codegen/'
 compile_cmd = "bash ./build.bash"
-execute_cmd = "bash ./codegen.bash"
+execute_cmd = "bash ./codegen_stdout.bash"
 excluded_test_cases = ["foo.mx"]
 ravel_path = "ravel"
 builtin_path = "./builtin/builtin.s"

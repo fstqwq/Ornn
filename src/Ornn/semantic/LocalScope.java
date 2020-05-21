@@ -1,10 +1,7 @@
 package Ornn.semantic;
 
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import Ornn.AST.util.Position;
 
 public class LocalScope extends NameScope {
     public LocalScope(Scope enclosingScope) {

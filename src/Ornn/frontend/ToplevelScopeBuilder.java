@@ -3,7 +3,7 @@ package Ornn.frontend;
 import Ornn.AST.*;
 import Ornn.semantic.*;
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;

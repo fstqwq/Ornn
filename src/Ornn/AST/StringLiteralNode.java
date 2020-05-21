@@ -1,7 +1,7 @@
 package Ornn.AST;
 
 import Ornn.IR.operand.Operand;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 import Ornn.util.UnreachableError;
 
 public class StringLiteralNode extends ExprNode implements Literal {

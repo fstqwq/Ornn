@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public class IntTypeNode extends PrimitiveTypeNode {
     public IntTypeNode(Position position) {

@@ -4,6 +4,7 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
 import Ornn.IR.type.Pointer;
+import Ornn.IR.util.IRReplicator;
 
 import java.util.HashSet;
 
@@ -26,6 +27,11 @@ public class Store extends Inst {
                 + value.type.toString() + " " + value.toString() + ", "
                 + addr.type.toString() + " " + addr.toString()
                 + ", align " + value.type.size() / 8;
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new Store(replicator.get(addr), replicator.get(value), dest));
     }
 
     @Override

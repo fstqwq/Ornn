@@ -4,6 +4,7 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.IRReplicator;
 import Ornn.util.UnreachableError;
 
 import java.util.ArrayList;
@@ -31,6 +32,17 @@ public class Phi extends Inst {
             ret.append(" [ ").append(values.get(i).toString()).append(", ").append(blocks.get(i).toString()).append(" ]");
         }
         return ret.toString();
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        ArrayList<BasicBlock> newBlocks = new ArrayList<>();
+        ArrayList<Operand> newValues = new ArrayList<>();
+        for (int i = 0; i < blocks.size(); i++) {
+            newBlocks.add(replicator.get(blocks.get(i)));
+            newValues.add(replicator.get(values.get(i)));
+        }
+        dest.pushBack(new Phi(replicator.get(this.dest), newBlocks, newValues, dest));
     }
 
     @Override

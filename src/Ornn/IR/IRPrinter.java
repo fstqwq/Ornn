@@ -5,6 +5,7 @@ import Ornn.IR.operand.*;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.type.ClassType;
 import Ornn.IR.type.Pointer;
+import Ornn.IR.util.FunctionBlockCollector;
 import Ornn.util.StringParser;
 
 import java.io.PrintStream;

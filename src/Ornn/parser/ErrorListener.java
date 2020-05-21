@@ -1,7 +1,7 @@
 package Ornn.parser;
 
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;

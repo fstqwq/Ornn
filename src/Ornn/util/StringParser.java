@@ -1,5 +1,7 @@
 package Ornn.util;
 
+import Ornn.AST.util.Position;
+
 public class StringParser {
     public static String parse(String in, Position position) {
         StringBuilder ret = new StringBuilder();

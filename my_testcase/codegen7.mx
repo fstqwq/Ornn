@@ -1,0 +1,27 @@
+/*
+Test Package: Codegen
+Author: 18' Zonghan YANG
+Time: 2020-05-12
+Input:
+=== input ===
+=== end ===
+Output:
+=== output ===
+Hello World!
+=== end ===
+ExitCode: 0
+InstLimit: -1
+Origin Package: class without members
+*/
+
+class namespace {
+	void sort() {
+		print("Hello World!");
+	}
+};
+
+int main() {
+	namespace std;
+	std = new namespace();
+	std.sort();
+}

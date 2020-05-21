@@ -1,10 +1,12 @@
-package Ornn.backend;
+package Ornn.frontend;
 
 import Ornn.AST.*;
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.*;
 import Ornn.IR.type.*;
+import Ornn.IR.util.FunctionBlockCollector;
+import Ornn.IR.util.Op2Inst;
 import Ornn.semantic.*;
 import Ornn.util.*;
 
@@ -13,7 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import static Ornn.util.Constant.*;
+import static Ornn.IR.util.Constant.*;
 
 /*
 Naming of registers : for debug, will rename in the future

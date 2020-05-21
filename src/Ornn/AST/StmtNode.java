@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public abstract class StmtNode extends ASTNode {
     public StmtNode(Position position) {

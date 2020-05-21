@@ -1,4 +1,7 @@
-package Ornn.IR;
+package Ornn.IR.util;
+
+import Ornn.IR.BasicBlock;
+import Ornn.IR.Function;
 
 import java.util.ArrayList;
 import java.util.HashMap;

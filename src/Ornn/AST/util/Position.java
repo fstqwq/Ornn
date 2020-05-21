@@ -1,4 +1,4 @@
-package Ornn.util;
+package Ornn.AST.util;
 
 import org.antlr.v4.runtime.Token;
 

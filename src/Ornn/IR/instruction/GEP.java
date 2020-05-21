@@ -6,6 +6,7 @@ import Ornn.IR.operand.ConstInt;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
+import Ornn.IR.util.IRReplicator;
 import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
@@ -26,6 +27,11 @@ public class GEP extends Inst {
         if (arrayOffset != null) arrayOffset.uses.add(this);
         if (elementOffset != null) elementOffset.uses.add(this);
         dest.def = this;
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new GEP(type, replicator.get(ptr), replicator.get(arrayOffset), elementOffset, replicator.get(this.dest), dest));
     }
 
     @Override

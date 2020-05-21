@@ -1,8 +1,7 @@
 package Ornn.semantic;
 
 
-import Ornn.AST.TypeNode;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public interface Scope {
     Scope getEnclosingScope();

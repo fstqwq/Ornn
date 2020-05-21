@@ -4,7 +4,7 @@ import Ornn.AST.*;
 import Ornn.parser.MxstarBaseVisitor;
 import Ornn.parser.MxstarParser;
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 import Ornn.util.StringParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 

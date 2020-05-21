@@ -1,6 +1,6 @@
 package Ornn.IR.type;
 
-import static Ornn.util.Constant.*;
+import static Ornn.IR.util.Constant.*;
 
 public class Pointer extends BaseType {
     public BaseType typePointedTo;

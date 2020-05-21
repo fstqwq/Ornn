@@ -2,7 +2,7 @@ package Ornn.IR.operand;
 
 import Ornn.IR.type.*;
 
-import static Ornn.util.Constant.VOID;
+import static Ornn.IR.util.Constant.VOID;
 
 
 public class Null extends Operand {

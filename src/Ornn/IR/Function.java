@@ -16,7 +16,7 @@ public class Function {
     public BasicBlock entryBlock;
     public BasicBlock exitBlock;
 
-    public HashSet<Function> callee = new LinkedHashSet<>();
+    public HashSet<Function> callee = new LinkedHashSet<>(), caller = new LinkedHashSet<>();
     public HashSet<Register> allocVar = new LinkedHashSet<>();
     public HashSet<BasicBlock> blocks = new LinkedHashSet<>();
     public boolean hasSideEffect;

@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public class VarDeclStmtNode extends StmtNode {
     private VarDeclListNode varDeclList;

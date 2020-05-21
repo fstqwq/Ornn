@@ -9,7 +9,7 @@ public class Global extends Operand {
 
     @Override
     public Operand getCopy() {
-        throw new RuntimeException("unreachable");
+        return this;
     }
 
     @Override

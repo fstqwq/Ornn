@@ -1,7 +1,7 @@
 package Ornn.semantic;
 
 import Ornn.util.CompilationError;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 public class PrimitiveTypeSymbol extends Symbol implements SemanticType {
     public PrimitiveTypeSymbol(String name) {super(name, null, null);}

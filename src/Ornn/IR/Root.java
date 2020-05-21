@@ -10,7 +10,7 @@ import Ornn.frontend.ToplevelScopeBuilder;
 import Ornn.semantic.*;
 import Ornn.util.UnreachableError;
 
-import static Ornn.util.Constant.*;
+import static Ornn.IR.util.Constant.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class Root {
     public HashMap<String, ClassType> types = new LinkedHashMap<>();
     public void addFunction(Function func) {
         if (builtinFunctions.containsKey(func.name) || functions.containsKey(func.name)) {
-            int i = 1;
+            int i = 1; // rename for collision with libc functions
             while (builtinFunctions.containsKey(func.name + i) || functions.containsKey(func.name + i)) {
                 i++;
             }
@@ -213,7 +213,7 @@ public class Root {
         builtinOrd.params.add(new Register("i", I32));
         ((FunctionSymbol) string.resolveSymbol("ord", null)).function = builtinOrd;
     }
-    /* Replace println with puts, print with printf */
+    /* Replace println with puts */
     public static final Function builtinMalloc = new Function("malloc", true);
     public static final Function builtinPrint = new Function("print", true);
     public static final Function builtinPrintln = new Function("puts", true);

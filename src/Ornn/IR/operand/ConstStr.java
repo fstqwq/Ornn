@@ -2,7 +2,7 @@ package Ornn.IR.operand;
 
 import Ornn.IR.type.*;
 
-import static Ornn.util.Constant.I8;
+import static Ornn.IR.util.Constant.I8;
 
 public class ConstStr extends Operand {
     public String value;

@@ -6,6 +6,7 @@ import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.type.Pointer;
+import Ornn.IR.util.IRReplicator;
 
 import java.util.HashSet;
 
@@ -22,6 +23,11 @@ public class Malloc extends Inst {
     public String toString() {
         return dest.toString() + " = call i8* @malloc(" +
                 size.type.toString() + " " + size.toString() + ")";
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new Malloc(replicator.get(this.dest), replicator.get(size), dest));
     }
 
     @Override

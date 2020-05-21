@@ -5,8 +5,8 @@ import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Null;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
-import Ornn.util.Op2Inst;
-import Ornn.util.UnreachableError;
+import Ornn.IR.util.IRReplicator;
+import Ornn.IR.util.Op2Inst;
 
 import java.util.HashSet;
 
@@ -34,6 +34,12 @@ public class Cmp extends Inst { // return boolean
                 + src1.type.toString() + " " + src1.toString() + ", "
                 + src2.toString();
     }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        dest.pushBack(new Cmp(replicator.get(src1), replicator.get(src2), (Register) replicator.get(this.dest), op, dest));
+    }
+
     @Override
     public HashSet<Operand> getUses() {
         return new HashSet<>() {{ add(src1); add(src2);}};

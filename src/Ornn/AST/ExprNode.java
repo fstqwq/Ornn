@@ -3,7 +3,7 @@ package Ornn.AST;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.semantic.*;
-import Ornn.util.Position;
+import Ornn.AST.util.Position;
 
 import static Ornn.semantic.TypeCategory.*;
 

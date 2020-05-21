@@ -5,6 +5,7 @@ import Ornn.IR.Function;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.IRReplicator;
 import Ornn.util.UnreachableError;
 
 import java.util.ArrayList;
@@ -24,6 +25,13 @@ public class Call extends Inst {
             this.dest = dest;
             dest.def = this;
         }
+    }
+
+    @Override
+    public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
+        ArrayList<Operand> newParams = new ArrayList<>();
+        params.forEach(x -> newParams.add(replicator.get(x)));
+        dest.pushBack(new Call(callee,  newParams, this.dest == null ? null : replicator.get(this.dest), dest));
     }
 
     @Override
