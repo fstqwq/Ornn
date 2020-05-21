@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class Inline implements Pass {
-    static final int forcedInstLimit = 512; // prevent too large output size
-    static final int instLimit = 16384;
+    static final int forcedInstLimit = 1024;
+    static final int instLimit = 4096;
     Root root;
     boolean updated = false, forced = false;
     public Inline(Root root) {
@@ -75,7 +75,7 @@ public class Inline implements Pass {
         currentBlock = call.basicBlock;
         IRReplicator replicator = new IRReplicator();
         Function callee = call.callee;
-        if (numberOfInst.get(caller) + numberOfInst.get(callee) >= instLimit || (forced && numberOfInst.get(callee) < forcedInstLimit)) {
+        if (numberOfInst.get(caller) + numberOfInst.get(callee) >= instLimit) {
             return false;
         }
         for (int i = 0; i < call.params.size(); i++) {
