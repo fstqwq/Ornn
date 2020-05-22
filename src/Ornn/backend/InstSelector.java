@@ -350,6 +350,26 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Call inst) {
+        if (inst.tailCallable) {
+            // do tail call
+            ArrayList<VReg> tmpParams = new ArrayList<>();
+            for (int i = 0; i < inst.params.size(); i++) {
+                tmpParams.add(new VReg(vRegCount++, 4));
+            }
+            for (int i = 0; i < inst.params.size(); i++) {
+                Reg reg = regTrans(inst.params.get(i));
+                if (reg instanceof GReg) {
+                    currentBlock.add(new La((GReg) reg, tmpParams.get(i), currentBlock));
+                } else {
+                    currentBlock.add(new Mv(reg, tmpParams.get(i), currentBlock));
+                }
+            }
+            for (int i = 0; i < inst.params.size(); i++) {
+                currentBlock.add(new Mv(tmpParams.get(i), currentFunction.params.get(i), currentBlock));
+            }
+            currentBlock.add(new Jmp(currentFunction.tailCallEntryBlock, currentBlock));
+            return;
+        }
         for (int i = 0; i < min(paramRegNum, inst.params.size()); i++) {
             Reg reg = regTrans(inst.params.get(i));
             if (reg instanceof GReg) {
@@ -437,6 +457,9 @@ public class InstSelector implements IRVisitor {
         }
         for (Inst inst = irBlock.front; inst != null; inst = inst.next) {
             inst.accept(this);
+            if (currentBlock.back instanceof Jmp || currentBlock.back instanceof Br || currentBlock.back instanceof Ret) {
+                break;
+            }
         }
     }
 
@@ -446,6 +469,11 @@ public class InstSelector implements IRVisitor {
         vRegCount = 0;
         tmpAlias.clear();
         SImm stackFrame = new SImm(0, true);
+
+        function.tailCallEntryBlock = function.entryBlock;
+
+        function.entryBlock = new RVBlock("." + irFunc.name + "_entry");
+
         function.entryBlock.add(new IType(sp, stackFrame, SCategory.add, sp, function.entryBlock));
 
         ArrayList<VReg> calleeVRegs = new ArrayList<>();
@@ -469,9 +497,16 @@ public class InstSelector implements IRVisitor {
                     function.entryBlock));
             paramInStackOffset += 4;
         }
+
+        function.entryBlock.add(new Jmp(function.tailCallEntryBlock, function.entryBlock));
+        function.entryBlock.successors.add(function.tailCallEntryBlock);
+        function.tailCallEntryBlock.precursors.add(function.entryBlock);
+        function.blocks.add(function.entryBlock);
+
         for (BasicBlock block : irFunc.blocks) {
             runForBlock(block);
         }
+
         for (int i = 0; i < calleeVRegs.size(); i++) {
             function.exitBlock.add(new Mv(calleeVRegs.get(i), rvRoot.calleeSavedRegs.get(i), function.exitBlock));
         }

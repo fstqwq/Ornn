@@ -413,6 +413,9 @@ public class IRBuilder implements ASTVisitor {
             ret = new Return(currentBlock, null);
         } else {
             node.getExpr().accept(this);
+            if (currentBlock.back instanceof Call && ((Call) currentBlock.back).callee.equals(currentFunction)) {
+                ((Call) currentBlock.back).tailCallable = true;
+            }
             Operand value = matchType(node.getExpr().result, currentFunction.returnType);
             ret = new Return(currentBlock, value);
         }

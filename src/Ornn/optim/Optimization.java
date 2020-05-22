@@ -14,8 +14,8 @@ public class Optimization {
         passes.add(inline);
     }
     public void run() {
-        boolean updated;
         do {
+            boolean updated;
             do {
                 updated = false;
                 for (Pass pass : passes) {

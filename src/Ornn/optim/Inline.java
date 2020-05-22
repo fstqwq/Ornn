@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class Inline implements Pass {
-    static final int forcedInstLimit = 2048;
-    static final int instLimit = 2500;
+    static final int forcedInstLimit = 128;
+    static final int instLimit = 2048;
     Root root;
     boolean updated = false, forced = false;
     public Inline(Root root) {

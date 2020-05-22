@@ -11,6 +11,7 @@ public class RVFunction {
     public HashSet<RVBlock> blocks = new LinkedHashSet<>();
     public ArrayList<Reg> params = new ArrayList<>();
     public RVBlock entryBlock;
+    public RVBlock tailCallEntryBlock;
     public RVBlock exitBlock;
     public RVFunction(String name) {
         this.name = name;

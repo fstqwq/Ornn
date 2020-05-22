@@ -15,6 +15,7 @@ public class Call extends Inst {
     public Register dest;
     public Function callee;
     public ArrayList<Operand> params;
+    public boolean tailCallable = false;
 
     public Call(Function callee, ArrayList<Operand> params, Register dest, BasicBlock block) {
         super(block);
@@ -37,10 +38,11 @@ public class Call extends Inst {
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
+        String callName = tailCallable ? "tail call" : "call";
         if (dest != null) {
-            ret.append(dest.toString()).append(" = call ").append(dest.type.toString()).append(" ");
+            ret.append(dest.toString()).append(" = ").append(callName).append("  ").append(dest.type.toString()).append(" ");
         } else {
-            ret.append("call void ");
+            ret.append(callName).append(" void ");
         }
         switch (callee.name) {
             case "printf": case "scanf": case "ssacanf":

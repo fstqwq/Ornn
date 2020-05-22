@@ -79,7 +79,7 @@ public class SSADestruction implements Pass {
                     if (copy.src != copy.dest) {
                         Register tmp = new Register(copy.src.name + "_copy", copy.src.type);
                         Move cp = new Move(copy.dest, copy.src, block);
-                        cp.completeConstruction();;
+                        cp.completeConstruction();
                         block.back.insertBefore(cp);
                         pCopy.useCnt.remove(copy.src);
                         for (Move move : pCopy.copies) {
