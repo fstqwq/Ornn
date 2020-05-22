@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class Inline implements Pass {
-    static final int forcedInstLimit = 128;
+    static final int forcedInstLimit = 192;
     static final int instLimit = 2048;
     Root root;
     boolean updated = false, forced = false;
@@ -136,7 +136,8 @@ public class Inline implements Pass {
             for (Inst inst = block.front; inst != null; inst = inst.next) {
                 if (inst instanceof Call) {
                     Call call = (Call) inst;
-                    if ((forced                             && numberOfInst.get(call.callee) < forcedInstLimit)
+                    if (!call.tailCallable
+                    &&  (forced                             && numberOfInst.get(call.callee) < forcedInstLimit)
                     ||  (canInline.contains(call.callee)    && numberOfInst.get(call.callee) < instLimit)) {
                         inlineCandidate.put(call, function);
                     }

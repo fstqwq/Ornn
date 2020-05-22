@@ -33,6 +33,9 @@ public class Call extends Inst {
         ArrayList<Operand> newParams = new ArrayList<>();
         params.forEach(x -> newParams.add(replicator.get(x)));
         dest.pushBack(new Call(callee,  newParams, this.dest == null ? null : replicator.get(this.dest), dest));
+        if (tailCallable && dest.function.equals(callee)) {
+            ((Call) dest.back).tailCallable = true;
+        }
     }
 
     @Override

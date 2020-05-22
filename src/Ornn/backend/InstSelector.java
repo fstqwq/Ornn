@@ -352,6 +352,7 @@ public class InstSelector implements IRVisitor {
     public void visit(Call inst) {
         if (inst.tailCallable) {
             // do tail call
+            System.err.println("tail call : " + inst.callee.name);
             ArrayList<VReg> tmpParams = new ArrayList<>();
             for (int i = 0; i < inst.params.size(); i++) {
                 tmpParams.add(new VReg(vRegCount++, 4));

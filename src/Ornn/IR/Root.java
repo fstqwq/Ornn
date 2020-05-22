@@ -90,7 +90,7 @@ public class Root {
         } else if (semanticType instanceof NullType) {
             return VOID;
         } else if (semanticType == null) {
-            System.err.println("warning: resolving null");
+//            System.err.println("warning: resolving null");
             return VOID;
         }
         throw new UnreachableError();

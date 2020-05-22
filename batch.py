@@ -1,13 +1,14 @@
 #!python3
 
-import os
+import os, time
 
 
-test_cases_dir = './Compiler-2020/testcase/codegen/'
+# test_cases_dir = './Compiler-2020/testcase/codegen/'
+test_cases_dir = './bin/optim/optim/'
 compile_cmd = "bash ./build.bash"
 execute_cmd = "bash ./codegen_stdout.bash"
 excluded_test_cases = ["foo.mx"]
-ravel_path = "ravel"
+ravel_path = "ravel --enable-cache"
 builtin_path = "./builtin/builtin.s"
 
 # When use_llvm is true, the output should be a .ll file, and we will use llc to
@@ -49,6 +50,10 @@ def parse_test_case(test_case_path):
     return src_text, input_text, output_text
 
 
+import pandas as pd
+import numpy as np
+df = pd.read_csv('./optim.csv', index_col=['name'], thousands=',')
+
 def main():
     if os.system(compile_cmd):
         print(color_red + "Fail when building your compiler...")
@@ -58,11 +63,14 @@ def main():
     total = 0
     passed = 0
     continue_fail = 0
+    score = []
+    max_len = max(len(i) for i in test_cases)
     for t in test_cases:
         if continue_fail > 2:
             exit(1)
         total += 1
         src_text, input_text, output_text = parse_test_case(test_cases_dir + t)
+        case_name = t[:-3]
         with open('test.mx', 'w') as f:
             f.write(src_text)
         with open('test.in', 'w') as f:
@@ -70,11 +78,15 @@ def main():
         with open('test.ans', 'w') as f:
             f.write(output_text)
 
-        print(t + ':', end=' ')
+        print(t + ':', end='')
+        for i in range(len(t), max_len):
+            print(end = ' ')
+        start = time.time()
         if os.system('%s < ./test.mx > test.s' % execute_cmd):
             print(color_red + "Compilation failed" + color_none)
             continue_fail += 1
             continue
+        print("(T=%.2fs)" % (time.time() - start), end=" ")
         if use_llvm:
             os.system('mv ./test.s ./test.ll')
             os.system(llc_cmd + ' --march=riscv32 -mattr=+m -o test.s test.ll')
@@ -90,14 +102,24 @@ def main():
         continue_fail = 0
 
         ravel_out = open("ravel.out")
-        time_field = ""
+        time_field = None
         while True:
             s = ravel_out.readline()
             if s.count("time") > 0:
-                time_field = s[5:-1]
+                time_field = int(s[5:-1])
                 break
-        print(color_green + "Accepted" + color_none + time_field)
+        
+        x1 = df.loc['O1'][case_name] * 1.5
+        x2 = df.loc['O1'][case_name]
+        y1 = 1.0
+        y2 = 4.0
+        k = (y2 - y1) / (x2 - x1)
+        sc = np.clip(k * (time_field - x1) + y1, 0, 5)
+        score.append(sc)
+        print(color_green + "Accepted" + color_none + (" %10d [%.2f]" % (time_field, sc)))
+        
     print("total {}, passed {}, ratio {}".format(total, passed, passed / total))
-
+    score = np.sort(np.array(score))
+    print(np.mean(score[1:-1]) * 10)
 if __name__ == '__main__':
     main()
