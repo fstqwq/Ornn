@@ -7,6 +7,7 @@ import Ornn.semantic.ToplevelScope;
 import Ornn.semantic.TypeCategory;
 import Ornn.util.CompilationError;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -155,7 +156,6 @@ public class PrintOptimization implements ASTVisitor {
                                 + (sec.getFunctionSymbol().equals(print) ? "" : "\n")
                                 + las.getParameterList().get(0).equivalentConstant.getStr();
                         FunctionSymbol symbol = las.getFunctionSymbol();
-                        ((StringLiteralNode)(las.getParameterList().get(0)).equivalentConstant).setValue(newStr);
                         list.remove(last);
                         list.remove(last - 1);
                         list.add(new ExprStmtNode(newFuncCall(symbol, new StringLiteralNode(newStr, node.getPosition())), node.getPosition()));
