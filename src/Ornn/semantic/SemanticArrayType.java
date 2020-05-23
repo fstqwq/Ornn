@@ -1,12 +1,19 @@
 package Ornn.semantic;
 
+import Ornn.IR.operand.Global;
 import Ornn.util.CompilationError;
 import Ornn.AST.util.Position;
+
+import java.util.ArrayList;
 
 
 public class SemanticArrayType implements SemanticType {
     private SemanticType baseType;
     private int dimension;
+
+    public boolean isStatic;
+    public ArrayList<Integer> dimensionOffsets;
+
     public SemanticArrayType(SemanticType baseType, int dimension) {
         this.baseType = baseType;
         this.dimension = dimension;

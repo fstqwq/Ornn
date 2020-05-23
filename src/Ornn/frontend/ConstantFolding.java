@@ -4,6 +4,7 @@ import Ornn.AST.*;
 import Ornn.semantic.*;
 import Ornn.util.CompilationError;
 
+import java.awt.desktop.SystemSleepEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,20 +45,23 @@ public class ConstantFolding implements ASTVisitor {
             declNode.accept(this);
         }
         collectingConstDecl = false;
-        for (Iterator<DeclNode> iter = node.getDeclNodeList().iterator(); iter.hasNext(); ) {
-            DeclNode declNode = iter.next();
+        for (DeclNode declNode : node.getDeclNodeList()) {
             declNode.accept(this);
-            if (declNode instanceof VarDeclNode
-                    && declMap.containsKey(((VarDeclNode) declNode).getVariableSymbol())
-                    && !modified.contains(((VarDeclNode) declNode).getVariableSymbol())) {
-                iter.remove();
-            }
         }
+        declMap.forEach(((symbol, literal) -> {
+            if (!modified.contains(symbol)) {
+                System.err.println("Constant : " + symbol.getSymbolName());
+            }
+        }));
     }
+
+    FunctionSymbol currentFunction;
 
     @Override
     public void visit(FuncDeclNode node) {
+        currentFunction = node.getFunctionSymbol();
         node.getBlock().accept(this);
+        currentFunction = null;
     }
 
     @Override
@@ -94,6 +98,8 @@ public class ConstantFolding implements ASTVisitor {
                     declMap.put(node.getVariableSymbol(), new NullLiteralNode(node.getPosition()));
                 }
             }
+        } else if (!node.getVariableSymbol().isGlobal() && node.getExpr() != null) {
+            node.getExpr().accept(this);
         }
     }
 
@@ -172,7 +178,7 @@ public class ConstantFolding implements ASTVisitor {
         ExprNode lhs = node.getLhs();
         ExprNode rhs = node.getRhs();
         if (collectingConstDecl) {
-            if (node.getOp().equals("=")) {
+            if (node.getOp().equals("=") && !currentFunction.getSymbolName().equals("__init")) {
                 if (lhs instanceof IDExprNode) {
                     modified.add(((IDExprNode) lhs).getVariableSymbol());
                 }
@@ -285,6 +291,9 @@ public class ConstantFolding implements ASTVisitor {
                             // null != null
                             node.equivalentConstant = new BoolLiteralNode(false, node.getPosition());
                         }
+                        break;
+                    case "=":
+                        // assignment for constant
                         break;
                     default:
                         throw new CompilationError("unknown error", node.getPosition());

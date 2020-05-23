@@ -5,6 +5,7 @@ import os, time
 
 # test_cases_dir = './Compiler-2020/testcase/codegen/'
 test_cases_dir = './bin/optim/optim/'
+calculate_score = True
 compile_cmd = "bash ./build.bash"
 execute_cmd = "bash ./codegen_stdout.bash"
 excluded_test_cases = ["foo.mx"]
@@ -49,10 +50,10 @@ def parse_test_case(test_case_path):
 
     return src_text, input_text, output_text
 
-
-import pandas as pd
-import numpy as np
-df = pd.read_csv('./optim.csv', index_col=['name'], thousands=',')
+if calculate_score:
+    import pandas as pd
+    import numpy as np
+    df = pd.read_csv('./optim.csv', index_col=['name'], thousands=',')
 
 def main():
     if os.system(compile_cmd):
@@ -108,18 +109,21 @@ def main():
             if s.count("time") > 0:
                 time_field = int(s[5:-1])
                 break
-        
-        x1 = df.loc['O1'][case_name] * 1.5
-        x2 = df.loc['O1'][case_name]
-        y1 = 1.0
-        y2 = 4.0
-        k = (y2 - y1) / (x2 - x1)
-        sc = np.clip(k * (time_field - x1) + y1, 0, 5)
-        score.append(sc)
+        if calculate_score:
+            x1 = df.loc['O1'][case_name] * 1.5
+            x2 = df.loc['O1'][case_name]
+            y1 = 1.0
+            y2 = 4.0
+            k = (y2 - y1) / (x2 - x1)
+            sc = np.clip(k * (time_field - x1) + y1, 0, 5)
+            score.append(sc)
+        else:
+            sc = -1
         print(color_green + "Accepted" + color_none + (" %10d [%.2f]" % (time_field, sc)))
         
     print("total {}, passed {}, ratio {}".format(total, passed, passed / total))
-    score = np.sort(np.array(score))
-    print(np.mean(score[1:-1]) * 10)
+    if calculate_score:
+        score = np.sort(np.array(score))
+        print(np.mean(score[1:-1]) * 10)
 if __name__ == '__main__':
     main()

@@ -35,8 +35,12 @@ public class IRBuilder implements ASTVisitor {
         public ArrayList<Operand> values = new ArrayList<>();
     }
 
-    public IRBuilder (ToplevelScope toplevelScope) {
+    boolean emitLLVM;
+
+    public IRBuilder (ToplevelScope toplevelScope, boolean emitLLVM) {
         root = new Root(toplevelScope);
+        this.emitLLVM = emitLLVM;
+        if (!emitLLVM) initMemoryPool();
     }
 
     @Override
@@ -78,7 +82,12 @@ public class IRBuilder implements ASTVisitor {
                 ((FuncDeclNode) declNode).getFunctionSymbol().function = function;
             }
         }
-        node.getDeclNodeList().forEach(x -> x.accept(this));
+        node.getDeclNodeList().forEach(x -> {
+            currentFunction = null;
+            currentBlock = null;
+            currentClass = null;
+            x.accept(this);
+        });
     }
 
     /*  When we refer to global values, we use the pointer to refer to it.
@@ -119,6 +128,11 @@ public class IRBuilder implements ASTVisitor {
     }
     private void insertAssignment(Operand lhs, ExprNode rhsNode) {
         rhsNode.accept(this);
+        if (currentFunction.name.equals("__init")) {
+            if (rhsNode.equivalentConstant instanceof IntLiteralNode && rhsNode.equivalentConstant.getInt() == 0) return;
+            if (rhsNode.equivalentConstant instanceof NullLiteralNode) return;
+            if (rhsNode.equivalentConstant instanceof BoolLiteralNode && !rhsNode.equivalentConstant.getBool()) return;
+        }
         Operand rhs = rhsNode.result;
         assert lhs.type instanceof Pointer;
         Operand value;
@@ -127,7 +141,7 @@ public class IRBuilder implements ASTVisitor {
             if (rhs instanceof ConstBool) {
                 value = ((ConstBool) rhs).value ? I8TRUE : I8FALSE;
             } else {
-                inst = new Cast((Register) rhs, new Register("bool2i8",I8), currentBlock);
+                inst = new Cast(rhs, new Register("bool2i8",I8), currentBlock);
                 value = ((Cast)inst).dest;
                 currentBlock.pushBack(inst);
             }
@@ -181,15 +195,7 @@ public class IRBuilder implements ASTVisitor {
                 ret = new Return(currentBlock, null);
             } else {
                 System.err.println("warning: no return statement in function returning non-void : " + currentFunction.name + node.getPosition().toString());
-                if (currentFunction.returnType instanceof IntType) {
-                    ret = new Return(currentBlock, new ConstInt(0, currentFunction.returnType.size()));
-                } else if (currentFunction.returnType instanceof BoolType) {
-                    ret = new Return(currentBlock, FALSE);
-                } else if (currentFunction.returnType instanceof Pointer) {
-                    ret = new Return(currentBlock, new Null());
-                } else {
-                    throw new UnreachableError();
-                }
+                ret = new Return(currentBlock, new Undef(currentFunction.returnType));
             }
             currentBlock.pushBack(ret);
             returns.add(ret);
@@ -257,6 +263,14 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(BlockStmtNode node) {
         for (StmtNode stmtNode : node.getStmtList()) {
+            if (currentFunction.name.equals("__init")) {
+                assert stmtNode instanceof ExprStmtNode;
+                assert ((ExprStmtNode) stmtNode).getExpr() instanceof BinaryExprNode;
+                BinaryExprNode binaryExprNode = (BinaryExprNode) ((ExprStmtNode) stmtNode).getExpr();
+                if (binaryExprNode.getLhs().getType() instanceof SemanticArrayType
+                        && ((SemanticArrayType) binaryExprNode.getLhs().getType()).isStatic) continue;
+                else if (binaryExprNode.getLhs().isPureConstant()) continue;
+            }
             stmtNode.accept(this);
             if (currentBlock.isTerminated) { // unreachable code after
                 return;
@@ -274,9 +288,22 @@ public class IRBuilder implements ASTVisitor {
         VariableSymbol symbol = node.getVariableSymbol();
         BaseType type = root.resolveType(symbol.getType(), true);
         if (symbol.isGlobal()) {
-            Global var = new Global(new Pointer(type), symbol.getSymbolName());
-            symbol.operand = var;
-            root.addGlobal(var);
+            if (symbol.getType() instanceof SemanticArrayType
+            && ((SemanticArrayType) symbol.getType()).isStatic) {
+                SemanticArrayType arrayType = ((SemanticArrayType) symbol.getType());
+                int size = arrayType.dimensionOffsets.get(0);
+                Global global = new Global(new Pointer(type), symbol.getSymbolName());
+                global.isArray = true;
+                global.arraySize = size;
+                global.initialization = null;
+                global.arrayLength = size / arrayType.dimensionOffsets.get(arrayType.getDimension());
+                symbol.operand = global;
+                root.addGlobal(global);
+            } else {
+                Global var = new Global(new Pointer(type), symbol.getSymbolName());
+                symbol.operand = var;
+                root.addGlobal(var);
+            }
         } else if (visitingParams) {
             Register param = new Register(symbol.getSymbolName(), type);
             currentFunction.params.add(param);
@@ -432,6 +459,21 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IDExprNode node) {
+        if (node.isPureConstant()) {
+            if (node.equivalentConstant instanceof BoolLiteralNode) {
+                node.result = node.equivalentConstant.getBool() ? I8TRUE : I8FALSE;
+            } else if (node.equivalentConstant instanceof IntLiteralNode) {
+                node.result = new ConstInt((int) node.equivalentConstant.getInt(), 32);
+            } else if (node.equivalentConstant instanceof StringLiteralNode) {
+                Register ret = new Register("_addr_" + node.getIdentifier(), STR);
+                root.addConstStr(node.equivalentConstant.getStr());
+                currentBlock.pushBack(new GEP(STR, root.getConstStr(node.equivalentConstant.getStr()), I32ZERO, null, ret, currentBlock));
+                node.result = ret;
+            } else {
+                node.result = new Null();
+            }
+            return;
+        }
         VariableSymbol variableSymbol;
         FunctionSymbol functionSymbol;
         switch (node.getTypeCategory()) {
@@ -449,6 +491,13 @@ public class IRBuilder implements ASTVisitor {
                     node.result = register;
                     currentBlock.pushBack(new GEP(((Pointer)classPtr.type).typePointedTo,
                             classPtr, I32ZERO, variableSymbol.index, register, currentBlock));
+                } else if (variableSymbol.getType() instanceof SemanticArrayType && ((SemanticArrayType) variableSymbol.getType()).isStatic) {
+                    Register register = new Register("_acc_glo_" + variableSymbol.getSymbolName(), new Pointer(root.resolveType(((SemanticArrayType) variableSymbol.getType()).getBaseType(), true)));
+                    Register addr = new Register("_acc_glo_" + variableSymbol.getSymbolName(), I32);
+                    currentBlock.pushBack(new GEP(register.type, variableSymbol.operand, I32ZERO, null, register, currentBlock));
+                    // fuck GEP
+                    currentBlock.pushBack(new Cast(register, addr, currentBlock));
+                    node.result = addr;
                 } else {
                     node.result = variableSymbol.operand;
                 }
@@ -476,14 +525,30 @@ public class IRBuilder implements ASTVisitor {
     public void visit(ArrayIndexNode node) {
         node.getArray().accept(this);
         node.getIndex().accept(this);
-        Operand array = matchType(node.getArray().result, root.resolveType(node.getArray().getType(), true));
         Operand index = loadValue(node.getIndex().result);
-        Register register = new Register("_array_access_result",
-                new Pointer(root.resolveType(node.getType(), true)));
-        node.result = register;
-        currentBlock.pushBack(new GEP(
-                ((Pointer) array.type).typePointedTo,
-                array, index,null, register, currentBlock));
+        if (node.from != null && ((SemanticArrayType) node.from.getType()).isStatic) {
+            Register register = new Register("_"  + node.getArray().result.name, I32);
+            Register offset = new Register("_off"  + node.getArray().result.name, I32);
+            int curSize = ((SemanticArrayType) node.from.getType()).dimensionOffsets.get(node.curDim);
+//            System.err.println("cur size = " + curSize);
+            currentBlock.pushBack(new Binary(loadValue(node.getIndex().result), new ConstInt(curSize, 32), offset, "*", currentBlock));
+            currentBlock.pushBack(new Binary(offset, node.getArray().result, register, "+", currentBlock));
+            if (node.curDim == ((SemanticArrayType) node.from.getType()).getDimension()) {
+                Register addr = new Register("addr", new Pointer(root.resolveType(((SemanticArrayType) node.from.getType()).getBaseType(), true)));
+                currentBlock.pushBack(new Cast(register, addr, currentBlock));
+                node.result = addr;
+            } else {
+                node.result = register;
+            }
+        } else {
+            Operand array = matchType(node.getArray().result, root.resolveType(node.getArray().getType(), true));
+            Register register = new Register("_array_access_result",
+                    new Pointer(root.resolveType(node.getType(), true)));
+            node.result = register;
+            currentBlock.pushBack(new GEP(
+                    ((Pointer) array.type).typePointedTo,
+                    array, index, null, register, currentBlock));
+        }
         solveBranch(node);
     }
 
@@ -690,21 +755,37 @@ public class IRBuilder implements ASTVisitor {
         node.getFunctionNode().accept(this);
         FunctionSymbol symbol = node.getFunctionSymbol();
         if (symbol.getSymbolName().equals("array_size")) {
-            Register ret = new Register("array_size", I32);
-            node.result = ret;
-            assert node.getFunctionNode().result.type instanceof Pointer; // *array
-            Register ptr = (Register) loadValue(node.getFunctionNode().result);
-            assert ptr.type instanceof Pointer; // array
-            Register i32Ptr;
-            if (ptr.type.isSame(I32Array)) {
-                i32Ptr = ptr;
+            // check static
+            ExprNode exprNode = ((ClassMemberNode) node.getFunctionNode()).getExpr();
+            int dim = 0;
+            Symbol variableSymbol;
+            if (exprNode instanceof IDExprNode) {
+                variableSymbol = ((IDExprNode) exprNode).getVariableSymbol();
             } else {
-                i32Ptr = new Register("cast_i32_arr", I32Array);
-                currentBlock.pushBack(new Cast(ptr, i32Ptr, currentBlock));
+                variableSymbol = ((ArrayIndexNode) exprNode).from;
+                dim = ((ArrayIndexNode) exprNode).curDim;
             }
-            Register sizePtr = new Register("size_addr", new Pointer(I32));
-            currentBlock.pushBack(new GEP(I32, i32Ptr, I32NEGONE, null, sizePtr, currentBlock));
-            currentBlock.pushBack(new Load(ret, sizePtr, currentBlock));
+            SemanticArrayType arrayType = ((SemanticArrayType) variableSymbol.getType());
+            if (arrayType.isStatic) {
+                node.result = new ConstInt(arrayType.dimensionOffsets.get(dim) / arrayType.dimensionOffsets.get(dim + 1), 32);
+            } else {
+                // non-static, read ((int*)ptr)[-1]
+                Register ret = new Register("array_size", I32);
+                node.result = ret;
+                assert node.getFunctionNode().result.type instanceof Pointer; // *array
+                Register ptr = (Register) loadValue(node.getFunctionNode().result);
+                assert ptr.type instanceof Pointer; // array
+                Register i32Ptr;
+                if (ptr.type.isSame(I32Array)) {
+                    i32Ptr = ptr;
+                } else {
+                    i32Ptr = new Register("cast_i32_arr", I32Array);
+                    currentBlock.pushBack(new Cast(ptr, i32Ptr, currentBlock));
+                }
+                Register sizePtr = new Register("size_addr", new Pointer(I32));
+                currentBlock.pushBack(new GEP(I32, i32Ptr, I32NEGONE, null, sizePtr, currentBlock));
+                currentBlock.pushBack(new Load(ret, sizePtr, currentBlock));
+            }
         } else {
             node.result = symbol.function.returnType.isSame(VOID) ?
                     null : new Register("ret_val", symbol.function.returnType);
@@ -766,7 +847,22 @@ public class IRBuilder implements ASTVisitor {
             Register mallocAddr = new Register("_addr_malloc", STR);
             Register castAddr = new Register("_addr_cast", root.resolveType(node.getBaseTypeAfterResolve(), true));
             node.result = castAddr;
-            currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8, 32), currentBlock));
+            if (emitLLVM) {
+                currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8, 32), currentBlock));
+            } else {
+                // hacked malloc
+                int allocWidth = ((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8;
+                Register off = new Register("off", new Pointer(STR));
+                currentBlock.pushBack(new GEP(off.type, sMultiOffset, I32ZERO, null, off, currentBlock)); // 2
+                currentBlock.pushBack(new Load(mallocAddr, off, currentBlock)); // 64
+                Register off_ = new Register("off_", I32);
+                currentBlock.pushBack(new Cast(mallocAddr, off_, currentBlock));
+                Register off__ = new Register("off__", I32);
+                currentBlock.pushBack(new Binary(off_, new ConstInt(allocWidth, 32), off__, "+", currentBlock)); // 1
+                Register off___ = new Register("off___", STR);
+                currentBlock.pushBack(new Cast(off__, off___, currentBlock));
+                currentBlock.pushBack(new Store(sMultiOffset, off___, currentBlock)); // 64
+            }
             currentBlock.pushBack(new Cast(mallocAddr, castAddr, currentBlock));
             if (((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor() != null) {
                 Function constructFunction = ((ClassSymbol) node.getBaseTypeAfterResolve()).getConstructor().function;
@@ -778,8 +874,23 @@ public class IRBuilder implements ASTVisitor {
         }
     }
 
-
-
+    // hack for bad implementation of global array with constant size
+    int staticArrayCnt = 0;
+    Global sMultiArr;
+    Global sMultiOffset;
+    void initMemoryPool() {
+        sMultiArr = new Global(STR, "_mArr_");
+        root.globalStaticArray.add(sMultiArr);
+        sMultiArr.isArray = true;
+        sMultiArr.arrayLength = 128 << 20;
+        sMultiArr.arraySize = 128 << 20;
+        sMultiOffset = new Global(new Pointer(new Pointer(STR)), "_mOff_");
+        sMultiOffset.initialization = new ArrayList<>() {{
+            add(".word\t_mArr_");
+        }};
+        sMultiOffset.arraySize = 4;
+        root.globalStaticArray.add(sMultiOffset);
+    }
 
     void newArray(NewExprNode node, int cur, Register ret) {
     /*
@@ -803,28 +914,69 @@ public class IRBuilder implements ASTVisitor {
         Register arrayPtr = cur == 0 ? ret : new Register("malloc_ptr", ((Pointer) ret.type).typePointedTo);
         BaseType typePointTo = ((Pointer) arrayPtr.type).typePointedTo;
         Operand curSize = loadValue(node.getExprNodeList().get(cur).result);
-        ConstInt typeWidth = new ConstInt(typePointTo.size() / 8, 32);
-        Register dataWidth = new Register("data_width", I32);
-        Register allocWidth = new Register("alloc_width", I32);
-        Register mallocAddr = new Register("_addr_malloc", STR);
-        Register intArrAddr = new Register("_addr_int", I32Array);
-        currentBlock.pushBack(new Binary(curSize, typeWidth, dataWidth, "*", currentBlock));
-        currentBlock.back.comment = "Binary *";
-        currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), allocWidth, "+", currentBlock));
-        currentBlock.back.comment = "Binary +";
-        currentBlock.pushBack(new Malloc(mallocAddr, allocWidth, currentBlock));
-        currentBlock.back.comment = "Malloc";
-        currentBlock.pushBack(new Cast(mallocAddr, intArrAddr, currentBlock));
-        currentBlock.back.comment = "Cast";
-        currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
-        currentBlock.back.comment = "Store";
-        if (typePointTo.isSame(I32)) {
-            currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
+        if (!emitLLVM && (cur == 0 && node.getExprNodeList().get(cur).isPureConstant() && currentFunction.name.equals("__init"))) {
+            // must be better
+            int curSize_ = (int) node.getExprNodeList().get(cur).equivalentConstant.getInt();
+            int typeWidth = typePointTo.size() / 8;
+            int allocWidth = typeWidth * curSize_ + 4;
+            Global arr = new Global(STR, "_sArr_" + staticArrayCnt++);
+            root.globalStaticArray.add(arr);
+            arr.isArray = true;
+            arr.arrayLength = curSize_;
+            arr.arraySize = allocWidth;
+            arr.initialization = new ArrayList<>();
+            arr.initialization.add(".word\t" + curSize);
+            arr.initialization.add(".zero\t" + (allocWidth - 4));
+            Register i8Ptr = new Register("tmp", STR);
+            currentBlock.pushBack(new GEP(STR, arr, I32ZERO, null, i8Ptr, currentBlock));
+            Register i32Ptr = new Register("tmp2", I32Array);
+            currentBlock.pushBack(new Cast(i8Ptr, i32Ptr, currentBlock));
+            if (typePointTo.isSame(I32)) {
+                currentBlock.pushBack(new GEP(I32, i32Ptr, I32ONE, null, arrayPtr, currentBlock));
+            } else {
+                Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
+                currentBlock.pushBack(new GEP(I32, i32Ptr, I32ONE, null, intArrAddr_1, currentBlock));
+                currentBlock.pushBack(new Cast(intArrAddr_1, arrayPtr, currentBlock));
+            }
         } else {
-            Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
-            currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, intArrAddr_1, currentBlock));
-            currentBlock.pushBack(new Cast(intArrAddr_1, arrayPtr, currentBlock));
+            ConstInt typeWidth = new ConstInt(typePointTo.size() / 8, 32);
+            Register dataWidth = new Register("data_width", I32);
+            Register allocWidth = new Register("alloc_width", I32);
+            Register mallocAddr = new Register("_addr_malloc", STR);
+            Register intArrAddr = new Register("_addr_int", I32Array);
+            currentBlock.pushBack(new Binary(curSize, typeWidth, dataWidth, "*", currentBlock));
+            currentBlock.back.comment = "Binary *";
+            currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), allocWidth, "+", currentBlock));
+            currentBlock.back.comment = "Binary +";
+            if (emitLLVM) {
+                currentBlock.pushBack(new Malloc(mallocAddr, allocWidth, currentBlock));
+                currentBlock.back.comment = "Malloc";
+            } else {
+                // may be better
+                Register off = new Register("off", new Pointer(STR));
+                currentBlock.pushBack(new GEP(off.type, sMultiOffset, I32ZERO, null, off, currentBlock)); // 2
+                currentBlock.pushBack(new Load(mallocAddr, off, currentBlock)); // 64
+                Register off_ = new Register("off_", I32);
+                Register off__ = new Register("off__", I32);
+                Register off___ = new Register("off___", STR);
+                currentBlock.pushBack(new Cast(mallocAddr, off_, currentBlock));
+                currentBlock.pushBack(new Binary(off_, allocWidth, off__, "+", currentBlock)); // 1
+                currentBlock.pushBack(new Cast(off__, off___, currentBlock));
+                currentBlock.pushBack(new Store(sMultiOffset, off___, currentBlock)); // 64
+                currentBlock.pushBack(new Cast(mallocAddr, intArrAddr, currentBlock));
+                currentBlock.back.comment = "Cast";
+                currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
+                currentBlock.back.comment = "Store";
+                if (typePointTo.isSame(I32)) {
+                    currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
+                } else {
+                    Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
+                    currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, intArrAddr_1, currentBlock));
+                    currentBlock.pushBack(new Cast(intArrAddr_1, arrayPtr, currentBlock));
+                }
+            }
         }
+
         if (cur > 0) {
             currentBlock.pushBack(new Store(ret, arrayPtr, currentBlock));
         }
@@ -857,7 +1009,6 @@ public class IRBuilder implements ASTVisitor {
 
             currentBlock = destBlock;
         }
-
     }
 
     @Override public void visit(ArrayTypeNode node) {}

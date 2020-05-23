@@ -50,7 +50,7 @@ getString:                              # @getString
 	addi	sp, sp, -16
 	sw	ra, 12(sp)
 	sw	s0, 8(sp)
-	addi	a0, zero, 1024
+	addi	a0, zero, 512
 	call	malloc
 	mv	s0, a0
 	lui	a0, %hi(.L.str)
@@ -317,5 +317,5 @@ string_ge:                              # @string_ge
 	.asciz	"%d\n"
 	.size	.L.str.2, 4
 
-	.ident	"clang version 10.0.0-++20200412073436+50d7e5d5e7d-1~exp1~20200412054917.132 "
+	.ident	"clang version 10.0.1-++20200507062652+bab8d1790a3-1~exp1~20200507163249.158 "
 	.section	".note.GNU-stack","",@progbits

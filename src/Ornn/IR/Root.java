@@ -22,6 +22,7 @@ public class Root {
     public HashMap<String, ConstStr> constStrings = new LinkedHashMap<>();
     public ArrayList<Global> globals = new ArrayList<>();
     public HashMap<String, ClassType> types = new LinkedHashMap<>();
+    public ArrayList<Global> globalStaticArray = new ArrayList<>();
     public void addFunction(Function func) {
         if (builtinFunctions.containsKey(func.name) || functions.containsKey(func.name)) {
             int i = 1; // rename for collision with libc functions

@@ -67,13 +67,22 @@ public class RISCVPrinter {
 
     void runForGlobal(GReg gReg) {
         file.println("\t.type\t" + gReg.name + ",@object");
-        file.println("\t.section\t.bss");
+        if (gReg.isArray) {
+            file.println("\t.data");
+        } else {
+            file.println("\t.section\t.data");
+        }
         file.println("\t.globl\t" + gReg.name);
         file.println("\t.p2align\t2");
         file.println(gReg.name + ":");
-        file.println(".L" + gReg.name + "$local:");
-        file.println("\t.word\t0");
-        file.println("\t.size\t" + gReg.name + ", 4\n");
+        if (gReg.initialization == null) {
+            file.println("\t.zero\t" + gReg.size);
+        } else {
+            for (String s : gReg.initialization) {
+                file.println("\t" + s);
+            }
+        }
+        file.println("\t.size\t" + gReg.name + ", " + gReg.size + "\n");
     }
 
     void runForConstStr(GReg gReg, String s) {

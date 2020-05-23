@@ -96,8 +96,9 @@ public class Main {
 
             new ConstantFolding(toplevelScope).visit(ast);
             new PrintOptimization(toplevelScope).visit(ast);
+            new StaticArrayDetector().visit(ast);
 
-            IRBuilder irBuilder = new IRBuilder(toplevelScope);
+            IRBuilder irBuilder = new IRBuilder(toplevelScope, emitLLVM);
             irBuilder.visit(ast);
 
             if (optLevel > 1) {
@@ -107,12 +108,14 @@ public class Main {
             if (emitLLVM) {
                 PrintStream IRFile = new PrintStream(pureName + ".ll");
                 new IRPrinter(irBuilder.root, IRFile).run();
+                return;
             }
 
             new SSADestruction(irBuilder.root).run();
             if (debugPhi) {
                 PrintStream IRFile = new PrintStream(pureName + ".ll");
                 new IRPrinter(irBuilder.root, IRFile).run();
+                return;
             }
 
             RVRoot rvRoot = (new InstSelector(irBuilder.root)).run();

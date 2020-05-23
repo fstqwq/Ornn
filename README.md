@@ -51,14 +51,23 @@ IR Builder
 * MIR Optimization
     * Mem2Reg
         * Actually it's also SSA construction
+    * Function inlining
+        * Forced inline when code size is small
+    * Tail call
+        * Mark all tail-callable calls and do tail calls at LIR stage
     * (Aggressive) Dead Code Eliminate (TODO)
         * Correct output is all we need
     * CFG Simplify (TODO)
     * Sparse Conditional Constant Propagation (TODO)
     * Common subexpression elimination (TODO)
-* Consider to do
-    * Function inlining (Where to do?)
-    * constexpr
+* LIR Optimization
+    * Register Allocation
+        * Graph coloring, refer to Tiger book
+    * Reschedule
+        * Simply put blocks in dfs-order
+    * Peephole
+        * Remove redundant moves
+
         
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen
 

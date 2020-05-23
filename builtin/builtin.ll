@@ -30,7 +30,7 @@ define dso_local void @printlnInt(i32 %0) local_unnamed_addr #0 {
 
 ; Function Attrs: nofree nounwind
 define dso_local i8* @getString() local_unnamed_addr #0 {
-  %1 = tail call dereferenceable_or_null(1024) i8* @malloc(i32 1024)
+  %1 = tail call dereferenceable_or_null(512) i8* @malloc(i32 512)
   %2 = tail call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i8* %1)
   ret i8* %1
 }
@@ -187,7 +187,7 @@ attributes #8 = { nounwind }
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 1, !"target-abi", !"ilp32"}
-!2 = !{!"clang version 10.0.0-++20200412073436+50d7e5d5e7d-1~exp1~20200412054917.132 "}
+!2 = !{!"clang version 10.0.1-++20200507062652+bab8d1790a3-1~exp1~20200507163249.158 "}
 !3 = !{!4, !4, i64 0}
 !4 = !{!"int", !5, i64 0}
 !5 = !{!"omnipotent char", !6, i64 0}

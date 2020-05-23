@@ -79,7 +79,11 @@ public class InstSelector implements IRVisitor {
             if (!operandMap.containsKey(operand)) {
                 GReg reg = new GReg(operand.name, ((Pointer) operand.type).typePointedTo.size() / 8);
                 if (operand instanceof Global) {
-                    reg.name = reg.name;
+                    if (((Global) operand).isArray) {
+                        reg.isArray = ((Global) operand).isArray;
+                        reg.size = ((Global) operand).arraySize;
+                        reg.initialization = ((Global) operand).initialization;
+                    }
                     rvRoot.global.add(reg);
                 } else {
                     rvRoot.constStr.put(reg, ((ConstStr) operand).value);
@@ -314,7 +318,14 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Branch inst) {
-        if (inst.cond instanceof Register
+        if (inst.cond instanceof ConstBool) {
+            RVBlock to = ((ConstBool) inst.cond).value ? blockMap.get(inst.thenDest) : blockMap.get(inst.elseDest);
+            RVBlock notTo = !((ConstBool) inst.cond).value ? blockMap.get(inst.thenDest) : blockMap.get(inst.elseDest);
+            currentBlock.add(new Jmp(to, currentBlock));
+            currentBlock.successors.remove(notTo);
+            notTo.precursors.remove(currentBlock);
+            return;
+        } else if (inst.cond instanceof Register
         &&  inst.cond.uses.size() == 1
         &&  inst.cond.uses.iterator().next().isTerminal()
         &&  ((Register) inst.cond).def instanceof Cmp) {
@@ -523,6 +534,13 @@ public class InstSelector implements IRVisitor {
             rvRoot.builtinFunctions.add(func);
             functionMap.put(function, func);
         }));
+        root.globalStaticArray.forEach(global -> {
+            GReg reg = new GReg(global.name, global.arraySize);
+            reg.isArray = global.isArray;
+            reg.initialization = global.initialization;
+            rvRoot.global.add(reg);
+            operandMap.put(global, reg);
+        });
         root.functions.forEach((s, function) -> {
             RVFunction rvFunction = new RVFunction(s);
             functionMap.put(function, rvFunction);

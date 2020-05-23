@@ -2,7 +2,6 @@ package Ornn.optim;
 
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
-import Ornn.IR.operand.*;
 import Ornn.IR.util.FunctionBlockCollector;
 import Ornn.IR.util.IRReplicator;
 
@@ -137,8 +136,8 @@ public class Inline implements Pass {
                 if (inst instanceof Call) {
                     Call call = (Call) inst;
                     if (!call.tailCallable
-                    &&  (forced                             && numberOfInst.get(call.callee) < forcedInstLimit)
-                    ||  (canInline.contains(call.callee)    && numberOfInst.get(call.callee) < instLimit)) {
+                    &&  (   (forced                             && numberOfInst.get(call.callee) < forcedInstLimit)
+                        ||  (canInline.contains(call.callee)    && numberOfInst.get(call.callee) < instLimit))) {
                         inlineCandidate.put(call, function);
                     }
                 }

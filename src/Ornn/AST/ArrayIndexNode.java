@@ -1,10 +1,13 @@
 package Ornn.AST;
 
 import Ornn.AST.util.Position;
+import Ornn.semantic.VariableSymbol;
 
 public class ArrayIndexNode extends ExprNode{
     private ExprNode array;
     private ExprNode index;
+    public VariableSymbol from;
+    public int curDim;
 
     public ArrayIndexNode(ExprNode array, ExprNode index, Position position) {
         super(position);
