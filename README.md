@@ -4,7 +4,7 @@
 ![](https://universe-meeps.leagueoflegends.com/v1/assets/images/ornn-splash.jpg)
 
 
-![](https://opgg-static.akamaized.net/images/lol/item/2420.png?image=q_auto,w_42&v=1586932751)
+![](https://opgg-static.akamaized.net/images/lol/item/3386.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/1054.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3373.png?image=q_auto,w_42&v=1583298869)
@@ -47,6 +47,9 @@ IR Builder
     * Print Reconstruct
         * Boring but highly effective optimization to the bad implementation of string
 
+    * Static Arrays Detect
+        * It's not standard implementation but a trick to those whose pointers are only modified when initializing.
+        Switch to C-style array for efficiency.
 
 * MIR Optimization
     * Mem2Reg
@@ -55,11 +58,15 @@ IR Builder
         * Forced inline when code size is small
     * Tail call
         * Mark all tail-callable calls and do tail calls at LIR stage
-    * (Aggressive) Dead Code Eliminate (TODO)
-        * Correct output is all we need
-    * CFG Simplify (TODO)
-    * Sparse Conditional Constant Propagation (TODO)
-    * Common subexpression elimination (TODO)
+    * Dead Code Eliminate
+    * CFG Simplify
+    * Constant Propagation
+    * Common subexpression elimination
+    * MIR Peephole
+        * Why should we load / store a global variable more than once in a basic block?
+    * Global variable localization in dead end functions
+        * If you called somebody else, we can't ensure if it's a positive optimization
+    
 * LIR Optimization
     * Register Allocation
         * Graph coloring, refer to Tiger book

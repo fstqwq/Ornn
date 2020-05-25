@@ -9,7 +9,7 @@ import Ornn.IR.type.Pointer;
 import Ornn.RISCV.*;
 import Ornn.RISCV.instrution.*;
 import Ornn.RISCV.operand.*;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,15 +59,11 @@ public class InstSelector implements IRVisitor {
     RVBlock currentBlock;
     RVFunction currentFunction;
 
-    HashMap<Register, Reg> tmpAlias = new HashMap<>();
-
     Reg regTrans(Operand operand) {
         if (operand instanceof Register) {
             Reg ret;
             if (operandMap.containsKey(operand)) {
                 ret = operandMap.get(operand);
-            } else if (tmpAlias.containsKey(operand)) {
-                ret = tmpAlias.get(operand);
             } else {
                 ret = new VReg(vRegCount++, operand.type.size() / 8);
                 operandMap.put(operand, ret);
@@ -156,12 +152,12 @@ public class InstSelector implements IRVisitor {
     Imm getImm(Operand operand) {
         if (isZero(operand)) return new Imm(0);
         else if (operand instanceof ConstInt) return new Imm(((ConstInt) operand).value);
-        else throw new UnreachableError();
+        else throw new UnreachableCodeError();
     }
     Imm getNegImm(Operand operand) {
         if (isZero(operand)) return new Imm(0);
         else if (operand instanceof ConstInt) return new Imm(-((ConstInt) operand).value);
-        else throw new UnreachableError();
+        else throw new UnreachableCodeError();
     }
 
     void makeBinary(Operand src1, Operand src2, String op, Reg rd) {
@@ -178,7 +174,7 @@ public class InstSelector implements IRVisitor {
             case "|": sop = SCategory.or; abelian = true; iType = true; break;
             case "<<": sop = SCategory.sll; iType = true; break;
             case ">>": sop = SCategory.sra; iType = true; break;
-            default: throw new UnreachableError();
+            default: throw new UnreachableCodeError();
         }
         if (isZero(src2)) {
             if (sop == SCategory.and || sop == SCategory.mul) {
@@ -313,12 +309,18 @@ public class InstSelector implements IRVisitor {
                 }
                 break;
             default:
-                throw new UnreachableError();
+                throw new UnreachableCodeError();
         }
     }
     @Override
     public void visit(Branch inst) {
-        if (inst.cond instanceof ConstBool) {
+        if (inst.thenDest.equals(inst.elseDest)) { // should be deprecated after CFG Simplify
+            System.err.println("simplify branch");
+            currentBlock.add(new Jmp(blockMap.get(inst.thenDest), currentBlock));
+            return;
+        }
+        else if (inst.cond instanceof ConstBool) { // should be deprecated after CFG Simplify
+            System.err.println("simplify branch");
             RVBlock to = ((ConstBool) inst.cond).value ? blockMap.get(inst.thenDest) : blockMap.get(inst.elseDest);
             RVBlock notTo = !((ConstBool) inst.cond).value ? blockMap.get(inst.thenDest) : blockMap.get(inst.elseDest);
             currentBlock.add(new Jmp(to, currentBlock));
@@ -351,7 +353,7 @@ public class InstSelector implements IRVisitor {
                     op = BCategory.ne;
                     break;
                 default:
-                    throw new UnreachableError();
+                    throw new UnreachableCodeError();
             }
             currentBlock.add(new Br(regTrans(cmp.src1), regTrans(cmp.src2), op, blockMap.get(inst.thenDest), currentBlock));
         } else {
@@ -380,6 +382,8 @@ public class InstSelector implements IRVisitor {
                 currentBlock.add(new Mv(tmpParams.get(i), currentFunction.params.get(i), currentBlock));
             }
             currentBlock.add(new Jmp(currentFunction.tailCallEntryBlock, currentBlock));
+            currentBlock.successors.add(currentFunction.tailCallEntryBlock);
+            currentFunction.tailCallEntryBlock.precursors.add(currentBlock);
             return;
         }
         for (int i = 0; i < min(paramRegNum, inst.params.size()); i++) {
@@ -405,8 +409,7 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Cast inst) {
-        /*  notice that: inst.dest must be a fucking useless tmp reg, so just fuck it  */
-        tmpAlias.put(inst.dest, regTrans(inst.src));
+        currentBlock.add(new Mv(regTrans(inst.src), regTrans(inst.dest), currentBlock));
     }
     @Override
     public void visit(Jump inst) {
@@ -436,14 +439,16 @@ public class InstSelector implements IRVisitor {
     }
     @Override
     public void visit(Return inst) {
-        if (isZero(inst.value)) {
-            currentBlock.add(new Mv(zero, a.get(0), currentBlock));
-        } else if (inst.value instanceof ConstInt) {
-            currentBlock.add(new Li(((ConstInt) inst.value).value, a.get(0), currentBlock));
-        } else if (inst.value instanceof ConstBool) {
-            currentBlock.add(new Li(((ConstBool) inst.value).value ? 1 : 0, a.get(0), currentBlock));
-        } else if (inst.value != null) {
-            currentBlock.add(new Mv(regTrans(inst.value), a.get(0), currentBlock));
+        if (inst.value != null) {
+            if (isZero(inst.value)) {
+                currentBlock.add(new Mv(zero, a.get(0), currentBlock));
+            } else if (inst.value instanceof ConstInt) {
+                currentBlock.add(new Li(((ConstInt) inst.value).value, a.get(0), currentBlock));
+            } else if (inst.value instanceof ConstBool) {
+                currentBlock.add(new Li(((ConstBool) inst.value).value ? 1 : 0, a.get(0), currentBlock));
+            } else {
+                currentBlock.add(new Mv(regTrans(inst.value), a.get(0), currentBlock));
+            }
         }
     }
     @Override
@@ -461,15 +466,15 @@ public class InstSelector implements IRVisitor {
 
     void runForBlock(BasicBlock irBlock) {
         currentBlock = blockMap.get(irBlock);
-        for (BasicBlock precursors : irBlock.precursors) {
-            currentBlock.precursors.add(blockMap.get(precursors));
+        for (BasicBlock precursor : irBlock.precursors) {
+            currentBlock.precursors.add(blockMap.get(precursor));
         }
         for (BasicBlock successor : irBlock.successors) {
             currentBlock.successors.add(blockMap.get(successor));
         }
         for (Inst inst = irBlock.front; inst != null; inst = inst.next) {
             inst.accept(this);
-            if (currentBlock.back instanceof Jmp || currentBlock.back instanceof Br || currentBlock.back instanceof Ret) {
+            if (currentBlock.back instanceof Jmp || currentBlock.back instanceof Ret) {
                 break;
             }
         }
@@ -478,8 +483,7 @@ public class InstSelector implements IRVisitor {
     void runForFunction(Function irFunc) {
         RVFunction function = functionMap.get(irFunc);
         currentFunction = function;
-        vRegCount = 0;
-        tmpAlias.clear();
+        vRegCount = function.vRegCount;
         SImm stackFrame = new SImm(0, true);
 
         function.tailCallEntryBlock = function.entryBlock;
@@ -518,7 +522,12 @@ public class InstSelector implements IRVisitor {
         for (BasicBlock block : irFunc.blocks) {
             runForBlock(block);
         }
-
+/*
+        for (RVBlock block : function.blocks) {
+            block.successors.forEach(x -> System.err.println(block + " suc -> " + x));
+            block.successors.forEach(x -> System.err.println(x + " pre -> " + block));
+        }
+*/
         for (int i = 0; i < calleeVRegs.size(); i++) {
             function.exitBlock.add(new Mv(calleeVRegs.get(i), rvRoot.calleeSavedRegs.get(i), function.exitBlock));
         }
@@ -534,7 +543,7 @@ public class InstSelector implements IRVisitor {
             rvRoot.builtinFunctions.add(func);
             functionMap.put(function, func);
         }));
-        root.globalStaticArray.forEach(global -> {
+        root.proxyStatics.forEach(global -> {
             GReg reg = new GReg(global.name, global.arraySize);
             reg.isArray = global.isArray;
             reg.initialization = global.initialization;
@@ -551,7 +560,9 @@ public class InstSelector implements IRVisitor {
             }
             rvFunction.entryBlock = blockMap.get(function.entryBlock);
             rvFunction.exitBlock = blockMap.get(function.exitBlock);
+            vRegCount = 0;
             function.params.forEach(param -> rvFunction.params.add(regTrans(param)));
+            rvFunction.vRegCount = vRegCount;
             rvRoot.functions.add(rvFunction);
         });
         root.functions.forEach(((s, function) -> runForFunction(function)));

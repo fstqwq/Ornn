@@ -8,7 +8,7 @@ import Ornn.IR.type.ClassType;
 import Ornn.IR.type.Pointer;
 import Ornn.frontend.ToplevelScopeBuilder;
 import Ornn.semantic.*;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import static Ornn.IR.util.Constant.*;
 
@@ -22,7 +22,7 @@ public class Root {
     public HashMap<String, ConstStr> constStrings = new LinkedHashMap<>();
     public ArrayList<Global> globals = new ArrayList<>();
     public HashMap<String, ClassType> types = new LinkedHashMap<>();
-    public ArrayList<Global> globalStaticArray = new ArrayList<>();
+    public ArrayList<Global> proxyStatics = new ArrayList<>();
     public void addFunction(Function func) {
         if (builtinFunctions.containsKey(func.name) || functions.containsKey(func.name)) {
             int i = 1; // rename for collision with libc functions
@@ -94,7 +94,7 @@ public class Root {
 //            System.err.println("warning: resolving null");
             return VOID;
         }
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
     public Root(ToplevelScope toplevelScope) {
 

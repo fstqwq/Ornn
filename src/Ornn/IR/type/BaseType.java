@@ -7,5 +7,5 @@ abstract public class BaseType {
     }
     public abstract int size();
     public abstract String toString();
-    public abstract boolean isSame(BaseType type);
+    public abstract boolean isSameWith(BaseType type);
 }

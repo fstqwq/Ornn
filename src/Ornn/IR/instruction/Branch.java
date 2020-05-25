@@ -5,7 +5,7 @@ import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashSet;
 
@@ -51,7 +51,7 @@ public class Branch extends Inst implements Terminator {
     @Override
     public void replaceUse(Register old, Operand newOpr) {
         if (cond.equals(old)) cond = newOpr;
-        else throw new UnreachableError();
+        else throw new UnreachableCodeError();
     }
 
     @Override

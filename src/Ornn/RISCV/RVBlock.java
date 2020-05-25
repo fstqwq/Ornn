@@ -23,6 +23,7 @@ public class RVBlock {
     public void add(RVInst inst) {
         if (back == null) {
             front = back = inst;
+            inst.next = inst.prev = null;
         }
         else {
             back.insertAfter(inst);

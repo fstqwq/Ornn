@@ -16,4 +16,9 @@ public class Undef extends Operand {
     public String toString() {
         return "undef";
     }
+
+    @Override
+    public boolean isSameWith(Operand other) {
+        return true;
+    }
 }

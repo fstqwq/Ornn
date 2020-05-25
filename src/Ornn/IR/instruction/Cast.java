@@ -4,11 +4,10 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
-import Ornn.IR.type.ArrayType;
 import Ornn.IR.type.IntType;
 import Ornn.IR.type.Pointer;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashSet;
 
@@ -58,10 +57,22 @@ public class Cast extends Inst {
     @Override
     public void replaceUse(Register old, Operand newOpr) {
         if (src.equals(old)) src = newOpr;
-        else throw new UnreachableError();
+        else throw new UnreachableCodeError();
     }
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean isSameWith(Inst inst) {
+        return inst instanceof Cast
+                && src.equals(((Cast) inst).src)
+                && dest.type.isSameWith(((Cast) inst).dest.type);
+    }
+
+    @Override
+    public boolean hasSideEffect() {
+        return false;
     }
 }

@@ -3,7 +3,6 @@ package Ornn.RISCV.instrution;
 import Ornn.RISCV.RVBlock;
 import Ornn.RISCV.operand.GReg;
 import Ornn.RISCV.operand.Reg;
-import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 

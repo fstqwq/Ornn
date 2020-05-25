@@ -19,4 +19,9 @@ public class Null extends Operand {
     public String toString() {
         return "null";
     }
+
+    @Override
+    public boolean isSameWith(Operand other) {
+        return other instanceof Null || other instanceof Undef;
+    }
 }

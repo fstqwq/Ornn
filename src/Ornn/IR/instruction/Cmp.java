@@ -6,7 +6,7 @@ import Ornn.IR.operand.Null;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.util.IRReplicator;
-import Ornn.IR.util.Op2Inst;
+import Ornn.IR.util.Op;
 
 import java.util.HashSet;
 
@@ -14,6 +14,7 @@ public class Cmp extends Inst { // return boolean
     public String op;
     public Operand src1, src2;
     public Register dest;
+
     public Cmp(Operand src1, Operand src2, Register dest, String op, BasicBlock block) {
         super(block);
         this.src1 = src1;
@@ -30,7 +31,7 @@ public class Cmp extends Inst { // return boolean
     @Override
     public String toString() {
         return dest.toString() + " = "
-                + "icmp " + Op2Inst.translate(op) + " "
+                + "icmp " + Op.translate(op) + " "
                 + src1.type.toString() + " " + src1.toString() + ", "
                 + src2.toString();
     }
@@ -42,12 +43,17 @@ public class Cmp extends Inst { // return boolean
 
     @Override
     public HashSet<Operand> getUses() {
-        return new HashSet<>() {{ add(src1); add(src2);}};
+        return new HashSet<>() {{
+            add(src1);
+            add(src2);
+        }};
     }
+
     @Override
     public boolean isTerminal() {
         return false;
     }
+
     @Override
     public Register getDest() {
         return dest;
@@ -66,8 +72,18 @@ public class Cmp extends Inst { // return boolean
         }
         assert success;
     }
+
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean isSameWith(Inst inst) {
+        return inst instanceof Cmp && ((Cmp) inst).op.equals(op) && src1.equals(((Cmp) inst).src1) && src2.equals(((Cmp) inst).src2);
+    }
+    @Override
+    public boolean hasSideEffect() {
+        return false;
     }
 }

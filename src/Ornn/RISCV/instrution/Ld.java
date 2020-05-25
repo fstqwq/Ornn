@@ -2,7 +2,7 @@ package Ornn.RISCV.instrution;
 
 import Ornn.RISCV.RVBlock;
 import Ornn.RISCV.operand.*;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashSet;
 
@@ -25,7 +25,7 @@ public class Ld extends RVInst {
             case 4:
                 return "lw " + rd + ", " + (rs instanceof GReg ? rs : (offset + "(" + rs + ")"));
         }
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
     @Override
     public HashSet<Reg> getUses() {

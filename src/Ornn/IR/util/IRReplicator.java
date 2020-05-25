@@ -3,7 +3,7 @@ package Ornn.IR.util;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashMap;
 
@@ -23,7 +23,7 @@ public class IRReplicator {
         if (blockMap.containsKey(from)) {
             return blockMap.get(from);
         }
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
     public void put(Operand from, Operand to) {
         operandMap.put(from, to);

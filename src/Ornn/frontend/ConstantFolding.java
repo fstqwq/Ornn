@@ -4,7 +4,6 @@ import Ornn.AST.*;
 import Ornn.semantic.*;
 import Ornn.util.CompilationError;
 
-import java.awt.desktop.SystemSleepEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

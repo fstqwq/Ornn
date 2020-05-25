@@ -12,7 +12,7 @@ public class VoidType extends BaseType {
     }
 
     @Override
-    public boolean isSame(BaseType type) {
+    public boolean isSameWith(BaseType type) {
         return type instanceof VoidType;
     }
 }

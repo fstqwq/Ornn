@@ -18,4 +18,10 @@ public class ConstBool extends Operand {
     public Operand getCopy() {
         return this;
     }
+
+    @Override
+    public boolean isSameWith(Operand other) {
+        return (other instanceof ConstBool && ((ConstBool) other).value == value)
+                || other instanceof Undef;
+    }
 }

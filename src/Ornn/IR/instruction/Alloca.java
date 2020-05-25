@@ -7,7 +7,7 @@ import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.type.Pointer;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashSet;
 
@@ -45,16 +45,16 @@ public class Alloca extends Inst {
 
     @Override
     public void replaceUse(Register old, Operand newOpr) {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
 
     @Override
     public void accept(IRVisitor visitor) {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
 
     @Override
     public void copySelfTo(BasicBlock dest, IRReplicator replicator) {
-        throw new UnreachableError(); // should only appear after SSA construction
+        throw new UnreachableCodeError(); // should only appear after SSA construction
     }
 }

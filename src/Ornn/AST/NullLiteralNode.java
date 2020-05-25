@@ -2,7 +2,7 @@ package Ornn.AST;
 
 import Ornn.IR.operand.Operand;
 import Ornn.AST.util.Position;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 public class NullLiteralNode extends ExprNode implements Literal {
     public NullLiteralNode(Position position) {
@@ -17,15 +17,15 @@ public class NullLiteralNode extends ExprNode implements Literal {
 
     @Override
     public long getInt() {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
     @Override
     public boolean getBool() {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
     @Override
     public String getStr() {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
     @Override
     public Operand getResult() {

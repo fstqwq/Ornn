@@ -6,7 +6,6 @@ import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
 
 import java.util.ArrayList;
 import java.util.HashSet;

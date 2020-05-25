@@ -4,7 +4,6 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
 
 import java.util.HashSet;
 

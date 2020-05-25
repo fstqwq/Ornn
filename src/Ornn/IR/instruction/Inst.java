@@ -26,6 +26,12 @@ public abstract class Inst {
     public abstract Register getDest();
     public abstract void copySelfTo(BasicBlock dest, IRReplicator replicator);
     public abstract void replaceUse(Register old, Operand newOpr);
+    public boolean isSameWith(Inst inst) {
+        return false;
+    }
+    public boolean hasSideEffect() {
+        return true;
+    }
     public abstract void accept(IRVisitor visitor);
 
     public boolean hasNext() {

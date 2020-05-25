@@ -5,7 +5,7 @@ import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashSet;
 
@@ -60,7 +60,7 @@ public class Return extends Inst implements Terminator {
 
     @Override
     public void redirect(BasicBlock from, BasicBlock to) {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
 
     @Override

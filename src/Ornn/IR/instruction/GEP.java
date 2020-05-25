@@ -7,7 +7,7 @@ import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.type.BaseType;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.HashSet;
 
@@ -71,11 +71,26 @@ public class GEP extends Inst {
             success = true;
         }
         if (!success) {
-            throw new UnreachableError();
+            throw new UnreachableCodeError();
         }
     }
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean isSameWith(Inst inst) {
+        return inst instanceof GEP
+                && ptr.equals(((GEP) inst).ptr)
+                && arrayOffset.equals(((GEP) inst).arrayOffset)
+                && (
+                        (elementOffset == null && ((GEP) inst).elementOffset == null)
+                ||      (elementOffset != null && elementOffset.equals(((GEP) inst).elementOffset))
+                );
+    }
+    @Override
+    public boolean hasSideEffect() {
+        return false;
     }
 }

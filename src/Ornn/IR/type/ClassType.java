@@ -31,7 +31,7 @@ public class ClassType extends BaseType {
     }
 
     @Override
-    public boolean isSame(BaseType type) {
+    public boolean isSameWith(BaseType type) {
         return type instanceof ClassType && ((ClassType) type).name.equals(name);
     }
 }

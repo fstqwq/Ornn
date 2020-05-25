@@ -6,7 +6,7 @@ import Ornn.IR.instruction.*;
 import Ornn.IR.operand.*;
 import Ornn.IR.type.*;
 import Ornn.IR.util.FunctionBlockCollector;
-import Ornn.IR.util.Op2Inst;
+import Ornn.IR.util.Op;
 import Ornn.semantic.*;
 import Ornn.util.*;
 
@@ -102,7 +102,7 @@ public class IRBuilder implements ASTVisitor {
         }  else {
             dest = new Register("load_" + operand.name, ((Pointer) operand.type).typePointedTo);
             currentBlock.pushBack(new Load(dest, operand, currentBlock));
-            if (dest.type.isSame(I8)) { // stored bool is i8
+            if (dest.type.isSameWith(I8)) { // stored bool is i8
                 Register castDest = new Register("i82bool", BOOL);
                 currentBlock.pushBack(new Cast(dest, castDest, currentBlock));
                 return castDest;
@@ -111,13 +111,13 @@ public class IRBuilder implements ASTVisitor {
         return dest;
     }
     private Operand matchType(Operand operand, BaseType expectedType) {
-        if (operand.type.isSame(expectedType)) {
+        if (operand.type.isSameWith(expectedType)) {
             return operand;
         } else if (expectedType instanceof Pointer && operand instanceof Null) {
             return operand;
         }
         assert operand.type instanceof Pointer;
-        assert ((Pointer) operand.type).typePointedTo.isSame(expectedType);
+        assert ((Pointer) operand.type).typePointedTo.isSameWith(expectedType);
         return loadPointer(operand);
     }
     private Operand loadValue(Operand operand) {
@@ -324,7 +324,7 @@ public class IRBuilder implements ASTVisitor {
             }
             symbol.operand = new Register("_addr_" + symbol.getSymbolName(), new Pointer(type));
         } else {
-            throw new UnreachableError();
+            throw new UnreachableCodeError();
         }
     }
 
@@ -516,7 +516,7 @@ public class IRBuilder implements ASTVisitor {
                 }
                 break;*/
             case CLASS:
-                throw new UnreachableError();
+                throw new UnreachableCodeError();
         }
 
     }
@@ -609,7 +609,7 @@ public class IRBuilder implements ASTVisitor {
                 node.getLhs().accept(this);
                 node.getRhs().accept(this);
                 Function function;
-                String instName = Op2Inst.translate(op);
+                String instName = Op.translate(op);
                 if (instName.charAt(0) == 's') { // 'signed' icmp
                     instName = instName.substring(1);
                 }
@@ -635,7 +635,7 @@ public class IRBuilder implements ASTVisitor {
                     case "&": case "^": case "|":
                         lhs = loadValue(node.getLhs().result);
                         rhs = loadValue(node.getRhs().result);
-                        node.result = new Register("binary_op_" + Op2Inst.translate(op), lhs.type);
+                        node.result = new Register("binary_op_" + Op.translate(op), lhs.type);
                         inst = new Binary(lhs, rhs, (Register) node.result, op, currentBlock);
                         currentBlock.pushBack(inst);
                         break;
@@ -651,12 +651,12 @@ public class IRBuilder implements ASTVisitor {
                         */
                         lhs = node.getLhs().result instanceof Null ? node.getLhs().result : loadValue(node.getLhs().result);
                         rhs = node.getRhs().result instanceof Null ? node.getRhs().result : loadValue(node.getRhs().result);
-                        node.result = new Register("cmp_op_" + Op2Inst.translate(op), BOOL);
+                        node.result = new Register("cmp_op_" + Op.translate(op), BOOL);
                         inst = new Cmp(lhs, rhs, (Register) node.result, op, currentBlock);
                         currentBlock.pushBack(inst);
                         break;
                     default:
-                        throw new UnreachableError();
+                        throw new UnreachableCodeError();
                 }
             }
             solveBranch(node);
@@ -746,7 +746,7 @@ public class IRBuilder implements ASTVisitor {
                 solveBranch(node);
                 break;
             case CLASS:
-                throw new UnreachableError();
+                throw new UnreachableCodeError();
         }
     }
 
@@ -776,7 +776,7 @@ public class IRBuilder implements ASTVisitor {
                 Register ptr = (Register) loadValue(node.getFunctionNode().result);
                 assert ptr.type instanceof Pointer; // array
                 Register i32Ptr;
-                if (ptr.type.isSame(I32Array)) {
+                if (ptr.type.isSameWith(I32Array)) {
                     i32Ptr = ptr;
                 } else {
                     i32Ptr = new Register("cast_i32_arr", I32Array);
@@ -787,7 +787,7 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.pushBack(new Load(ret, sizePtr, currentBlock));
             }
         } else {
-            node.result = symbol.function.returnType.isSame(VOID) ?
+            node.result = symbol.function.returnType.isSameWith(VOID) ?
                     null : new Register("ret_val", symbol.function.returnType);
             ArrayList <Operand> params = new ArrayList<>();
             int base = 0;
@@ -852,9 +852,7 @@ public class IRBuilder implements ASTVisitor {
             } else {
                 // hacked malloc
                 int allocWidth = ((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8;
-                Register off = new Register("off", new Pointer(STR));
-                currentBlock.pushBack(new GEP(off.type, sMultiOffset, I32ZERO, null, off, currentBlock)); // 2
-                currentBlock.pushBack(new Load(mallocAddr, off, currentBlock)); // 64
+                currentBlock.pushBack(new Load(mallocAddr, sMultiOffset, currentBlock)); // 64
                 Register off_ = new Register("off_", I32);
                 currentBlock.pushBack(new Cast(mallocAddr, off_, currentBlock));
                 Register off__ = new Register("off__", I32);
@@ -870,7 +868,7 @@ public class IRBuilder implements ASTVisitor {
                 currentFunction.callee.add(constructFunction);
             }
         } else {
-            throw new UnreachableError();
+            throw new UnreachableCodeError();
         }
     }
 
@@ -880,7 +878,7 @@ public class IRBuilder implements ASTVisitor {
     Global sMultiOffset;
     void initMemoryPool() {
         sMultiArr = new Global(STR, "_mArr_");
-        root.globalStaticArray.add(sMultiArr);
+        root.proxyStatics.add(sMultiArr);
         sMultiArr.isArray = true;
         sMultiArr.arrayLength = 128 << 20;
         sMultiArr.arraySize = 128 << 20;
@@ -889,7 +887,7 @@ public class IRBuilder implements ASTVisitor {
             add(".word\t_mArr_");
         }};
         sMultiOffset.arraySize = 4;
-        root.globalStaticArray.add(sMultiOffset);
+        root.proxyStatics.add(sMultiOffset);
     }
 
     void newArray(NewExprNode node, int cur, Register ret) {
@@ -920,7 +918,7 @@ public class IRBuilder implements ASTVisitor {
             int typeWidth = typePointTo.size() / 8;
             int allocWidth = typeWidth * curSize_ + 4;
             Global arr = new Global(STR, "_sArr_" + staticArrayCnt++);
-            root.globalStaticArray.add(arr);
+            root.proxyStatics.add(arr);
             arr.isArray = true;
             arr.arrayLength = curSize_;
             arr.arraySize = allocWidth;
@@ -931,7 +929,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.pushBack(new GEP(STR, arr, I32ZERO, null, i8Ptr, currentBlock));
             Register i32Ptr = new Register("tmp2", I32Array);
             currentBlock.pushBack(new Cast(i8Ptr, i32Ptr, currentBlock));
-            if (typePointTo.isSame(I32)) {
+            if (typePointTo.isSameWith(I32)) {
                 currentBlock.pushBack(new GEP(I32, i32Ptr, I32ONE, null, arrayPtr, currentBlock));
             } else {
                 Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
@@ -953,9 +951,7 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.back.comment = "Malloc";
             } else {
                 // may be better
-                Register off = new Register("off", new Pointer(STR));
-                currentBlock.pushBack(new GEP(off.type, sMultiOffset, I32ZERO, null, off, currentBlock)); // 2
-                currentBlock.pushBack(new Load(mallocAddr, off, currentBlock)); // 64
+                currentBlock.pushBack(new Load(mallocAddr, sMultiOffset, currentBlock)); // 64
                 Register off_ = new Register("off_", I32);
                 Register off__ = new Register("off__", I32);
                 Register off___ = new Register("off___", STR);
@@ -967,7 +963,7 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.back.comment = "Cast";
                 currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
                 currentBlock.back.comment = "Store";
-                if (typePointTo.isSame(I32)) {
+                if (typePointTo.isSameWith(I32)) {
                     currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
                 } else {
                     Register intArrAddr_1 = new Register("_addr_int_1", I32Array);

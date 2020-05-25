@@ -2,7 +2,7 @@ package Ornn.IR.util;
 
 import java.util.HashMap;
 
-public class Op2Inst { // for llvm IR
+public class Op { // for llvm IR
 
     public static final HashMap<String, String> opTable = new HashMap<>() {
         {
@@ -27,5 +27,11 @@ public class Op2Inst { // for llvm IR
     };
     public static String translate(String op) {
         return opTable.get(op);
+    }
+    public static boolean isAbelian(String op) {
+        switch (op) {
+            case "+": case "*": case "^": case "&": case "|": return true;
+            default: return false;
+        }
     }
 }

@@ -2,7 +2,7 @@ package Ornn.IR;
 
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.Register;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class BasicBlock {
             } else if (inst instanceof Return) {
                 // pass
             } else {
-                throw new UnreachableError();
+                throw new UnreachableCodeError();
             }
         }
     }
@@ -50,7 +50,7 @@ public class BasicBlock {
         }
         else if (inst.isTerminal()) {
             isTerminated = false;
-            splitSuccessors();
+            //splitSuccessors();
         }
     }
 
@@ -89,16 +89,33 @@ public class BasicBlock {
         assert isTerminated;
         Inst terminator = back;
         terminator.delete();
+        splitSuccessors();
+    }
+
+    public void cleanUpTerminator() {
+        assert isTerminated;
+        Inst terminator = back;
+        terminator.delete();
+        cleanSuccessors();
+    }
+    public void splitSuccessors() {
+        successors.forEach(x -> {
+            x.precursors.remove(this);
+            //x.phiRemove(this); // may keep when transforming jumps
+        });
+        successors.clear();
+    }
+    public void cleanSuccessors() {
+        successors.forEach(x -> {
+            x.precursors.remove(this);
+            x.phiRemove(this);
+        });
+        successors.clear();
     }
 
     public void linkSuccessor(BasicBlock block) {
         successors.add(block);
         block.precursors.add(this);
-    }
-
-    public void splitSuccessors() {
-        successors.forEach(x -> x.precursors.remove(this));
-        successors.clear();
     }
 
     public void redirectPrecursor(BasicBlock from, BasicBlock to) {
@@ -133,6 +150,17 @@ public class BasicBlock {
             }
         });
     }
+    public void phiRemove(BasicBlock from) {
+        phiInst.forEach((register, phi) -> {
+            for (int i = 0; i < phi.blocks.size(); i++) {
+                if (phi.blocks.get(i).equals(from)) {
+                    phi.blocks.remove(i);
+                    phi.values.remove(i);
+                    i--;
+                }
+            }
+        });
+    }
 
     public void spiltAndCopyTo(BasicBlock dest, Inst inst) {
         assert dest.front == null && dest.back == null;
@@ -162,6 +190,7 @@ public class BasicBlock {
     }
 
     public void merge(BasicBlock block) {
+        assert block.phiInst.size() == 0;
         successors = block.successors;
         block.successors.forEach(x -> x.redirectPrecursor(block, this));
         for (Inst inst = block.front; inst != null; inst = inst.next) {
@@ -178,6 +207,13 @@ public class BasicBlock {
         }
         back = block.back;
         isTerminated = block.isTerminated;
+    }
+
+    public boolean isDomedBy(BasicBlock block) {
+        for (BasicBlock cur = iDom; cur != null; cur = cur.iDom) {
+            if (cur.equals(block)) return true;
+        }
+        return false;
     }
 
 }

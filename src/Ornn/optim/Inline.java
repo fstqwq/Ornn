@@ -2,6 +2,7 @@ package Ornn.optim;
 
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
+import Ornn.IR.util.CallGraphUpdater;
 import Ornn.IR.util.FunctionBlockCollector;
 import Ornn.IR.util.IRReplicator;
 
@@ -10,15 +11,15 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class Inline implements Pass {
-    static final int forcedInstLimit = 192;
-    static final int instLimit = 2048;
+    static final int forcedInstLimit = 200;
+    static final int instLimit = 666;
     Root root;
     boolean updated = false, forced = false;
     public Inline(Root root) {
         this.root = root;
     }
 
-    HashSet<Function> visited = new HashSet<>(), canInline = new HashSet<>();
+    HashSet<Function> canInline = new HashSet<>();
     HashMap<Function, Integer> numberOfInst = new HashMap<>();
 
     void recollectInfo(Function function) {
@@ -31,36 +32,12 @@ public class Inline implements Pass {
         numberOfInst.put(function, cnt);
     }
 
-    void FunctionDFS(Function function) {
-        visited.add(function);
-        for (BasicBlock block : function.blocks) {
-            for (Inst inst = block.front; inst != null; inst = inst.next) {
-                if (inst instanceof Call) {
-                    Function callee = ((Call) inst).callee;
-                    if (root.isBuiltin(callee.name)) {
-                        continue;
-                    }
-                    callee.caller.add(function);
-                    function.callee.add(function);
-                    if (!visited.contains(callee)) {
-                        FunctionDFS(callee);
-                    }
-                }
-            }
-        }
-        recollectInfo(function);
-    }
-
     void updateCallGraph() {
-        root.functions.forEach(((s, function) -> {
-            function.callee.clear();
-            function.caller.clear();
-        }));
-        visited.clear();
+        CallGraphUpdater.run(root, true);
         numberOfInst.clear();
-        Function main = root.getFunction("main");
-        main.caller.add(null); // prevent from deleting
-        FunctionDFS(main);
+        root.functions.forEach(((s, function) -> {
+            recollectInfo(function);
+        }));
         root.builtinFunctions.forEach(((s, function) -> {
             numberOfInst.put(function, instLimit);
         }));

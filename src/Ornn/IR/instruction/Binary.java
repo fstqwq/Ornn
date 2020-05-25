@@ -4,7 +4,7 @@ import Ornn.IR.BasicBlock;
 import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.*;
 import Ornn.IR.util.IRReplicator;
-import Ornn.IR.util.Op2Inst;
+import Ornn.IR.util.Op;
 
 import java.util.HashSet;
 
@@ -27,7 +27,7 @@ public class Binary extends Inst { // return int
     @Override
     public String toString() {
         return dest.toString() + " = "
-                + Op2Inst.translate(op) + " "
+                + Op.translate(op) + " "
                 + src1.type.toString() + " " + src1.toString() + ", "
                 + src2.toString();
     }
@@ -69,5 +69,19 @@ public class Binary extends Inst { // return int
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean isSameWith(Inst inst) {
+        return inst instanceof Binary && ((Binary) inst).op.equals(op) &&
+            (
+                    (src1.equals(((Binary) inst).src1) && src2.equals(((Binary) inst).src2))
+            ||      (Op.isAbelian(op) && src1.equals(((Binary) inst).src2) && src2.equals(((Binary) inst).src1))
+            );
+    }
+
+    @Override
+    public boolean hasSideEffect() {
+        return false;
     }
 }

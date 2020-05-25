@@ -15,9 +15,9 @@ abstract public class Operand {
         this.name = name;
         this.type = type;
     }
-    public Inst defInst() {
-        return null;
-    }
     public abstract Operand getCopy();
     public abstract String toString();
+    public boolean isSameWith(Operand other) {
+        return false;
+    }
 }

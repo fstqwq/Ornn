@@ -57,5 +57,13 @@ public class LivenessAnalysis {
         visited = new HashSet<>();
         function.blocks.forEach(LivenessAnalysis::runForBlock);
         runBackward(function.exitBlock);
+/*        System.err.println("==== blocks ====");
+        function.blocks.forEach(x -> {
+            System.err.println(x + "\nlive in:");
+            x.liveIn.forEach(System.err::println);
+            System.err.println("live out:");
+            x.liveOut.forEach(System.err::println);
+        });
+        System.err.println("==== end =====");*/
     }
 }

@@ -178,7 +178,6 @@ public class StaticArrayDetector implements ASTVisitor {
         FunctionSymbol symbol = node.getFunctionSymbol();
         if (symbol.getSymbolName().equals("array_size")) {
             ExprNode exprNode = ((ClassMemberNode) node.getFunctionNode()).getExpr();
-            System.err.println(exprNode.getType());
             if (exprNode instanceof IDExprNode) {
                 Symbol variableSymbol = ((IDExprNode) exprNode).getVariableSymbol();
                 access.put(variableSymbol, access.getOrDefault(variableSymbol, 0) - 1);

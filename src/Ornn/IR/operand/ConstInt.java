@@ -18,4 +18,10 @@ public class ConstInt extends Operand {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean isSameWith(Operand other) {
+        return other instanceof ConstInt && ((ConstInt) other).value == value
+                || other instanceof Undef;
+    }
 }

@@ -30,15 +30,16 @@ public abstract class RVInst {
     public HashSet<Reg> getUses() {
         return new HashSet<>();
     }
+    public HashSet<Reg> getDefs() {
+        return new HashSet<>();
+    }
+
     public void replaceUse(Reg old, Reg newReg) {
         assert false;
     }
 
     public void replaceRd(Reg old, Reg newReg) {
         assert false;
-    }
-    public HashSet<Reg> getDefs() {
-        return new HashSet<>();
     }
     public void applyStackOffset(int stackOffset) {}
     public boolean hasNext() {

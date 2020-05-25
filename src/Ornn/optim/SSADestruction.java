@@ -3,17 +3,14 @@ package Ornn.optim;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.Function;
 import Ornn.IR.Root;
-import Ornn.IR.instruction.Branch;
-import Ornn.IR.instruction.Jump;
-import Ornn.IR.instruction.Move;
+import Ornn.IR.instruction.*;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.operand.Undef;
+import Ornn.IR.util.DominatorTreeBuilder;
+import Ornn.util.UnreachableCodeError;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 
 /*
@@ -162,10 +159,42 @@ public class SSADestruction implements Pass {
                 }
             }
         }
-        function.blocks.removeIf(cur -> !cur.equals(function.entryBlock) && cur.precursors.size() == 0);
+        function.blocks.forEach(x -> x.precursors.clear());
+        function.blocks.forEach(x -> x.successors.clear());
+        visited = new LinkedHashSet<>();
+        DFS(function.entryBlock);
+        function.blocks = visited;
+        for ( ; ; ) {
+            int size = function.blocks.size();
+            for (Iterator<BasicBlock> iter = function.blocks.iterator(); iter.hasNext(); ) {
+                BasicBlock cur = iter.next();
+                if (!cur.equals(function.entryBlock) && cur.precursors.size() == 0) {
+                    iter.remove();
+                    cur.splitSuccessors();
+                }
+            }
+            if (size == function.blocks.size()) break;
+        }
         function.blocks.forEach(cur -> cur.phiInst.clear());
+        DominatorTreeBuilder.runForFunction(function);
     }
 
+    HashSet<BasicBlock> visited;
+
+    void DFS(BasicBlock x) {
+        if (visited.contains(x)) return;
+        visited.add(x);
+        if (x.back instanceof Return) {
+        } else if (x.back instanceof Branch) {
+            x.linkSuccessor(((Branch) x.back).thenDest);
+            x.linkSuccessor(((Branch) x.back).elseDest);
+        } else if (x.back instanceof Jump) {
+            x.linkSuccessor(((Jump) x.back).dest);
+        } else {
+            throw new UnreachableCodeError();
+        }
+        x.successors.forEach(this::DFS);
+    }
 
     @Override
     public boolean run() {

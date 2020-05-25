@@ -1,6 +1,7 @@
 package Ornn;
 
 import Ornn.AST.ProgramNode;
+import Ornn.RISCV.RISCVDebugger;
 import Ornn.RISCV.RISCVPrinter;
 import Ornn.RISCV.RVRoot;
 import Ornn.frontend.IRBuilder;
@@ -8,6 +9,7 @@ import Ornn.IR.IRPrinter;
 import Ornn.backend.InstSelector;
 import Ornn.backend.RegisterAllocation;
 import Ornn.frontend.*;
+import Ornn.optim.Global2Local;
 import Ornn.optim.Mem2Reg;
 import Ornn.optim.Optimization;
 import Ornn.optim.SSADestruction;
@@ -94,15 +96,20 @@ public class Main {
 
             if (runSemanticOnly) return;
 
-            new ConstantFolding(toplevelScope).visit(ast);
-            new PrintOptimization(toplevelScope).visit(ast);
-            new StaticArrayDetector().visit(ast);
+            if (optLevel > 0) {
+                new ConstantFolding(toplevelScope).visit(ast);
+                new PrintOptimization(toplevelScope).visit(ast);
+                new StaticArrayDetector().visit(ast);
+            }
 
             IRBuilder irBuilder = new IRBuilder(toplevelScope, emitLLVM);
             irBuilder.visit(ast);
 
             if (optLevel > 1) {
-                new Mem2Reg(irBuilder.root).run();
+                new Global2Local(irBuilder.root).run();
+            }
+            new Mem2Reg(irBuilder.root).run();
+            if (optLevel > 1) {
                 new Optimization(irBuilder.root).run();
             }
             if (emitLLVM) {
@@ -125,6 +132,8 @@ public class Main {
             }
 
             new RegisterAllocation(rvRoot).run();
+            //new RISCVDebugger(rvRoot, new PrintStream(outputFile)).run();
+            //if (true) return;
             if (outputToStdout) {
                 new RISCVPrinter(rvRoot, new PrintStream(System.out), true).run();
             }

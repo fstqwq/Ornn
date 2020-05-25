@@ -5,9 +5,10 @@ import Ornn.IR.IRVisitor;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.util.IRReplicator;
-import Ornn.util.UnreachableError;
+import Ornn.util.UnreachableCodeError;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Phi extends Inst {
@@ -78,7 +79,29 @@ public class Phi extends Inst {
 
     @Override
     public void accept(IRVisitor visitor) {
-        throw new UnreachableError();
+        throw new UnreachableCodeError();
     }
 
+    @Override
+    public boolean isSameWith(Inst inst) {
+        if (!(inst instanceof Phi)) return false;
+        if (((Phi) inst).values.size() != values.size()) return false;
+
+        HashMap<BasicBlock, Operand> tmp = new HashMap<>();
+        for (int i = 0; i < blocks.size(); i++) {
+            tmp.put(blocks.get(i), values.get(i));
+        }
+        for (int i = 0; i < blocks.size(); i++) {
+            BasicBlock block  = ((Phi) inst).blocks.get(i);
+            Operand value  = ((Phi) inst).values.get(i);
+            if (!tmp.containsKey(block)) return false;
+            if (!tmp.get(block).equals(value)) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void delete() {
+        values.forEach(value -> value.uses.remove(this));
+    }
 }

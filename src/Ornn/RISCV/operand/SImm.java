@@ -1,12 +1,19 @@
 package Ornn.RISCV.operand;
 
-import Ornn.util.UnreachableError;
-
 public class SImm extends Imm {
     boolean topDown, applied = false;
     public SImm(int value, boolean topDown) {
         super(value);
         this.topDown = topDown;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof SImm && ((SImm) obj).value == value;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
     }
 
     @Override

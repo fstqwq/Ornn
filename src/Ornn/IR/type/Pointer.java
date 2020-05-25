@@ -27,10 +27,10 @@ public class Pointer extends BaseType {
     }
 
     @Override
-    public boolean isSame(BaseType type) {
+    public boolean isSameWith(BaseType type) {
         return  (
                     type instanceof Pointer &&
-                    (((Pointer) type).typePointedTo instanceof VoidType || ((Pointer)type).typePointedTo.isSame(this.typePointedTo))
-                ) || (type instanceof ArrayType && ((ArrayType)type).baseType.isSame(typePointedTo));
+                    (((Pointer) type).typePointedTo instanceof VoidType || ((Pointer)type).typePointedTo.isSameWith(this.typePointedTo))
+                ) || (type instanceof ArrayType && ((ArrayType)type).baseType.isSameWith(typePointedTo));
     }
 }

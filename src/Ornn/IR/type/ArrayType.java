@@ -20,10 +20,10 @@ public class ArrayType extends BaseType {
     }
 
     @Override
-    public boolean isSame(BaseType type) {
+    public boolean isSameWith(BaseType type) {
         return  (
                     type instanceof Pointer &&
-                    (((Pointer) type).typePointedTo instanceof VoidType || ((Pointer)type).typePointedTo.isSame(baseType))
-                ) || (type instanceof ArrayType && type.isSame(this.baseType));
+                    (((Pointer) type).typePointedTo instanceof VoidType || ((Pointer)type).typePointedTo.isSameWith(baseType))
+                ) || (type instanceof ArrayType && type.isSameWith(this.baseType));
     }
 }

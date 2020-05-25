@@ -1,5 +1,6 @@
 package Ornn.backend;
 
+import Ornn.IR.Function;
 import Ornn.RISCV.*;
 import Ornn.RISCV.instrution.*;
 import Ornn.RISCV.operand.*;
@@ -452,19 +453,6 @@ public class RegisterAllocation {
         }
     }
 
-    void removeIdMove() {
-        for (RVBlock block : currentFunction.blocks) {
-            for (RVInst inst = block.front, next; inst != null; inst = inst.next) {
-//                System.err.println(block.name + " : " +inst.prev + " (" + inst + ") " + inst.next + " " + (inst instanceof Mv ? ((Mv) inst).rs.color + " " + ((Mv) inst).rd.color : ""));
-                if (inst instanceof Mv && ((Mv) inst).rs.color.equals(((Mv) inst).rd.color)) {
-                    inst.delete();
-                } else if (inst instanceof IType && ((IType) inst).op == RVInst.SCategory.add && ((IType) inst).rd.color.equals(((IType) inst).rs.color) && ((IType) inst).imm.value == 0) {
-                    inst.delete();
-                }
-            }
-        }
-    }
-
     public void run() {
         for (RVFunction function : root.functions) {
             stackOffset = 0;
@@ -472,7 +460,7 @@ public class RegisterAllocation {
             stackOffset += function.paramInStackOffset;
             stackOffset = (stackOffset + 15) / 16 * 16;
             applyStackOffset();
-            removeIdMove();
         }
+        Peephole.run(root);
     }
 }

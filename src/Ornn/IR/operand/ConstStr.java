@@ -21,4 +21,9 @@ public class ConstStr extends Operand {
     public String toString() {
         return "@" + name;
     }
+
+    @Override
+    public boolean isSameWith(Operand other) {
+        return equals(other);
+    }
 }

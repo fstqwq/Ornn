@@ -4,8 +4,9 @@ import os, time
 
 
 test_cases_dir = './Compiler-2020/testcase/codegen/'
-# test_cases_dir = './bin/optim/optim/'
+#test_cases_dir = './bin/optim/optim/'
 calculate_score = False
+#calculate_score = True
 compile_cmd = "bash ./build.bash"
 execute_cmd = "bash ./codegen_stdout.bash"
 excluded_test_cases = ["foo.mx"]

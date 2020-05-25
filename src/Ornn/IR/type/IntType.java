@@ -17,7 +17,7 @@ public class IntType extends BaseType {
     }
 
     @Override
-    public boolean isSame(BaseType type) {
+    public boolean isSameWith(BaseType type) {
         return (type instanceof IntType && size == type.size()) || (size == 8 && type instanceof BoolType);
     }
 }

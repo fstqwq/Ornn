@@ -12,11 +12,6 @@ public class Register extends Operand {
     }
 
     @Override
-    public Inst defInst() {
-        return def;
-    }
-
-    @Override
     public Operand getCopy() {
         return new Register(name, type);
     }
@@ -31,5 +26,6 @@ public class Register extends Operand {
             inst.replaceUse(this, to);
             to.uses.add(inst);
         }
+        uses.clear();
     }
 }
