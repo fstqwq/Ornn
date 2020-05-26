@@ -5,7 +5,8 @@ test.mx
 test.in
 test.ans
 test.out
-*.s
+output.s
+test.s
 *.ll
 *.log
 *.out
