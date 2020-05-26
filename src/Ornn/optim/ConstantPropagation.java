@@ -120,6 +120,90 @@ public class ConstantPropagation implements Pass {
                     }
                     dest.replaceAll(equiv);
                     changed = true;
+                } else if (isConstant(src1)) {
+                    switch (op) {
+                        case "*":
+                            if (((ConstInt) src1).value == 1) {
+                                dest.replaceAll(src2);
+                                changed = true;
+                            }
+                            break;
+                        case "<<":
+                        case ">>":
+                        case "&":
+                            if ((src1 instanceof ConstInt && ((ConstInt) src1).value == 0) || (src1 instanceof ConstBool && !((ConstBool) src1).value) ) {
+                                dest.replaceAll(src1);
+                                changed = true;
+                            }
+                            break;
+                        case "^":
+                        case "|":
+                        case "+":
+                            if ((src1 instanceof ConstInt && ((ConstInt) src1).value == 0) || (src1 instanceof ConstBool && !((ConstBool) src1).value) ) {
+                                dest.replaceAll(src2);
+                                changed = true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                } else if (isConstant(src2)) {
+                    switch (op) {
+                        case "*": case "/":
+                            if (((ConstInt) src2).value == 1) {
+                                dest.replaceAll(src1);
+                                changed = true;
+                            }
+                            break;
+                        case "&":
+                            if ((src2 instanceof ConstInt && ((ConstInt) src2).value == 0) || (src2 instanceof ConstBool && !((ConstBool) src2).value) ) {
+                                dest.replaceAll(src2);
+                                changed = true;
+                            }
+                            break;
+                        case "^":
+                        case "|":
+                        case "+":
+                        case "-":
+                        case "<<":
+                        case ">>":
+                            if ((src2 instanceof ConstInt && ((ConstInt) src2).value == 0) || (src2 instanceof ConstBool && !((ConstBool) src2).value) ) {
+                                dest.replaceAll(src1);
+                                changed = true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    // associativity
+                    if (!changed
+                            && src1 instanceof Register
+                            //&& src1.uses.size() == 1 // only a temp
+                            && ((Register) src1).def instanceof Binary
+                            && ((Binary) ((Register) src1).def).op.equals(op)
+                            && ((Binary) ((Register) src1).def).src2 instanceof ConstInt) {
+                            if (op.equals("+") || op.equals("-") || op.equals("^") || op.equals("&") || op.equals("|")) { // *, / are dangerous
+                                src1.uses.remove(inst);
+                                ((Binary) ((Register) src1).def).src1.uses.add(inst);
+                                ((Binary) inst).src1 = ((Binary) ((Register) src1).def).src1;
+                                assert src2 instanceof ConstInt;
+                                switch (op) {
+                                    case "+": case "-":
+                                        ((Binary) inst).src2 = new ConstInt(((ConstInt) src2).value + ((ConstInt) ((Binary) ((Register) src1).def).src2).value, 32);
+                                        break;
+                                    case "^":
+                                        ((Binary) inst).src2 = new ConstInt(((ConstInt) src2).value ^ ((ConstInt) ((Binary) ((Register) src1).def).src2).value, 32);
+                                        break;
+                                    case "&":
+                                        ((Binary) inst).src2 = new ConstInt(((ConstInt) src2).value & ((ConstInt) ((Binary) ((Register) src1).def).src2).value, 32);
+                                        break;
+                                    case "|":
+                                        ((Binary) inst).src2 = new ConstInt(((ConstInt) src2).value | ((ConstInt) ((Binary) ((Register) src1).def).src2).value, 32);
+                                        break;
+                                }
+                                changed = true;
+                            }
+                    }
                 }
             } else if (inst instanceof Cmp) {
                 Operand src1 = ((Cmp) inst).src1, src2 = ((Cmp) inst).src2;

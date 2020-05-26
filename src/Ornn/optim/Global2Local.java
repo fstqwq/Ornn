@@ -65,7 +65,7 @@ public class Global2Local implements Pass {
                     inlinedCnt++;
                 }
             }
-        } while (inlinedCnt > 6);
+        } while (inlinedCnt > 8);
         for (Map.Entry<Global, Integer> entry : cnt.entrySet()) {
             Global global = entry.getKey();
             Integer integer = entry.getValue();

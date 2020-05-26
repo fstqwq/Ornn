@@ -28,4 +28,9 @@ public class Register extends Operand {
         }
         uses.clear();
     }
+
+    @Override
+    public boolean isSameWith(Operand other) {
+        return equals(other);
+    }
 }

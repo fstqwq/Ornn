@@ -82,11 +82,11 @@ public class GEP extends Inst {
     @Override
     public boolean isSameWith(Inst inst) {
         return inst instanceof GEP
-                && ptr.equals(((GEP) inst).ptr)
-                && arrayOffset.equals(((GEP) inst).arrayOffset)
+                && ptr.isSameWith(((GEP) inst).ptr)
+                && arrayOffset.isSameWith(((GEP) inst).arrayOffset)
                 && (
                         (elementOffset == null && ((GEP) inst).elementOffset == null)
-                ||      (elementOffset != null && elementOffset.equals(((GEP) inst).elementOffset))
+                ||      (elementOffset != null && elementOffset.isSameWith(((GEP) inst).elementOffset))
                 );
     }
     @Override

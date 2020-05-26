@@ -13,7 +13,25 @@ public class Peephole {
             for (RVInst inst = block.front; inst != null; inst = inst.next) {
                 if (inst instanceof Mv && ((Mv) inst).rs.color.equals(((Mv) inst).rd.color)) {
                     inst.delete();
-                } else if (inst instanceof IType && ((IType) inst).op == RVInst.SCategory.add && ((IType) inst).rd.color.equals(((IType) inst).rs.color) && ((IType) inst).imm.value == 0) {
+                } else if (inst instanceof IType
+                        && (((IType) inst).op == RVInst.SCategory.add
+                            || ((IType) inst).op == RVInst.SCategory.or
+                            || ((IType) inst).op == RVInst.SCategory.xor
+                            || ((IType) inst).op == RVInst.SCategory.sll
+                            || ((IType) inst).op == RVInst.SCategory.sra
+                        )
+                        && ((IType) inst).rd.color.equals(((IType) inst).rs.color) && ((IType) inst).imm.value == 0) {
+                    inst.delete();
+                } else if (inst instanceof RType
+                        && (((RType) inst).op == RVInst.SCategory.add
+                            || ((RType) inst).op == RVInst.SCategory.or
+                            || ((RType) inst).op == RVInst.SCategory.xor
+                            || ((RType) inst).op == RVInst.SCategory.sll
+                            || ((RType) inst).op == RVInst.SCategory.sra
+                        )
+                        && (
+                                ((RType) inst).rd.color.equals(((RType) inst).rs1.color) && ((RType) inst).rs2.color == root.pRegs.get(0)
+                        )) {
                     inst.delete();
                 }
             }
@@ -21,9 +39,11 @@ public class Peephole {
     }
     static void redundantEliminator(RVFunction function) {
         // hard to implement, give up
+        // MIR peephole did (most of) it, so it's now not required that much
     }
 
     static void combineBlocks(RVFunction function) {
+        // for redundant eliminator, but now useless (we have reschedule!)
         boolean updated;
         do {
             updated = false;

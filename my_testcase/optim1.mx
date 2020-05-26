@@ -1,0 +1,38 @@
+/*
+Test Package: Codegen
+Author: 18' Zonghan YANG
+Time: 2020-05-27
+Input:
+=== input ===
+=== end ===
+Output:
+=== output ===
+114514
+617617
+3003
+3003
+
+=== end ===
+ExitCode: 0
+InstLimit: -1
+Origin Package: A cool constant propagation + inline could output constant directly.
+*/
+
+int n, m, q;
+void f() {n++; n = n * 1; n = n / 1; n = n ^ 0; n = n + 1 / 2;}
+void g() {n++; f(); f(); f(); f(); f(); f(); f(); f(); f(); n++;}
+void h() {n = n * 1; g(); g(); g(); g(); g(); g(); g(); n = n + 0;}
+void k() {n = n / 1; m++; q++; h(); h(); h(); h(); h(); h(); h(); h(); n = n - 0; m++; q++;}
+
+int do(int w) {
+	n++; m++; q++;
+	k();
+	if (w > 0) return do(w - 1);
+	else return 114514;
+}
+int main() {
+	printlnInt(do(1000));
+	printlnInt(n);
+	printlnInt(m);
+	printlnInt(q);
+}

@@ -14,7 +14,7 @@ import java.util.Map;
 
 
 public class CommonSubexpressionElimination implements Pass {
-    static final int instLimit = 28; // optimistic
+    static final int instLimit = 64; // optimistic
     Root root;
     public CommonSubexpressionElimination(Root root) {
         this.root = root;

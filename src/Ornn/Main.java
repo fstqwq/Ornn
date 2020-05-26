@@ -44,8 +44,8 @@ public class Main {
                             outputToStdout = true;
                             break;
                         case "-O0":
-                            optLevel = 0;
-                            break;
+                            // not enough tested, but RE on some test cases
+                            throw new RuntimeException("Sorry, O0 is not supported in this version. Please, use older versions.");
                         case "-O1":
                             optLevel = 1;
                             break;

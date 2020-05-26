@@ -67,7 +67,7 @@ public class Cast extends Inst {
     @Override
     public boolean isSameWith(Inst inst) {
         return inst instanceof Cast
-                && src.equals(((Cast) inst).src)
+                && src.isSameWith(((Cast) inst).src)
                 && dest.type.isSameWith(((Cast) inst).dest.type);
     }
 

@@ -75,8 +75,8 @@ public class Binary extends Inst { // return int
     public boolean isSameWith(Inst inst) {
         return inst instanceof Binary && ((Binary) inst).op.equals(op) &&
             (
-                    (src1.equals(((Binary) inst).src1) && src2.equals(((Binary) inst).src2))
-            ||      (Op.isAbelian(op) && src1.equals(((Binary) inst).src2) && src2.equals(((Binary) inst).src1))
+                    (src1.isSameWith(((Binary) inst).src1) && src2.isSameWith(((Binary) inst).src2))
+            ||      (Op.isAbelian(op) && src1.isSameWith(((Binary) inst).src2) && src2.isSameWith(((Binary) inst).src1))
             );
     }
 

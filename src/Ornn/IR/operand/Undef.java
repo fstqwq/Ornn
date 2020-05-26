@@ -19,6 +19,6 @@ public class Undef extends Operand {
 
     @Override
     public boolean isSameWith(Operand other) {
-        return true;
+        return !(other instanceof Register);
     }
 }
