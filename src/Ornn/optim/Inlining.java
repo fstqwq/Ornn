@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Inlining implements Pass {
     static final int forcedInstLimit = 200;
-    static final int instLimit = 666;
+    static final int instLimit = 750;
     Root root;
     boolean updated = false, forced = false;
     public Inlining(Root root) {

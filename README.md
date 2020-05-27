@@ -66,9 +66,9 @@ IR Builder
     * Common subexpression elimination
     * MIR Peephole
         > Is alias analysis THAT important? In fact if you use alias analysis, in many times the only answer is may alias.
-        * Kill redundant load stores. Mainly locally, but able to access idom block if it is the only entry (Like for cond)
+        * Kill redundant load stores. Mainly locally, but able to access idom block if it is the only entry (often conditions)
             * For globals, they must not have alias, so delete all loads except the first and all stores except the last.
-            * For pointers, loads change nothing so it's safe; stores are dangerous so clear all information kept now.
+            * For pointers, take all pointers of same type as may alias, and delete useless L/S.
     * Global variable localization in dead end functions
         * It was inspired by my participation in Huawei Software *~~(Constant Optimization)~~* Elite Challenge
         * Brainless inlining globals shows negative sometimes, like you've got lot to call in current function. So I designed a threshold condition to do it heuristically.

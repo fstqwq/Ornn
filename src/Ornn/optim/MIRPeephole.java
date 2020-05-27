@@ -5,8 +5,6 @@ import Ornn.IR.Function;
 import Ornn.IR.Root;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.Global;
-import Ornn.IR.operand.Register;
-import Ornn.IR.util.DominatorTreeBuilder;
 
 import java.util.*;
 
@@ -24,14 +22,29 @@ public class MIRPeephole implements Pass {
             changed = false;
             HashMap <Global, Inst> globalLoadStore = new HashMap<>(); // globals never have aliases
             ArrayList <Inst> available = new ArrayList<>();
-            Store protectedStore = null; // should not delete cross-block store
+            ArrayList<Store> protectedStore = new ArrayList<>(); // should not delete cross-block store
             if (block.precursors.contains(block.iDom) && block.precursors.size() == 1) {
                 for (Inst inst = block.iDom.back.prev; inst != null; inst = inst.prev) {
                     if (inst instanceof Store) {
+                        boolean collision = false;
+                        for (Store store : protectedStore) {
+                            if (store.addr.type.isSameWith(((Store) inst).addr.type)) {
+                                collision = true;
+                                break;
+                            }
+                        }
+                        if (collision) continue;
                         available.add(inst);
-                        protectedStore = (Store) inst;
-                        break;
+                        protectedStore.add((Store) inst);
                     } else if (inst instanceof Load) {
+                        boolean collision = false;
+                        for (Store store : protectedStore) {
+                            if (store.addr.type.isSameWith(((Load) inst).addr.type)) {
+                                collision = true;
+                                break;
+                            }
+                        }
+                        if (collision) continue;
                         available.add(inst);
                     }
                 }
@@ -83,7 +96,7 @@ public class MIRPeephole implements Pass {
                     if (((Store) inst).addr instanceof Global && globalLoadStore.containsKey((Global) ((Store) inst).addr) && !((Global) ((Store) inst).addr).isArray) {
                         Global global = (Global) ((Store) inst).addr;
                         Inst last = globalLoadStore.get(global);
-                        if (last instanceof Store && last != protectedStore) {
+                        if (last instanceof Store && !protectedStore.contains(last)) {
                             last.delete();
                             changed = true;
                         }
@@ -93,7 +106,7 @@ public class MIRPeephole implements Pass {
                     } else {
                         boolean replaced = false;
                         for (Inst i : available) {
-                            if (i instanceof Store && i != protectedStore) {
+                            if (i instanceof Store && !protectedStore.contains(i)) {
                                 if (((Store) i).addr.isSameWith(((Store) inst).addr)) {
                                     i.delete();
                                     replaced = true;
@@ -102,7 +115,19 @@ public class MIRPeephole implements Pass {
                             }
                         }
                         if (replaced) changed = true;
-                        available.clear();
+                        /**/for (Iterator<Inst> iter = available.iterator(); iter.hasNext(); ) {
+                            Inst cur = iter.next();
+                            if (cur instanceof Store) {
+                                if (((Store) cur).addr.type.isSameWith(((Store) inst).addr.type)) {
+                                    iter.remove();
+                                }
+                            } else if (cur instanceof Load) {
+                                if (((Load) cur).addr.type.isSameWith(((Store) inst).addr.type)) {
+                                    iter.remove();
+                                }
+                            }
+                        }//*/
+                        //available.clear();
                         available.add(inst);
                     }
                 } else if (inst instanceof Call) {
