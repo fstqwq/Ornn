@@ -205,6 +205,8 @@ public class InstSelector implements IRVisitor {
                 currentBlock.add(new IType(regTrans(src1), new Imm(Integer.numberOfTrailingZeros(getOperandConst(src2))), SCategory.sll, rd, currentBlock));
             } else if (sop == SCategory.div && checkOperandConst(src2) && isPowerOfTwo(getOperandConst(src2))) { // wrong when negative, assumed undefined
                 currentBlock.add(new IType(regTrans(src1), new Imm(Integer.numberOfTrailingZeros(getOperandConst(src2))), SCategory.sra, rd, currentBlock));
+            } else if (sop == SCategory.rem && checkOperandConst(src2) && isPowerOfTwo(getOperandConst(src2))) { // wrong when negative, assumed undefined
+                currentBlock.add(new IType(regTrans(src1), new Imm((1 << Integer.numberOfTrailingZeros(getOperandConst(src2))) - 1), SCategory.and, rd, currentBlock));
             } else {
                 currentBlock.add(new RType(regTrans(src1), regTrans(src2), sop, rd, currentBlock));
             }
