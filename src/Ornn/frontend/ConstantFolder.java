@@ -1,12 +1,11 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
-import Ornn.semantic.*;
+import Ornn.AST.semantic.*;
 import Ornn.util.CompilationError;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import static Ornn.frontend.ToplevelScopeBuilder.*;
 
@@ -27,14 +26,14 @@ import static Ornn.frontend.ToplevelScopeBuilder.*;
     2. complete constexpr?
  */
 
-public class ConstantFolding implements ASTVisitor {
+public class ConstantFolder implements ASTVisitor {
 
     HashMap<Symbol, Literal> declMap = new HashMap<>();
     HashSet<Symbol> modified = new HashSet<>();
     boolean collectingConstDecl;
 
     FunctionSymbol toString;
-    public ConstantFolding(ToplevelScope toplevelScope) {
+    public ConstantFolder(ToplevelScope toplevelScope) {
         toString = (FunctionSymbol) toplevelScope.resolveSymbol("toString", null);
     }
     @Override

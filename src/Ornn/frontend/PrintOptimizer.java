@@ -1,18 +1,14 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
-import Ornn.semantic.FunctionSymbol;
-import Ornn.semantic.Symbol;
-import Ornn.semantic.ToplevelScope;
-import Ornn.semantic.TypeCategory;
-import Ornn.util.CompilationError;
+import Ornn.AST.semantic.FunctionSymbol;
+import Ornn.AST.semantic.ToplevelScope;
+import Ornn.AST.semantic.TypeCategory;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static Ornn.frontend.ToplevelScopeBuilder.Bool;
-import static Ornn.semantic.TypeCategory.RVALUE;
+import static Ornn.AST.semantic.TypeCategory.RVALUE;
 
 
 /*
@@ -21,11 +17,11 @@ import static Ornn.semantic.TypeCategory.RVALUE;
     With help of frontend constant folding, it can be magically useful.
  */
 
-public class PrintOptimization implements ASTVisitor {
+public class PrintOptimizer implements ASTVisitor {
     FunctionSymbol print, println, printInt, printlnInt, toString;
     HashMap<FunctionSymbol, FunctionSymbol> asInt = new HashMap<>();
     HashMap<FunctionSymbol, FunctionSymbol> asStr = new HashMap<>();
-    public PrintOptimization(ToplevelScope toplevelScope) {
+    public PrintOptimizer(ToplevelScope toplevelScope) {
         print = (FunctionSymbol) toplevelScope.resolveSymbol("print", null);
         println = (FunctionSymbol) toplevelScope.resolveSymbol("println", null);
         printInt = (FunctionSymbol) toplevelScope.resolveSymbol("printInt", null);

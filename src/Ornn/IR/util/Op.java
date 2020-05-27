@@ -30,7 +30,7 @@ public class Op { // for llvm IR
     }
     public static boolean isAbelian(String op) {
         switch (op) {
-            case "+": case "*": case "^": case "&": case "|": return true;
+            case "+": case "*": case "^": case "&": case "|": case "==": case "!=": return true;
             default: return false;
         }
     }

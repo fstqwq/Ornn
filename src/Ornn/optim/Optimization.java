@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 public class Optimization {
-    Inline inline;
+    Inlining inline;
     DeadCodeElimination DCE;
     CommonSubexpressionElimination CSE;
     ConstantPropagation CP;
@@ -15,7 +15,7 @@ public class Optimization {
     public ArrayList<Pass> passes = new ArrayList<>();
 
     public Optimization(Root root) {
-        inline = new Inline(root);
+        inline = new Inlining(root);
         DCE = new DeadCodeElimination(root);
         CSE = new CommonSubexpressionElimination(root);
         CP = new ConstantPropagation(root);

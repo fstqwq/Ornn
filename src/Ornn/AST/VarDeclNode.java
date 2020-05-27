@@ -1,7 +1,7 @@
 package Ornn.AST;
 
-import Ornn.semantic.SemanticType;
-import Ornn.semantic.VariableSymbol;
+import Ornn.AST.semantic.SemanticType;
+import Ornn.AST.semantic.VariableSymbol;
 import Ornn.AST.util.Position;
 
 public class VarDeclNode extends DeclNode {

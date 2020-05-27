@@ -80,7 +80,11 @@ public class Cmp extends Inst { // return boolean
 
     @Override
     public boolean isSameWith(Inst inst) {
-        return inst instanceof Cmp && ((Cmp) inst).op.equals(op) && src1.isSameWith(((Cmp) inst).src1) && src2.isSameWith(((Cmp) inst).src2);
+        return inst instanceof Cmp && ((Cmp) inst).op.equals(op) &&
+                (
+                        (src1.isSameWith(((Cmp) inst).src1) && src2.isSameWith(((Cmp) inst).src2))
+                ||      (Op.isAbelian(op) && src1.isSameWith(((Cmp) inst).src2) && src2.isSameWith(((Cmp) inst).src1))
+                );
     }
     @Override
     public boolean hasSideEffect() {

@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.semantic.SemanticType;
+import Ornn.AST.semantic.SemanticType;
 import Ornn.AST.util.Position;
 
 import java.util.ArrayList;

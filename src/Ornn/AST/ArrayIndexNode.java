@@ -1,7 +1,7 @@
 package Ornn.AST;
 
 import Ornn.AST.util.Position;
-import Ornn.semantic.VariableSymbol;
+import Ornn.AST.semantic.VariableSymbol;
 
 public class ArrayIndexNode extends ExprNode{
     private ExprNode array;

@@ -7,7 +7,7 @@ import Ornn.IR.operand.*;
 import Ornn.IR.type.*;
 import Ornn.IR.util.FunctionBlockCollector;
 import Ornn.IR.util.Op;
-import Ornn.semantic.*;
+import Ornn.AST.semantic.*;
 import Ornn.util.*;
 
 import java.util.ArrayList;

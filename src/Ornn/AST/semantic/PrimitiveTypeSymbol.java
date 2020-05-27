@@ -1,4 +1,4 @@
-package Ornn.semantic;
+package Ornn.AST.semantic;
 
 import Ornn.util.CompilationError;
 import Ornn.AST.util.Position;

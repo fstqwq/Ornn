@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.semantic.Symbol;
+import Ornn.AST.semantic.Symbol;
 import Ornn.AST.util.Position;
 
 public class ClassMemberNode extends ExprNode {

@@ -1,4 +1,4 @@
-package Ornn.semantic;
+package Ornn.AST.semantic;
 
 import Ornn.AST.FuncDeclNode;
 import Ornn.IR.Function;

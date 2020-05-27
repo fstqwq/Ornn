@@ -1,7 +1,6 @@
 package Ornn;
 
 import Ornn.AST.ProgramNode;
-import Ornn.RISCV.RISCVDebugger;
 import Ornn.RISCV.RISCVPrinter;
 import Ornn.RISCV.RVRoot;
 import Ornn.frontend.IRBuilder;
@@ -16,7 +15,7 @@ import Ornn.optim.SSADestruction;
 import Ornn.parser.ErrorListener;
 import Ornn.parser.MxstarLexer;
 import Ornn.parser.MxstarParser;
-import Ornn.semantic.ToplevelScope;
+import Ornn.AST.semantic.ToplevelScope;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.FileInputStream;
@@ -98,8 +97,8 @@ public class Main {
             if (runSemanticOnly) return;
 
             if (optLevel > 0) {
-                new ConstantFolding(toplevelScope).visit(ast);
-                new PrintOptimization(toplevelScope).visit(ast);
+                new ConstantFolder(toplevelScope).visit(ast);
+                new PrintOptimizer(toplevelScope).visit(ast);
                 new StaticArrayDetector().visit(ast);
             }
 

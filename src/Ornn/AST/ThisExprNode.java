@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.semantic.Scope;
+import Ornn.AST.semantic.Scope;
 import Ornn.AST.util.Position;
 
 public class ThisExprNode extends ExprNode {

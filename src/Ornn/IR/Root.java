@@ -7,7 +7,7 @@ import Ornn.IR.type.BaseType;
 import Ornn.IR.type.ClassType;
 import Ornn.IR.type.Pointer;
 import Ornn.frontend.ToplevelScopeBuilder;
-import Ornn.semantic.*;
+import Ornn.AST.semantic.*;
 import Ornn.util.UnreachableCodeError;
 
 import static Ornn.IR.util.Constant.*;

@@ -1,13 +1,13 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
-import Ornn.semantic.*;
+import Ornn.AST.semantic.*;
 import Ornn.util.CompilationError;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import static Ornn.semantic.TypeCategory.*;
+import static Ornn.AST.semantic.TypeCategory.*;
 
 public class SemanticChecker implements ASTVisitor {
     private PrimitiveTypeSymbol Int;

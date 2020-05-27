@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.semantic.FunctionSymbol;
+import Ornn.AST.semantic.FunctionSymbol;
 import Ornn.AST.util.Position;
 
 import java.util.ArrayList;

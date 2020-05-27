@@ -1,6 +1,5 @@
-package Ornn.semantic;
+package Ornn.AST.semantic;
 
-import Ornn.AST.TypeNode;
 import Ornn.util.CompilationError;
 
 import java.util.LinkedHashMap;

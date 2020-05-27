@@ -80,7 +80,7 @@ IR Builder
         * Simply put blocks in a dfs-order.
     * Peephole
         * Remove redundant moves.
-
+        * Remove redundant load immediate numbers, which is invisible in MIR
         
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen
 

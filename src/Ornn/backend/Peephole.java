@@ -37,13 +37,49 @@ public class Peephole {
             }
         }
     }
-    static void redundantEliminator(RVFunction function) {
-        // hard to implement, give up
-        // MIR peephole did (most of) it, so it's now not required that much
+    static void redundantElimination(RVFunction function) {
+        // remove redundant Li, Lui, La
+        // Load and stores are removed in MIR
+        for (RVBlock block : function.blocks) {
+            HashMap <PReg, RVInst> content = new HashMap<>();
+            for (RVInst inst = block.front; inst != null; inst = inst.next) {
+                boolean changed = false;
+                if (inst instanceof La) {
+                    if (content.containsKey(((La) inst).rd.color)) {
+                        RVInst last = content.get(((La) inst).rd.color);
+                        if (last instanceof La && ((La) last).src.equals(((La) inst).src)) {
+                            inst.delete();
+                            changed = true;
+                        }
+                    }
+                } else if (inst instanceof Lui) {
+                    if (content.containsKey(((Lui) inst).rd.color)) {
+                        RVInst last = content.get(((Lui) inst).rd.color);
+                        if (last instanceof Lui && ((Lui) last).value.equals(((Lui) inst).value)) {
+                            inst.delete();
+                            changed = true;
+                        }
+                    }
+                } else if (inst instanceof Li) {
+                    if (content.containsKey(((Li) inst).rd.color)) {
+                        RVInst last = content.get(((Li) inst).rd.color);
+                        if (last instanceof Li && ((Li) last).value == ((Li) inst).value) {
+                            inst.delete();
+                            changed = true;
+                        }
+                    }
+                }
+                if (!changed) {
+                    for (Reg def : inst.getDefs()) {
+                        content.put(def.color, inst);
+                    }
+                }
+            }
+        }
     }
 
     static void combineBlocks(RVFunction function) {
-        // for redundant eliminator, but now useless (we have reschedule!)
+        // for redundant eliminator
         boolean updated;
         do {
             updated = false;
@@ -79,6 +115,6 @@ public class Peephole {
         Peephole.root = root;
         root.functions.forEach(Peephole::removeIdMove);
         root.functions.forEach(Peephole::combineBlocks);
-        root.functions.forEach(Peephole::redundantEliminator);
+        root.functions.forEach(Peephole::redundantElimination);
     }
 }

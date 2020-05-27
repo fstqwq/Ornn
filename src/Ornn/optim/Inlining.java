@@ -12,12 +12,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Inline implements Pass {
+public class Inlining implements Pass {
     static final int forcedInstLimit = 200;
     static final int instLimit = 666;
     Root root;
     boolean updated = false, forced = false;
-    public Inline(Root root) {
+    public Inlining(Root root) {
         this.root = root;
     }
 

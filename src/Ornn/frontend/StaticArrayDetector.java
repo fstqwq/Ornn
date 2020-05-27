@@ -1,14 +1,11 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
-import Ornn.IR.type.ArrayType;
-import Ornn.semantic.*;
-import Ornn.util.CompilationError;
+import Ornn.AST.semantic.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import static Ornn.frontend.ToplevelScopeBuilder.Bool;
 

@@ -13,11 +13,21 @@ public class Imm {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Imm && ((Imm) obj).value == value;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
+
+    @Override
     public String toString() {
         return Integer.toString(value);
     }
 
     public void applyStackOffset(int stackOffset) {
-
+        // override by SImm
     }
 }

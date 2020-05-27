@@ -1,6 +1,6 @@
 package Ornn.AST;
 
-import Ornn.semantic.ClassSymbol;
+import Ornn.AST.semantic.ClassSymbol;
 import Ornn.AST.util.Position;
 
 import java.util.ArrayList;

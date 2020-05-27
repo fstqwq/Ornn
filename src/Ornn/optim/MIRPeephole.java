@@ -24,9 +24,12 @@ public class MIRPeephole implements Pass {
             changed = false;
             HashMap <Global, Inst> globalLoadStore = new HashMap<>(); // globals never have aliases
             ArrayList <Inst> available = new ArrayList<>();
+            Store protectedStore = null; // should not delete cross-block store
             if (block.precursors.contains(block.iDom) && block.precursors.size() == 1) {
                 for (Inst inst = block.iDom.back.prev; inst != null; inst = inst.prev) {
                     if (inst instanceof Store) {
+                        available.add(inst);
+                        protectedStore = (Store) inst;
                         break;
                     } else if (inst instanceof Load) {
                         available.add(inst);
@@ -80,7 +83,7 @@ public class MIRPeephole implements Pass {
                     if (((Store) inst).addr instanceof Global && globalLoadStore.containsKey((Global) ((Store) inst).addr) && !((Global) ((Store) inst).addr).isArray) {
                         Global global = (Global) ((Store) inst).addr;
                         Inst last = globalLoadStore.get(global);
-                        if (last instanceof Store) {
+                        if (last instanceof Store && last != protectedStore) {
                             last.delete();
                             changed = true;
                         }
@@ -90,7 +93,7 @@ public class MIRPeephole implements Pass {
                     } else {
                         boolean replaced = false;
                         for (Inst i : available) {
-                            if (i instanceof Store) {
+                            if (i instanceof Store && i != protectedStore) {
                                 if (((Store) i).addr.isSameWith(((Store) inst).addr)) {
                                     i.delete();
                                     replaced = true;

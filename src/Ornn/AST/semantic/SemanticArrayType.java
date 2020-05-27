@@ -1,6 +1,5 @@
-package Ornn.semantic;
+package Ornn.AST.semantic;
 
-import Ornn.IR.operand.Global;
 import Ornn.util.CompilationError;
 import Ornn.AST.util.Position;
 

@@ -1,7 +1,7 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
-import Ornn.semantic.*;
+import Ornn.AST.semantic.*;
 import Ornn.util.CompilationError;
 import Ornn.AST.util.Position;
 
