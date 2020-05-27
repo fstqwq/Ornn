@@ -27,7 +27,6 @@ public class MIRPeephole implements Pass {
             if (block.precursors.contains(block.iDom) && block.precursors.size() == 1) {
                 for (Inst inst = block.iDom.back.prev; inst != null; inst = inst.prev) {
                     if (inst instanceof Store) {
-                        available.add(inst);
                         break;
                     } else if (inst instanceof Load) {
                         available.add(inst);

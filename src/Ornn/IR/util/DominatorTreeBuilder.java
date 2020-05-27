@@ -21,7 +21,6 @@ public class DominatorTreeBuilder {
     static HashMap<Integer, Integer> pa;
 
     static void dfs(BasicBlock x) {
-        x.resetDomInfo();
         dfn.put(x, cnt);
         id.add(x);
         p.add(cnt); mn.add(cnt); sDom.add(cnt);
@@ -74,6 +73,8 @@ public class DominatorTreeBuilder {
         }
     }
     static public void runForFunction(Function function) {
+        BlockGraphUpdater.runForFunction(function);
+        function.blocks.forEach(BasicBlock::resetDomInfo);
         BasicBlock entry = function.entryBlock;
         dom = new ArrayList<>();
         dfn = new HashMap<>();

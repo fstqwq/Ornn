@@ -44,6 +44,7 @@ public class Main {
                             outputToStdout = true;
                             break;
                         case "-O0":
+                            optLevel = 0;
                             // not enough tested, but RE on some test cases
                             throw new RuntimeException("Sorry, O0 is not supported in this version. Please, use older versions.");
                         case "-O1":
@@ -145,6 +146,7 @@ public class Main {
             System.err.println(err.getMessage());
             throw err;
         }
+        System.err.println("[Compile Finished]");
     }
 
     public static ProgramNode buildAST(InputStream file) throws Exception {

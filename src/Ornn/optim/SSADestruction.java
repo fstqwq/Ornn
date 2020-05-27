@@ -7,6 +7,7 @@ import Ornn.IR.instruction.*;
 import Ornn.IR.operand.Operand;
 import Ornn.IR.operand.Register;
 import Ornn.IR.operand.Undef;
+import Ornn.IR.util.BlockGraphUpdater;
 import Ornn.IR.util.DominatorTreeBuilder;
 import Ornn.util.UnreachableCodeError;
 
@@ -159,41 +160,8 @@ public class SSADestruction implements Pass {
                 }
             }
         }
-        function.blocks.forEach(x -> x.precursors.clear());
-        function.blocks.forEach(x -> x.successors.clear());
-        visited = new LinkedHashSet<>();
-        DFS(function.entryBlock);
-        function.blocks = visited;
-        for ( ; ; ) {
-            int size = function.blocks.size();
-            for (Iterator<BasicBlock> iter = function.blocks.iterator(); iter.hasNext(); ) {
-                BasicBlock cur = iter.next();
-                if (!cur.equals(function.entryBlock) && cur.precursors.size() == 0) {
-                    iter.remove();
-                    cur.splitSuccessors();
-                }
-            }
-            if (size == function.blocks.size()) break;
-        }
+        BlockGraphUpdater.runForFunction(function);
         function.blocks.forEach(cur -> cur.phiInst.clear());
-        DominatorTreeBuilder.runForFunction(function);
-    }
-
-    HashSet<BasicBlock> visited;
-
-    void DFS(BasicBlock x) {
-        if (visited.contains(x)) return;
-        visited.add(x);
-        if (x.back instanceof Return) {
-        } else if (x.back instanceof Branch) {
-            x.linkSuccessor(((Branch) x.back).thenDest);
-            x.linkSuccessor(((Branch) x.back).elseDest);
-        } else if (x.back instanceof Jump) {
-            x.linkSuccessor(((Jump) x.back).dest);
-        } else {
-            throw new UnreachableCodeError();
-        }
-        x.successors.forEach(this::DFS);
     }
 
     @Override

@@ -178,7 +178,7 @@ public class ConstantPropagation implements Pass {
                     // associativity
                     if (!changed
                             && src1 instanceof Register
-                            //&& src1.uses.size() == 1 // only a temp
+                            && src1.uses.size() == 1 // only a temp
                             && ((Register) src1).def instanceof Binary
                             && ((Binary) ((Register) src1).def).op.equals(op)
                             && ((Binary) ((Register) src1).def).src2 instanceof ConstInt) {

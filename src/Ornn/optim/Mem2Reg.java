@@ -6,10 +6,7 @@ import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /*
     Algorithm refer to SSA book's basic algorithm.
@@ -46,16 +43,16 @@ public class Mem2Reg implements Pass {
         DominatorTreeBuilder.runForFunction(function);
 
         allocVar = function.allocVar;
-        allocLoad = new HashMap<>();
-        allocPhi = new HashMap<>();
-        allocStore = new HashMap<>();
-        definitionBlocks = new HashSet<>();
+        allocLoad = new LinkedHashMap<>();
+        allocPhi = new LinkedHashMap<>();
+        allocStore = new LinkedHashMap<>();
+        definitionBlocks = new LinkedHashSet<>();
         fa = new HashMap<>();
 
         for (BasicBlock block : function.blocks) {
-            allocLoad.put(block, new HashSet<>());
-            allocStore.put(block, new HashMap<>());
-            allocPhi.put(block, new HashMap<>());
+            allocLoad.put(block, new LinkedHashSet<>());
+            allocStore.put(block, new LinkedHashMap<>());
+            allocPhi.put(block, new LinkedHashMap<>());
         }
         for (BasicBlock block : function.blocks) {
             for (Inst inst = block.front; inst != null ; inst = inst.next) {

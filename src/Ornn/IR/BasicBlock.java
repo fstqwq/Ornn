@@ -161,6 +161,17 @@ public class BasicBlock {
             }
         });
     }
+    public void removeUnnecessaryPhi() {
+        HashSet<BasicBlock> deprecated = new HashSet<>();
+        phiInst.forEach((register, phi) -> {
+            for (int i = 0; i < phi.blocks.size(); i++) {
+                if (!precursors.contains(phi.blocks.get(i))) {
+                    deprecated.add(phi.blocks.get(i));
+                }
+            }
+        });
+        deprecated.forEach(this::phiRemove);
+    }
 
     public void spiltAndCopyTo(BasicBlock dest, Inst inst) {
         assert dest.front == null && dest.back == null;

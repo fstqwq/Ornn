@@ -65,7 +65,7 @@ public class InstSelector implements IRVisitor {
             if (operandMap.containsKey(operand)) {
                 ret = operandMap.get(operand);
             } else {
-                ret = new VReg(vRegCount++, operand.type.size() / 8);
+                ret = new VReg(vRegCount++, max(1, operand.type.size() / 8));
                 operandMap.put(operand, ret);
             }
             return ret;
@@ -93,7 +93,7 @@ public class InstSelector implements IRVisitor {
         }
         if (operand instanceof ConstBool) {
             if (((ConstBool) operand).value) {
-                VReg reg = new VReg(vRegCount++, operand.type.size() / 8);
+                VReg reg = new VReg(vRegCount++, 1);
                 currentBlock.add(new Li(1, reg, currentBlock));
                 return reg;
             } else {
@@ -102,7 +102,7 @@ public class InstSelector implements IRVisitor {
         }
         if (operand instanceof ConstInt) {
             if (((ConstInt) operand).value != 0) {
-                VReg reg = new VReg(vRegCount++, operand.type.size() / 8);
+                VReg reg = new VReg(vRegCount++, 4);
                 currentBlock.add(new Li(((ConstInt) operand).value, reg, currentBlock));
                 return reg;
             } else {
@@ -509,7 +509,7 @@ public class InstSelector implements IRVisitor {
             function.entryBlock.add(new Ld(sp,
                     new SImm(paramInStackOffset, false),
                     function.params.get(i),
-                    irFunc.params.get(i).type.size() / 8,
+                    max(1, irFunc.params.get(i).type.size() / 8),
                     function.entryBlock));
             paramInStackOffset += 4;
         }

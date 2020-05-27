@@ -6,6 +6,8 @@ import Ornn.IR.Root;
 import Ornn.IR.instruction.Inst;
 import Ornn.IR.instruction.Phi;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.BlockGraphUpdater;
+import Ornn.IR.util.DominatorTreeBuilder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -97,6 +99,7 @@ public class CommonSubexpressionElimination implements Pass {
 
 
     void runForFunction(Function function) {
+        DominatorTreeBuilder.runForFunction(function);
         function.blocks.forEach(this::runForBlock);
     }
 

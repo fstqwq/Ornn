@@ -10,6 +10,11 @@
 ![](https://opgg-static.akamaized.net/images/lol/item/3111.png?image=q_auto,w_42&v=1583298869)
 ![](https://opgg-static.akamaized.net/images/lol/item/3379.png?image=q_auto,w_42&v=1583298869)
 
+**Warning:** If you try to read this code and find anywhere can't understand, please contact me.
+There should be so many bugs and unreasonable designs that 
+at last I have to add redundant code to ensure correctness.
+
+
 List of things I shall done:
 
 

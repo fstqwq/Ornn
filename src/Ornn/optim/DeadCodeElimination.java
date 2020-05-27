@@ -5,6 +5,7 @@ import Ornn.IR.Function;
 import Ornn.IR.Root;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.DominatorTreeBuilder;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -68,6 +69,7 @@ public class DeadCodeElimination implements Pass {
             }
             modified |= changed;
         } while (changed);
+        root.functions.forEach(((s, function) -> DominatorTreeBuilder.runForFunction(function)));
     }
 
     @Override

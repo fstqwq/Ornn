@@ -7,6 +7,7 @@ import Ornn.IR.Root;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.ConstBool;
 import Ornn.IR.operand.Register;
+import Ornn.IR.util.DominatorTreeBuilder;
 import Ornn.util.CompilationError;
 
 import java.util.ArrayList;
@@ -60,6 +61,9 @@ public class CFGSimplification implements Pass {
                             throw new CompilationError("unreachable return instruction in function " + function.name, Position.nowhere);
                         }
                     }
+                }
+                if (changed) {
+                    DominatorTreeBuilder.runForFunction(function);
                 }
             }
         } while (changed);

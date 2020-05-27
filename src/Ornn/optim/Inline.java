@@ -3,11 +3,13 @@ package Ornn.optim;
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.util.CallGraphUpdater;
+import Ornn.IR.util.DominatorTreeBuilder;
 import Ornn.IR.util.FunctionBlockCollector;
 import Ornn.IR.util.IRReplicator;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Inline implements Pass {
@@ -107,7 +109,7 @@ public class Inline implements Pass {
             root.functions.remove(unusedFunction);
             modified = true;
         }
-        HashMap <Call, Function> inlineCandidate = new HashMap<>();
+        HashMap <Call, Function> inlineCandidate = new LinkedHashMap<>();
         root.functions.forEach((s, function) -> function.blocks.forEach(block -> {
             for (Inst inst = block.front; inst != null; inst = inst.next) {
                 if (inst instanceof Call) {
@@ -134,6 +136,7 @@ public class Inline implements Pass {
         forced = true;
         do updateCallGraph(); while (inlineFunctions());
         forced = false;
+        root.functions.forEach((s, function) -> DominatorTreeBuilder.runForFunction(function));
         return updated;
     }
 
@@ -141,6 +144,7 @@ public class Inline implements Pass {
     public boolean run() {
         updated = false;
         do updateCallGraph(); while (inlineFunctions());
+        root.functions.forEach((s, function) -> DominatorTreeBuilder.runForFunction(function));
         return updated;
     }
 }
