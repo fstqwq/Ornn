@@ -102,7 +102,7 @@ public class Main {
                 new StaticArrayDetector().visit(ast);
             }
 
-            IRBuilder irBuilder = new IRBuilder(toplevelScope, emitLLVM);
+            IRBuilder irBuilder = new IRBuilder(toplevelScope, optLevel);
             irBuilder.visit(ast);
 
             if (optLevel > 1) {

@@ -4,6 +4,8 @@ import Ornn.AST.*;
 import Ornn.AST.semantic.*;
 import Ornn.util.CompilationError;
 
+import static java.lang.Integer.max;
+
 
 /*
 Resolve:
@@ -108,8 +110,10 @@ public class ScopeResolver implements ASTVisitor {
     public void visit(WhileStmtNode node) {
         Loop enclosingLoop = currentLoop;
         currentLoop = node;
+        currentLoop.setLoopDepth(0);
         node.getExpr().accept(this);
         node.getStmt().accept(this);
+        if (enclosingLoop != null) enclosingLoop.setLoopDepth(max(enclosingLoop.getLoopDepth(), currentLoop.getLoopDepth() + 1));
         currentLoop = enclosingLoop;
     }
 
@@ -117,10 +121,12 @@ public class ScopeResolver implements ASTVisitor {
     public void visit(ForStmtNode node) {
         Loop enclosingLoop = currentLoop;
         currentLoop = node;
+        currentLoop.setLoopDepth(0);
         if (node.getInit() != null) node.getInit().accept(this);
         if (node.getCond() != null) node.getCond().accept(this);
         if (node.getStep() != null) node.getStep().accept(this);
         node.getStmt().accept(this);
+        if (enclosingLoop != null) enclosingLoop.setLoopDepth(max(enclosingLoop.getLoopDepth(), currentLoop.getLoopDepth() + 1));
         currentLoop = enclosingLoop;
     }
 

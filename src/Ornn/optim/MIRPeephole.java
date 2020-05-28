@@ -9,6 +9,7 @@ import Ornn.IR.operand.Global;
 import java.util.*;
 
 public class MIRPeephole implements Pass {
+    public static int maxGap = 32;
     Root root;
     public MIRPeephole(Root root) {
         this.root = root;
@@ -21,10 +22,12 @@ public class MIRPeephole implements Pass {
         do {
             changed = false;
             HashMap <Global, Inst> globalLoadStore = new HashMap<>(); // globals never have aliases
-            ArrayList <Inst> available = new ArrayList<>();
+            LinkedHashMap <Inst, Integer> available = new LinkedHashMap<>();
             ArrayList<Store> protectedStore = new ArrayList<>(); // should not delete cross-block store
+            int timeStamp = 0;
             if (block.precursors.contains(block.iDom) && block.precursors.size() == 1) {
                 for (Inst inst = block.iDom.back.prev; inst != null; inst = inst.prev) {
+                    timeStamp++;
                     if (inst instanceof Store) {
                         boolean collision = false;
                         for (Store store : protectedStore) {
@@ -34,7 +37,7 @@ public class MIRPeephole implements Pass {
                             }
                         }
                         if (collision) continue;
-                        available.add(inst);
+                        available.put(inst, timeStamp);
                         protectedStore.add((Store) inst);
                     } else if (inst instanceof Load) {
                         boolean collision = false;
@@ -45,11 +48,12 @@ public class MIRPeephole implements Pass {
                             }
                         }
                         if (collision) continue;
-                        available.add(inst);
+                        available.put(inst, timeStamp);
                     }
                 }
             }
             for (Inst inst = block.front; inst != null; inst = inst.next) {
+                timeStamp++;
                 if (inst instanceof Load ) {
                     if (((Load) inst).addr instanceof Global && globalLoadStore.containsKey((Global) ((Load) inst).addr) && !((Global) ((Load) inst).addr).isArray) {
                         Global global = (Global) ((Load) inst).addr;
@@ -68,25 +72,31 @@ public class MIRPeephole implements Pass {
                         }
                         else {
                             boolean replaced = false;
-                            for (Inst i : available) {
-                                if (i instanceof Load) {
-                                    if (((Load) i).addr.isSameWith(((Load) inst).addr)) {
-                                        ((Load) inst).dest.replaceAll(((Load) i).dest);
-                                        inst.delete();
-                                        replaced = true;
-                                        break;
-                                    }
-                                } else if (i instanceof Store) {
-                                    if (((Store) i).addr.isSameWith(((Load) inst).addr)) {
-                                        ((Load) inst).dest.replaceAll(((Store) i).value);
-                                        inst.delete();
-                                        replaced = true;
-                                        break;
+                            for (Iterator<Map.Entry<Inst, Integer>> iter = available.entrySet().iterator(); iter.hasNext(); ) {
+                                Map.Entry<Inst, Integer> entry = iter.next();
+                                if (entry.getValue() - timeStamp > maxGap) {
+                                    iter.remove();
+                                } else {
+                                    Inst i = entry.getKey();
+                                    if (i instanceof Load) {
+                                        if (((Load) i).addr.isSameWith(((Load) inst).addr)) {
+                                            ((Load) inst).dest.replaceAll(((Load) i).dest);
+                                            inst.delete();
+                                            replaced = true;
+                                            break;
+                                        }
+                                    } else if (i instanceof Store) {
+                                        if (((Store) i).addr.isSameWith(((Load) inst).addr)) {
+                                            ((Load) inst).dest.replaceAll(((Store) i).value);
+                                            inst.delete();
+                                            replaced = true;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                             if (!replaced) {
-                                available.add(inst);
+                                available.put(inst, timeStamp);
                             } else {
                                 changed = true;
                             }
@@ -105,18 +115,26 @@ public class MIRPeephole implements Pass {
                         globalLoadStore.put((Global) ((Store) inst).addr, inst);
                     } else {
                         boolean replaced = false;
-                        for (Inst i : available) {
-                            if (i instanceof Store && !protectedStore.contains(i)) {
-                                if (((Store) i).addr.isSameWith(((Store) inst).addr)) {
-                                    i.delete();
-                                    replaced = true;
-                                    break;
+                        for (Iterator<Map.Entry<Inst, Integer>> iter = available.entrySet().iterator(); iter.hasNext(); ) {
+                            Map.Entry<Inst, Integer> entry = iter.next();
+                            if (entry.getValue() - timeStamp > maxGap) {
+                                iter.remove();
+                            } else {
+                                Inst i = entry.getKey();
+                                if (i instanceof Store && !protectedStore.contains(i)) {
+                                    if (((Store) i).addr.isSameWith(((Store) inst).addr)) {
+                                        i.delete();
+                                        iter.remove();
+                                        replaced = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
                         if (replaced) changed = true;
-                        /**/for (Iterator<Inst> iter = available.iterator(); iter.hasNext(); ) {
-                            Inst cur = iter.next();
+                        for (Iterator<Map.Entry<Inst, Integer>> iter = available.entrySet().iterator(); iter.hasNext(); ) {
+                            Map.Entry<Inst, Integer> entry = iter.next();
+                            Inst cur = entry.getKey();
                             if (cur instanceof Store) {
                                 if (((Store) cur).addr.type.isSameWith(((Store) inst).addr.type)) {
                                     iter.remove();
@@ -126,9 +144,8 @@ public class MIRPeephole implements Pass {
                                     iter.remove();
                                 }
                             }
-                        }//*/
-                        //available.clear();
-                        available.add(inst);
+                        }
+                        available.put(inst, timeStamp);
                     }
                 } else if (inst instanceof Call) {
                     globalLoadStore.clear();

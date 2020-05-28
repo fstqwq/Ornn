@@ -35,12 +35,12 @@ public class IRBuilder implements ASTVisitor {
         public ArrayList<Operand> values = new ArrayList<>();
     }
 
-    boolean emitLLVM;
+    int optLevel;
 
-    public IRBuilder (ToplevelScope toplevelScope, boolean emitLLVM) {
+    public IRBuilder (ToplevelScope toplevelScope, int optLevel) {
         root = new Root(toplevelScope);
-        this.emitLLVM = emitLLVM;
-        if (!emitLLVM) initMemoryPool();
+        this.optLevel = optLevel;
+        if (optLevel > 1) initMemoryPool();
     }
 
     @Override
@@ -395,6 +395,8 @@ public class IRBuilder implements ASTVisitor {
         currentBlock = destBlock;
     }
 
+    int unrollTotalSize = 1;
+
     @Override
     public void visit(ForStmtNode node) {
         if (node.getInit() != null) {
@@ -403,6 +405,66 @@ public class IRBuilder implements ASTVisitor {
         if (node.getCond() != null && node.getCond().isPureConstant() && !node.getCond().equivalentConstant.getBool()) {
             return;
         }
+        if (optLevel > 1) { // loop unrolling
+            if (node.getInit() instanceof BinaryExprNode && node.getCond() instanceof BinaryExprNode && node.getStep() instanceof UnaryExprNode) {
+                BinaryExprNode init = (BinaryExprNode) node.getInit();
+                BinaryExprNode cond = (BinaryExprNode) node.getCond();
+                UnaryExprNode  step = (UnaryExprNode) node.getStep();
+                // for (i = 0; i <= 10; i++)
+                if (
+                   init.getLhs() instanceof IDExprNode
+                && ((IDExprNode) init.getLhs()).getVariableSymbol().getType().getTypeName().equals("int")
+                && init.getOp().equals("=")
+                && init.getRhs().isPureConstant()
+                && cond.getLhs() instanceof IDExprNode
+                && ((IDExprNode) cond.getLhs()).getVariableSymbol().equals(((IDExprNode) init.getLhs()).getVariableSymbol())
+                && (cond.getOp().equals("<") || cond.getOp().equals(">") || cond.getOp().equals("<=") || cond.getOp().equals(">="))
+                && cond.getRhs().isPureConstant()
+                && step.getExpr() instanceof IDExprNode
+                && ((IDExprNode) step.getExpr()).getVariableSymbol().equals(((IDExprNode) init.getLhs()).getVariableSymbol())
+                && (step.getOp().equals("i++") || step.getOp().equals("i--") || step.getOp().equals("++i") || step.getOp().equals("--i"))
+                ) {
+                    int unrollLengthLimit;
+                    switch (node.loopDepth) {
+                        case 0: unrollLengthLimit = 32; break; // reg alloc shows negative result if larger than it (why?)
+                        case 1: unrollLengthLimit = 8; break;
+                        case 2:  unrollLengthLimit = 2; break;
+                        default: unrollLengthLimit = 1; break;
+                    }
+                    int start = (int) init.getRhs().equivalentConstant.getInt();
+                    int end = (int) cond.getRhs().equivalentConstant.getInt();
+                    int oneStep = step.getOp().charAt(1) == '+' ? 1 : -1;
+                    int loopLength = (end - start) / oneStep + (cond.getOp().length() == 2 ? 1 : 0);
+                    if (loopLength <= 0) return;
+                    if (loopLength <= unrollLengthLimit) {
+                        System.err.println("unroll size = " + loopLength);
+                        unrollTotalSize = unrollTotalSize * loopLength;
+                        BasicBlock destBlock = new BasicBlock(currentFunction, "for_dest");
+                        ArrayList<BasicBlock> stmtBlocks = new ArrayList<>();
+                        for (int i = 0; i < loopLength; i++) {
+                            stmtBlocks.add(new BasicBlock(currentFunction, "for_stmt" + i));
+                        }
+
+                        node.getInit().accept(this);
+                        currentBlock.pushBack(new Jump(stmtBlocks.get(0), currentBlock));
+
+                        node.destBlock = destBlock;
+                        for (int i = 0; i < loopLength; i++) {
+                            node.stepBlock = i == loopLength - 1 ? destBlock : stmtBlocks.get(i + 1);
+                            currentBlock = stmtBlocks.get(i);
+                            if (i > 0) step.accept(this);
+                            node.getStmt().accept(this);
+                            if (!currentBlock.isTerminated) currentBlock.pushBack(new Jump(node.stepBlock, currentBlock));
+                        }
+                        currentBlock = node.destBlock;
+                        step.accept(this);
+                        unrollTotalSize = unrollTotalSize / loopLength;
+                        return;
+                    }
+                }
+            }
+        }
+
         BasicBlock stmtBlock = new BasicBlock(currentFunction, "for_stmt");
         BasicBlock condBlock = node.getCond() == null ? stmtBlock : new BasicBlock(currentFunction, "for_cond");
         BasicBlock stepBlock = node.getStep() == null ? condBlock : new BasicBlock(currentFunction, "for_step");
@@ -847,7 +909,7 @@ public class IRBuilder implements ASTVisitor {
             Register mallocAddr = new Register("_addr_malloc", STR);
             Register castAddr = new Register("_addr_cast", root.resolveType(node.getBaseTypeAfterResolve(), true));
             node.result = castAddr;
-            if (emitLLVM) {
+            if (optLevel > 1) {
                 currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8, 32), currentBlock));
             } else {
                 // hacked malloc
@@ -912,7 +974,7 @@ public class IRBuilder implements ASTVisitor {
         Register arrayPtr = cur == 0 ? ret : new Register("malloc_ptr", ((Pointer) ret.type).typePointedTo);
         BaseType typePointTo = ((Pointer) arrayPtr.type).typePointedTo;
         Operand curSize = loadValue(node.getExprNodeList().get(cur).result);
-        if (!emitLLVM && (cur == 0 && node.getExprNodeList().get(cur).isPureConstant() && currentFunction.name.equals("__init"))) {
+        if (optLevel > 1 && (cur == 0 && node.getExprNodeList().get(cur).isPureConstant() && currentFunction.name.equals("__init"))) {
             // must be better
             int curSize_ = (int) node.getExprNodeList().get(cur).equivalentConstant.getInt();
             int typeWidth = typePointTo.size() / 8;
@@ -946,7 +1008,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.back.comment = "Binary *";
             currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), allocWidth, "+", currentBlock));
             currentBlock.back.comment = "Binary +";
-            if (emitLLVM) {
+            if (optLevel < 2) {
                 currentBlock.pushBack(new Malloc(mallocAddr, allocWidth, currentBlock));
                 currentBlock.back.comment = "Malloc";
             } else {

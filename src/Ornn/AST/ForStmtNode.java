@@ -54,4 +54,16 @@ public class ForStmtNode extends StmtNode implements Loop {
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
+
+    public int loopDepth;
+
+    @Override
+    public void setLoopDepth(int depth) {
+        loopDepth = depth;
+    }
+
+    @Override
+    public int getLoopDepth() {
+        return loopDepth;
+    }
 }

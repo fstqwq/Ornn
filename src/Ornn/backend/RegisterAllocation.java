@@ -114,13 +114,13 @@ public class RegisterAllocation {
         }
     }
     HashSet<Reg> adjacent(Reg n) {
-        return new HashSet<>(n.adjList) {{removeAll(selectStack); removeAll(coalescedNodes);}};
+        return new LinkedHashSet(n.adjList) {{removeAll(selectStack); removeAll(coalescedNodes);}};
     }
     HashSet<Reg> adjacent(Reg u, Reg v) {
         return new HashSet<>(adjacent(u)) {{addAll(adjacent(v));}};
     }
     HashSet<Mv> nodeMoves(Reg n) {
-        return new HashSet<>(workListMoves) {{ addAll(activeMoves); retainAll(n.moveList);}};
+        return new LinkedHashSet<>(workListMoves) {{ addAll(activeMoves); retainAll(n.moveList);}};
     }
     boolean moveRelated(Reg n) {
         return !nodeMoves(n).isEmpty();
@@ -136,7 +136,7 @@ public class RegisterAllocation {
     }
     void decrementDegree(Reg reg) {
         if (reg.degree-- == K) {
-            HashSet<Reg> nodes = new HashSet<>(adjacent(reg));
+            HashSet<Reg> nodes = new LinkedHashSet<>(adjacent(reg));
             nodes.add(reg);
             enableMoves(nodes);
             spillWorkList.remove(reg);
@@ -154,7 +154,7 @@ public class RegisterAllocation {
     }
     void build() {
         for (RVBlock block : currentFunction.blocks) {
-            HashSet<Reg> currentLive = new HashSet<>(block.liveOut);
+            HashSet<Reg> currentLive = new LinkedHashSet<>(block.liveOut);
             for (RVInst inst = block.back; inst != null; inst = inst.prev) {
                 if (inst instanceof Mv) {
                     currentLive.removeAll(inst.getUses());
@@ -226,7 +226,7 @@ public class RegisterAllocation {
         coalescedNodes.add(v);
         v.alias = u;
         u.moveList.addAll(v.moveList);
-        HashSet<Reg> tmp = new HashSet<>() {{add(v);}};
+        HashSet<Reg> tmp = new LinkedHashSet<>() {{add(v);}};
         enableMoves(tmp);
         adjacent(v).forEach(t -> {
             addEdge(t, u);
@@ -317,7 +317,7 @@ public class RegisterAllocation {
         while (!selectStack.isEmpty()) {
             Reg n = selectStack.pop();
             ArrayList<PReg> okColors = new ArrayList<>(root.allocatableRegs);
-            HashSet<Reg> colored = new HashSet<>(coloredNodes);
+            HashSet<Reg> colored = new LinkedHashSet<>(coloredNodes);
             colored.addAll(preColored);
             for (Reg w : n.adjList) {
                 if (colored.contains(getAlias(w))) {
@@ -376,7 +376,7 @@ public class RegisterAllocation {
     }
 
     void rewriteProgram() {
-        HashSet<Reg> newTemps = new HashSet<>();
+        HashSet<Reg> newTemps = new LinkedHashSet<>();
 
         spilledNodes.forEach(v -> {
             v.stackOffset = new SImm(-stackOffset - 4, false);
