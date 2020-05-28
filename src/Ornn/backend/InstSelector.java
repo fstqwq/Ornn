@@ -45,6 +45,7 @@ public class InstSelector implements IRVisitor {
     HashMap<Function, RVFunction> functionMap = new LinkedHashMap<>();
     HashMap<BasicBlock, RVBlock> blockMap = new LinkedHashMap<>();
     HashMap<Operand, Reg> operandMap = new LinkedHashMap<>();
+    HashMap<Integer, Reg> tmpAlias = new LinkedHashMap<>();
     int vRegCount = 0;
     public InstSelector(Root root) {
         this.root = root;
@@ -101,10 +102,18 @@ public class InstSelector implements IRVisitor {
             }
         }
         if (operand instanceof ConstInt) {
-            if (((ConstInt) operand).value != 0) {
-                VReg reg = new VReg(vRegCount++, 4);
-                currentBlock.add(new Li(((ConstInt) operand).value, reg, currentBlock));
-                return reg;
+            int value = ((ConstInt) operand).value;
+            if (value != 0) {
+                if (tmpAlias.containsKey(value)) {
+                    return tmpAlias.get(value);
+                } else {
+                    VReg reg = new VReg(vRegCount++, 4);
+                    currentBlock.add(new Li(((ConstInt) operand).value, reg, currentBlock));
+                    reg.isImm = true;
+                    reg.imm = value;
+                    tmpAlias.put(value, reg);
+                    return reg;
+                }
             } else {
                 return zero;
             }
@@ -433,7 +442,7 @@ public class InstSelector implements IRVisitor {
     public void visit(Move inst) {
         if (isZero(inst.src)) {
             currentBlock.add(new Mv(zero, regTrans(inst.dest), currentBlock));
-        } else if (inst.src instanceof ConstInt) {
+        } else if (inst.src instanceof ConstInt && checkImm(((ConstInt) inst.src).value)) {
             currentBlock.add(new Li(((ConstInt) inst.src).value, regTrans(inst.dest), currentBlock));
         } else if (inst.src instanceof ConstBool) {
             currentBlock.add(new Li(((ConstBool) inst.src).value ? 1 : 0, regTrans(inst.dest), currentBlock));
@@ -469,6 +478,9 @@ public class InstSelector implements IRVisitor {
     }
 
     void runForBlock(BasicBlock irBlock) {
+        if (currentFunction == null || currentBlock != blockMap.get(irBlock.iDom)) {
+            tmpAlias.clear();
+        }
         currentBlock = blockMap.get(irBlock);
         for (BasicBlock precursor : irBlock.precursors) {
             currentBlock.precursors.add(blockMap.get(precursor));

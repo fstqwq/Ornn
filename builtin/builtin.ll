@@ -30,7 +30,7 @@ define dso_local void @printlnInt(i32 %0) local_unnamed_addr #0 {
 
 ; Function Attrs: nofree nounwind
 define dso_local i8* @getString() local_unnamed_addr #0 {
-  %1 = tail call dereferenceable_or_null(512) i8* @malloc(i32 512)
+  %1 = tail call dereferenceable_or_null(128) i8* @malloc(i32 128)
   %2 = tail call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i8* %1)
   ret i8* %1
 }

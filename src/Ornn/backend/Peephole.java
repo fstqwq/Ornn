@@ -40,6 +40,7 @@ public class Peephole {
     static void redundantElimination(RVFunction function) {
         // remove redundant Li, Lui, La
         // Load and stores are removed in MIR
+        PReg zero = root.pRegs.get(0);
         for (RVBlock block : function.blocks) {
             HashMap <PReg, RVInst> content = new HashMap<>();
             for (RVInst inst = block.front; inst != null; inst = inst.next) {
@@ -67,6 +68,33 @@ public class Peephole {
                             inst.delete();
                             changed = true;
                         }
+                    }
+                } else if (inst instanceof Mv && ((Mv) inst).rs.color.equals(zero)) {
+                    if (content.containsKey(((Mv) inst).rd.color)) {
+                        RVInst last = content.get(((Mv) inst).rd.color);
+                        if (last instanceof Mv && ((Mv) last).rs.color.equals(zero)) {
+                            inst.delete();
+                            changed = true;
+                        }
+                    }
+                }
+                while (!changed
+                && inst.prev != null
+                && inst.prev.getDefs().size() == 1
+                && inst.getDefs().size() == 1
+                && inst.prev.getDefs().iterator().next().color == inst.getDefs().iterator().next().color) {
+                    changed = true;
+                    for (Reg i : inst.getUses()) {
+                        if (i.color == inst.getDefs().iterator().next().color) {
+                            changed = false;
+                            break;
+                        }
+                    }
+                    if (changed) {
+                        inst.prev.delete();
+                        changed = false;
+                    } else {
+                        break;
                     }
                 }
                 if (!changed) {

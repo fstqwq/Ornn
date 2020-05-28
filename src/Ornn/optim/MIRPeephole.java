@@ -9,7 +9,7 @@ import Ornn.IR.operand.Global;
 import java.util.*;
 
 public class MIRPeephole implements Pass {
-    public static int maxGap = 32;
+    public static int maxGap = 32;  // 27 = max available registers
     Root root;
     public MIRPeephole(Root root) {
         this.root = root;
@@ -22,7 +22,7 @@ public class MIRPeephole implements Pass {
         do {
             changed = false;
             HashMap <Global, Inst> globalLoadStore = new HashMap<>(); // globals never have aliases
-            LinkedHashMap <Inst, Integer> available = new LinkedHashMap<>();
+            LinkedHashMap <Inst, Integer> available = new LinkedHashMap<>(); // used as pair, store the time stamp
             ArrayList<Store> protectedStore = new ArrayList<>(); // should not delete cross-block store
             int timeStamp = 0;
             if (block.precursors.contains(block.iDom) && block.precursors.size() == 1) {

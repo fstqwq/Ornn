@@ -3,6 +3,7 @@ package Ornn.optim;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.Function;
 import Ornn.IR.Root;
+import Ornn.IR.instruction.Call;
 import Ornn.IR.instruction.Inst;
 import Ornn.IR.instruction.Phi;
 import Ornn.IR.operand.Register;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 
 public class CommonSubexpressionElimination implements Pass {
-    static final int instLimit = 32; // 27 = max available registers
+    static final int instLimit = 48; // optimistic
     // warning : may cause too long live range
     Root root;
     public CommonSubexpressionElimination(Root root) {
@@ -36,6 +37,8 @@ public class CommonSubexpressionElimination implements Pass {
                         break;
                     }
                 }
+            } else if (inst instanceof Call) {
+                numInst += 20;  // across call && block, too costly
             }
         }
         if (numInst < instLimit) {

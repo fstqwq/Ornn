@@ -50,7 +50,7 @@ getString:                              # @getString
 	addi	sp, sp, -16
 	sw	ra, 12(sp)
 	sw	s0, 8(sp)
-	addi	a0, zero, 512
+	addi	a0, zero, 128
 	call	malloc
 	mv	s0, a0
 	lui	a0, %hi(.L.str)

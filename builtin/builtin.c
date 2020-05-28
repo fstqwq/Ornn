@@ -7,7 +7,6 @@ extern int strcmp(const char*, const char *);
 extern char* strcat(char*, const char *);
 extern void* memcpy(void*, const void*, unsigned int);
 extern void* malloc(unsigned int);
-extern char* _mOff_;
 
 void print(char* str) {
 	printf("%s", str);
@@ -22,8 +21,7 @@ void printlnInt(int n) {
 }
 
 char* getString() {
-	char *ret = _mOff_;
-	_mOff_ = ret + 512;
+	char *ret = (char*) malloc(128);
 	scanf("%s", ret);
 	return ret;
 }
@@ -69,8 +67,7 @@ char* toString(int i) {
 		}
 	}
 	return ret;*/
-	char *ret = _mOff_;
-	_mOff_ = ret + 12;
+	char *ret = (char*) malloc(12);
 	sprintf(ret, "%d", i);
 	return ret;
 }
@@ -79,8 +76,7 @@ int string_ord(char *s, int i) {
 	return *(s + i);
 }
 char* string_substring(char *s, int l, int r) {
-	char *ret = _mOff_;
-	_mOff_ = ret + (r - l + 1);
+	char *ret = (char*) malloc(r - l + 1);
 	memcpy(ret, s + l, r - l);
 	return ret;
 }
@@ -94,8 +90,7 @@ int string_length(char *s) {
 }
 char* string_add(char *lhs, char *rhs) {
 	int l = strlen(lhs), r = strlen(rhs);
-	char *ret = _mOff_;
-	_mOff_ = ret + l + r + 1;
+	char *ret = (char*) malloc(l + r + 1);
 	memcpy(ret, lhs, l);
 	strcat(ret, rhs);
 	return ret;

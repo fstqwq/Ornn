@@ -4,13 +4,12 @@ import Ornn.IR.Function;
 import Ornn.RISCV.*;
 import Ornn.RISCV.instrution.*;
 import Ornn.RISCV.operand.*;
+import Ornn.util.CompilationError;
+import Ornn.util.UnreachableCodeError;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Stack;
+import java.util.*;
 
 import static java.lang.Integer.min;
 
@@ -114,7 +113,7 @@ public class RegisterAllocation {
         }
     }
     HashSet<Reg> adjacent(Reg n) {
-        return new LinkedHashSet(n.adjList) {{removeAll(selectStack); removeAll(coalescedNodes);}};
+        return new LinkedHashSet<>(n.adjList) {{removeAll(selectStack); removeAll(coalescedNodes);}};
     }
     HashSet<Reg> adjacent(Reg u, Reg v) {
         return new HashSet<>(adjacent(u)) {{addAll(adjacent(v));}};
@@ -299,6 +298,9 @@ public class RegisterAllocation {
         boolean hasCandidate = false;
         for (Reg reg : spillWorkList) {
             double cost = reg.weight / reg.degree;
+            if (reg instanceof VReg && ((VReg) reg).isImm) {
+                cost /= 64;
+            }
             if (!spillTemps.contains(reg)) {
                 hasCandidate = true;
                 if (cost < minCost) {
@@ -399,20 +401,33 @@ public class RegisterAllocation {
                     if (reg.stackOffset != null) {
                         if (inst.getDefs().contains(reg)) {
                             VReg tmp = new VReg(currentFunction.vRegCount++, 4);
-                            inst.replaceUse(reg, tmp);
-                            inst.replaceRd(reg, tmp);
-                            inst.insertBefore(new Ld(sp, reg.stackOffset, tmp,  tmp.size, block));
-                            inst.insertAfter(new St(sp, reg.stackOffset, tmp,  tmp.size, block));
-                            newTemps.add(tmp);
+                            if (reg instanceof VReg && ((VReg) reg).isImm) { // impossible
+                                throw new UnreachableCodeError();
+                            } else {
+                                inst.insertBefore(new Ld(sp, reg.stackOffset, tmp, tmp.size, block));
+                                inst.insertAfter(new St(sp, reg.stackOffset, tmp, tmp.size, block));
+                                inst.replaceUse(reg, tmp);
+                                inst.replaceRd(reg, tmp);
+                                newTemps.add(tmp);
+                            }
                         }
                         else {
                             if (inst instanceof Mv && ((Mv)inst).rs == reg && ((Mv)inst).rd.stackOffset == null) {
-                                RVInst replace = new Ld(sp, reg.stackOffset, ((Mv)inst).rd,  ((VReg)reg).size, block);
+                                RVInst replace;
+                                if (reg instanceof VReg && ((VReg) reg).isImm) {
+                                    replace = new Li(((VReg) reg).imm, ((Mv) inst).rd, block);
+                                } else {
+                                    replace = new Ld(sp, reg.stackOffset, ((Mv) inst).rd, ((VReg) reg).size, block);
+                                }
                                 inst.replace(replace);
                                 inst = replace;
                             } else {
                                 VReg tmp = new VReg(currentFunction.vRegCount++, 4);
-                                inst.insertBefore(new Ld(sp, reg.stackOffset, tmp, tmp.size, block));
+                                if (reg instanceof VReg && ((VReg) reg).isImm) {
+                                    inst.insertBefore(new Li(((VReg) reg).imm, tmp, block));
+                                } else {
+                                    inst.insertBefore(new Ld(sp, reg.stackOffset, tmp, tmp.size, block));
+                                }
                                 inst.replaceUse(reg, tmp);
                                 newTemps.add(tmp);
                             }
@@ -422,7 +437,12 @@ public class RegisterAllocation {
                 for (Reg def : inst.getDefs()) {
                     if (def.stackOffset != null) {
                         if (!inst.getUses().contains(def)) {
-                            if (inst instanceof Mv && ((Mv) inst).rs.stackOffset == null){
+                            if (def instanceof VReg && ((VReg) def).isImm) {
+                                System.err.println("delete " + inst);
+                                RVInst replace = new Mv(root.regMap.get("zero"), root.regMap.get("zero"), block);
+                                inst.replace(replace);
+                                inst = replace;
+                            } else if (inst instanceof Mv && ((Mv) inst).rs.stackOffset == null){
                                 RVInst replace = new St(sp, def.stackOffset, ((Mv) inst).rs,  ((VReg)def).size, block);
                                 inst.replace(replace);
                                 inst = replace;
