@@ -6,7 +6,7 @@ public class CompileParameter {
     public static int badSpillLimit = 10;
     public static int forcedInlineInstLimit = 200;
     public static int inlineInstLimit = 750;
-    public static int outputInstLimit = 1000000;
+    public static int outputInstLimit = 200000;
     public static int CSEInstLimit = 64;
     public static int crossCallPenalty = 0;
     public static int MIRPeepholeMaxGap = 9999;

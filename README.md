@@ -98,6 +98,7 @@ IR Builder
     * Peephole
         * Remove redundant moves.
         * Remove redundant load immediate numbers, which is invisible in MIR.
+        * Push up returns, that allows multiple returns (Building MIR/LIR redirect all returns to one block)
         
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen
 
