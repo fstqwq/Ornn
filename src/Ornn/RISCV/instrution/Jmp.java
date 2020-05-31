@@ -15,4 +15,9 @@ public class Jmp extends RVInst {
     public String toString() {
         return "j " + offset;
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Jmp(offset, block);
+    }
 }

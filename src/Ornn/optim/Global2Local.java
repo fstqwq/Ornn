@@ -70,7 +70,6 @@ public class Global2Local implements Pass {
             Global global = entry.getKey();
             Integer integer = entry.getValue();
             if (integer > threshold) {
-                System.err.println("local effective : " + global.name);
                 Register addr = new Register("_addr_" + global.name, global.type);
                 Register loadTmp = new Register("_ld_" + global.name, ((Pointer) global.type).typePointedTo);
                 Load load = new Load(loadTmp, global, function.entryBlock);

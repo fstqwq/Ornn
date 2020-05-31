@@ -1,5 +1,6 @@
 package Ornn.optim;
 
+import Ornn.CompileParameter;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.Function;
 import Ornn.IR.Root;
@@ -9,7 +10,6 @@ import Ornn.IR.operand.Global;
 import java.util.*;
 
 public class MIRPeephole implements Pass {
-    public static int maxGap = 32;  // 27 = max available registers
     Root root;
     public MIRPeephole(Root root) {
         this.root = root;
@@ -22,7 +22,7 @@ public class MIRPeephole implements Pass {
         do {
             changed = false;
             HashMap <Global, Inst> globalLoadStore = new HashMap<>(); // globals never have aliases
-            LinkedHashMap <Inst, Integer> available = new LinkedHashMap<>(); // used as pair, store the time stamp
+            HashMap <Inst, Integer> available = new HashMap<>(); // used as pair, store the time stamp
             ArrayList<Store> protectedStore = new ArrayList<>(); // should not delete cross-block store
             int timeStamp = 0;
             if (block.precursors.contains(block.iDom) && block.precursors.size() == 1) {
@@ -49,6 +49,8 @@ public class MIRPeephole implements Pass {
                         }
                         if (collision) continue;
                         available.put(inst, timeStamp);
+                    } else if (inst instanceof Call) {
+                        break;
                     }
                 }
             }
@@ -74,7 +76,7 @@ public class MIRPeephole implements Pass {
                             boolean replaced = false;
                             for (Iterator<Map.Entry<Inst, Integer>> iter = available.entrySet().iterator(); iter.hasNext(); ) {
                                 Map.Entry<Inst, Integer> entry = iter.next();
-                                if (entry.getValue() - timeStamp > maxGap) {
+                                if (entry.getValue() - timeStamp > CompileParameter.MIRPeepholeMaxGap) {
                                     iter.remove();
                                 } else {
                                     Inst i = entry.getKey();
@@ -117,7 +119,7 @@ public class MIRPeephole implements Pass {
                         boolean replaced = false;
                         for (Iterator<Map.Entry<Inst, Integer>> iter = available.entrySet().iterator(); iter.hasNext(); ) {
                             Map.Entry<Inst, Integer> entry = iter.next();
-                            if (entry.getValue() - timeStamp > maxGap) {
+                            if (entry.getValue() - timeStamp > CompileParameter.MIRPeepholeMaxGap) {
                                 iter.remove();
                             } else {
                                 Inst i = entry.getKey();

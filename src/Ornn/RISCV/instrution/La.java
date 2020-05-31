@@ -28,4 +28,9 @@ public class La extends RVInst {
             rd = newReg;
         }
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new La(src, rd, block);
+    }
 }

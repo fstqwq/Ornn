@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class Ret extends RVInst {
     static PReg ra;
     public Ret(RVRoot root, RVBlock rvBlock) {
-        ra = root.regMap.get("ra");
+        if (root != null) ra = root.regMap.get("ra");
         this.block = rvBlock;
     }
     @Override
@@ -20,5 +20,10 @@ public class Ret extends RVInst {
     @Override
     public HashSet<Reg> getUses() {
         return new HashSet<>() {{ add(ra); }};
+    }
+
+    @Override
+    public RVInst getCopy() {
+        return new Ret(null, block);
     }
 }

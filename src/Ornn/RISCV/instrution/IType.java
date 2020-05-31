@@ -47,4 +47,9 @@ public class IType extends RVInst {
     public void applyStackOffset(int stackOffset) {
         imm.applyStackOffset(stackOffset);
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new IType(rs, imm, op, rd, block);
+    }
 }

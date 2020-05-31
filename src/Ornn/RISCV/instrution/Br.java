@@ -33,4 +33,9 @@ public class Br extends RVInst {
             rs2 = newReg;
         }
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Br(rs1, rs2, op, offset, block);
+    }
 }

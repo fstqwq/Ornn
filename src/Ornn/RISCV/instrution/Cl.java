@@ -43,4 +43,8 @@ public class Cl extends RVInst {
         return new HashSet<>(rootInfo.callerSavedRegs);
     }
 
+    @Override
+    public RVInst getCopy() {
+        return new Cl(rootInfo, callee, block);
+    }
 }

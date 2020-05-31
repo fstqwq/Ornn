@@ -17,7 +17,7 @@ public class RVRoot {
     public ArrayList<PReg> allocatableRegs = new ArrayList<>();
     public HashMap<GReg, String> constStr = new HashMap<>();
     public HashSet<GReg> global = new HashSet<>();
-
+    public int spilledCount;
     public RVRoot() {
         for (String reg : regNames) {
             PReg pReg = new PReg(reg);

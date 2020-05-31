@@ -48,4 +48,9 @@ public class Sz extends RVInst {
             rd = newReg;
         }
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Sz(rs, op, rd, block);
+    }
 }

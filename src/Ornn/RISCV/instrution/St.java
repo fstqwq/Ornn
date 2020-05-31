@@ -45,4 +45,9 @@ public class St extends RVInst {
     public void applyStackOffset(int stackOffset) {
         offset.applyStackOffset(stackOffset);
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new St(rs1, offset, rs2, width, block);
+    }
 }

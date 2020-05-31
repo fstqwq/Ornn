@@ -52,4 +52,9 @@ public class Ld extends RVInst {
     public void applyStackOffset(int stackOffset) {
         offset.applyStackOffset(stackOffset);
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Ld(rs, offset, rd, width, block);
+    }
 }

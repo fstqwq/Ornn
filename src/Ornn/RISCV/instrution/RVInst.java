@@ -42,6 +42,7 @@ public abstract class RVInst {
         assert false;
     }
     public void applyStackOffset(int stackOffset) {}
+    public abstract RVInst getCopy();
     public boolean hasNext() {
         return next != null;
     }

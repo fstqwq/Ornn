@@ -3,6 +3,7 @@ package Ornn;
 import Ornn.AST.ProgramNode;
 import Ornn.RISCV.RISCVPrinter;
 import Ornn.RISCV.RVRoot;
+import Ornn.backend.Peephole;
 import Ornn.frontend.IRBuilder;
 import Ornn.IR.IRPrinter;
 import Ornn.backend.InstSelector;
@@ -19,6 +20,7 @@ import Ornn.AST.semantic.ToplevelScope;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
@@ -58,12 +60,6 @@ public class Main {
                         case "-emit-llvm":
                             emitLLVM = true;
                             break;
-                        case "-debug-phi":
-                            debugPhi = true;
-                            break;
-                        case "-debug-codegen":
-                            debugCodegen = true;
-                            break;
                         default:
                             throw new RuntimeException("unknown option " + arg);
                     }
@@ -101,37 +97,21 @@ public class Main {
                 new PrintOptimizer(toplevelScope).visit(ast);
                 new StaticArrayDetector().visit(ast);
             }
+            RVRoot rvRoot = runBackend(toplevelScope, ast, optLevel, emitLLVM, pureName);
+            if (rvRoot == null) return;
 
-            IRBuilder irBuilder = new IRBuilder(toplevelScope, optLevel);
-            irBuilder.visit(ast);
-
-            if (optLevel > 1) {
-                new Global2Local(irBuilder.root).run();
+            if (rvRoot.spilledCount > CompileParameter.badSpillLimit) {
+                System.err.println("Rerun, since spilled " + rvRoot.spilledCount);
+                CompileParameter.setLowConfidence();
+                RVRoot rvRoot1 = runBackend(toplevelScope, ast, optLevel, emitLLVM, pureName);
+                assert rvRoot1 != null;
+                System.err.println("Rerun spilled " + rvRoot1.spilledCount);
+                if (rvRoot1.spilledCount * 1.5 < rvRoot.spilledCount) {
+                    System.err.println("Take rerun result");
+                    rvRoot = rvRoot1;
+                }
             }
-            new Mem2Reg(irBuilder.root).run();
-            if (optLevel > 1) {
-                new Optimization(irBuilder.root).run();
-            }
-            if (emitLLVM) {
-                PrintStream IRFile = new PrintStream(pureName + ".ll");
-                new IRPrinter(irBuilder.root, IRFile).run();
-                return;
-            }
-
-            new SSADestruction(irBuilder.root).run();
-            if (debugPhi) {
-                PrintStream IRFile = new PrintStream(pureName + ".ll");
-                new IRPrinter(irBuilder.root, IRFile).run();
-                return;
-            }
-
-            RVRoot rvRoot = (new InstSelector(irBuilder.root)).run();
-            if (debugCodegen) {
-                new RISCVPrinter(rvRoot, new PrintStream(outputFile), true).run();
-                return;
-            }
-
-            new RegisterAllocation(rvRoot).run();
+            Peephole.run(rvRoot);
             //new RISCVDebugger(rvRoot, new PrintStream(outputFile)).run();
             //if (true) return;
             if (outputToStdout) {
@@ -146,6 +126,28 @@ public class Main {
             throw err;
         }
         System.err.println("[Compile Finished]");
+    }
+
+    public static RVRoot runBackend(ToplevelScope toplevelScope, ProgramNode ast, int optLevel, boolean emitLLVM, String pureName) throws FileNotFoundException {
+        IRBuilder irBuilder = new IRBuilder(toplevelScope, optLevel);
+        irBuilder.visit(ast);
+
+        if (optLevel > 1) {
+            new Global2Local(irBuilder.root).run();
+        }
+        new Mem2Reg(irBuilder.root).run();
+        if (optLevel > 1) {
+            new Optimization(irBuilder.root).run();
+        }
+        if (emitLLVM) {
+            PrintStream IRFile = new PrintStream(pureName + ".ll");
+            new IRPrinter(irBuilder.root, IRFile).run();
+            return null;
+        }
+        new SSADestruction(irBuilder.root).run();
+        RVRoot rvRoot = (new InstSelector(irBuilder.root)).run();
+        new RegisterAllocation(rvRoot).run();
+        return rvRoot;
     }
 
     public static ProgramNode buildAST(InputStream file) throws Exception {

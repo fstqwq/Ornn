@@ -27,4 +27,9 @@ public class Li extends RVInst {
             rd = newReg;
         }
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Li(value, rd, block);
+    }
 }

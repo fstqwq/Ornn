@@ -46,4 +46,9 @@ public class RType extends RVInst {
             rd = newReg;
         }
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new RType(rs1, rs2, op, rd, block);
+    }
 }

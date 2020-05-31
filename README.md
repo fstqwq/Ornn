@@ -4,12 +4,12 @@
   And wind blows through hollow dells\
   Skies clear as day, shall soon turn gray\
   And you'll know, you're nearing Ornn
-  
+> 
 > Barring your path is a chasm wide\
   Howls rise from fathomless pits\
   But close stands a bridge, frozen by time\
   And across, you'll soon find Ornn
-  
+> 
 > River of fire, that scorches the earth\
   Belies his kingdom of stone\
   And steel sings its tone, as a god stands alone\
@@ -102,6 +102,7 @@ IR Builder
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen
 
 ![](http://fstqwq.pw/wp-content/uploads/2020/05/darkseal10-e1590666353790.png) Surpass O2 on test data
+* "Over-fitting" and some constant tricks
 
 ![](https://opgg-static.akamaized.net/images/lol/item/3374.png?image=q_auto,w_42&v=1583298869) Black magic
 * Time's up, baby.

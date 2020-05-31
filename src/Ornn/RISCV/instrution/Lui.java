@@ -32,4 +32,9 @@ public class Lui extends RVInst {
     public void applyStackOffset(int stackOffset) {
         value.applyStackOffset(stackOffset);
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Lui(value, rd, block);
+    }
 }

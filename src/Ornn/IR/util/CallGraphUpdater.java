@@ -7,11 +7,12 @@ import Ornn.IR.instruction.Call;
 import Ornn.IR.instruction.Inst;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class CallGraphUpdater {
 
     static Root root;
-    static HashSet<Function> visited = new HashSet<>();
+    public static HashSet<Function> visited = new LinkedHashSet<>();
 
     static void FunctionDFS(Function function) {
         visited.add(function);

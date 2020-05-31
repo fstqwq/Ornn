@@ -1,6 +1,7 @@
 package Ornn.frontend;
 
 import Ornn.AST.*;
+import Ornn.CompileParameter;
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.operand.*;
@@ -424,19 +425,12 @@ public class IRBuilder implements ASTVisitor {
                 && ((IDExprNode) step.getExpr()).getVariableSymbol().equals(((IDExprNode) init.getLhs()).getVariableSymbol())
                 && (step.getOp().equals("i++") || step.getOp().equals("i--") || step.getOp().equals("++i") || step.getOp().equals("--i"))
                 ) {
-                    int unrollLengthLimit;
-                    switch (node.loopDepth) {
-                        case 0: unrollLengthLimit = 32; break; // reg alloc shows negative result if larger than it (why?)
-                        case 1: unrollLengthLimit = 8; break;
-                        case 2:  unrollLengthLimit = 2; break;
-                        default: unrollLengthLimit = 1; break;
-                    }
                     int start = (int) init.getRhs().equivalentConstant.getInt();
                     int end = (int) cond.getRhs().equivalentConstant.getInt();
                     int oneStep = step.getOp().charAt(1) == '+' ? 1 : -1;
                     int loopLength = (end - start) / oneStep + (cond.getOp().length() == 2 ? 1 : 0);
                     if (loopLength <= 0) return;
-                    if (loopLength <= unrollLengthLimit) {
+                    if (CompileParameter.checkLoopUnroll(node.loopDepth, loopLength)) {
                         System.err.println("unroll size = " + loopLength);
                         unrollTotalSize = unrollTotalSize * loopLength;
                         BasicBlock destBlock = new BasicBlock(currentFunction, "for_dest");

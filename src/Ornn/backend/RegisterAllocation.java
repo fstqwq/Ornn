@@ -1,5 +1,6 @@
 package Ornn.backend;
 
+import Ornn.CompileParameter;
 import Ornn.IR.Function;
 import Ornn.RISCV.*;
 import Ornn.RISCV.instrution.*;
@@ -377,9 +378,10 @@ public class RegisterAllocation {
         }
     }
 
+    int spilledCount = 0;
     void rewriteProgram() {
         HashSet<Reg> newTemps = new LinkedHashSet<>();
-
+        spilledCount += spilledNodes.size();
         spilledNodes.forEach(v -> {
             v.stackOffset = new SImm(-stackOffset - 4, false);
             stackOffset += 4;
@@ -438,7 +440,6 @@ public class RegisterAllocation {
                     if (def.stackOffset != null) {
                         if (!inst.getUses().contains(def)) {
                             if (def instanceof VReg && ((VReg) def).isImm) {
-                                System.err.println("delete " + inst);
                                 RVInst replace = new Mv(root.regMap.get("zero"), root.regMap.get("zero"), block);
                                 inst.replace(replace);
                                 inst = replace;
@@ -474,6 +475,7 @@ public class RegisterAllocation {
     }
 
     public void run() {
+        spilledCount = 0;
         for (RVFunction function : root.functions) {
             stackOffset = 0;
             runForFunction(function);
@@ -481,6 +483,6 @@ public class RegisterAllocation {
             stackOffset = (stackOffset + 15) / 16 * 16;
             applyStackOffset();
         }
-        Peephole.run(root);
+        root.spilledCount = spilledCount;
     }
 }

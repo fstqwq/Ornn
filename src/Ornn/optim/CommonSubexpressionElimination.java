@@ -1,5 +1,6 @@
 package Ornn.optim;
 
+import Ornn.CompileParameter;
 import Ornn.IR.BasicBlock;
 import Ornn.IR.Function;
 import Ornn.IR.Root;
@@ -17,7 +18,6 @@ import java.util.Map;
 
 
 public class CommonSubexpressionElimination implements Pass {
-    static final int instLimit = 48; // optimistic
     // warning : may cause too long live range
     Root root;
     public CommonSubexpressionElimination(Root root) {
@@ -28,20 +28,19 @@ public class CommonSubexpressionElimination implements Pass {
     BasicBlock currentBlock;
 
     void globalCSE(BasicBlock block, int numInst, ArrayList<Inst> appearedInst) {
-        for (Inst inst = block.front; inst != null && numInst++ < instLimit; inst = inst.next) {
+        for (Inst inst = block.front; inst != null && numInst++ < CompileParameter.CSEInstLimit; inst = inst.next) {
             if (!inst.hasSideEffect()) {
                 for (Inst i : appearedInst) {
                     if (i.isSameWith(inst)) {
                         inst.getDest().replaceAll(i.getDest()); // must have a result
                         inst.delete();
-                        break;
                     }
                 }
             } else if (inst instanceof Call) {
-                numInst += 20;  // across call && block, too costly
+                numInst += CompileParameter.crossCallPenalty;  // across call && block, too costly
             }
         }
-        if (numInst < instLimit) {
+        if (numInst < CompileParameter.CSEInstLimit) {
             for (BasicBlock successor : block.successors) {
                 if (successor.isDomedBy(currentBlock)) {
                     globalCSE(successor, numInst, appearedInst);

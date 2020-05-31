@@ -99,7 +99,6 @@ public class Root {
     public Root(ToplevelScope toplevelScope) {
 
         // avoid duplicate libc name
-        builtinFunctions.put("scanf", null);
         builtinFunctions.put("sscanf", null);
         builtinFunctions.put("putchar", null);
         builtinFunctions.put("free", null);
@@ -213,6 +212,9 @@ public class Root {
         builtinOrd.params.add(builtinOrd.classPtr);
         builtinOrd.params.add(new Register("i", I32));
         ((FunctionSymbol) string.resolveSymbol("ord", null)).function = builtinOrd;
+
+        addConstStr("%d");
+        addConstStr("%s");
     }
     /* Replace println with puts */
     public static final Function builtinMalloc = new Function("malloc", true);

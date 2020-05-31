@@ -1,5 +1,6 @@
 package Ornn.optim;
 
+import Ornn.CompileParameter;
 import Ornn.IR.*;
 import Ornn.IR.instruction.*;
 import Ornn.IR.util.CallGraphUpdater;
@@ -7,14 +8,9 @@ import Ornn.IR.util.DominatorTreeBuilder;
 import Ornn.IR.util.FunctionBlockCollector;
 import Ornn.IR.util.IRReplicator;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Inlining implements Pass {
-    static final int forcedInstLimit = 200;
-    static final int instLimit = 750;
     Root root;
     boolean updated = false, forced = false;
     public Inlining(Root root) {
@@ -41,7 +37,7 @@ public class Inlining implements Pass {
             recollectInfo(function);
         }));
         root.builtinFunctions.forEach(((s, function) -> {
-            numberOfInst.put(function, instLimit);
+            numberOfInst.put(function, CompileParameter.inlineInstLimit);
         }));
     }
 
@@ -53,7 +49,7 @@ public class Inlining implements Pass {
         currentBlock = call.basicBlock;
         IRReplicator replicator = new IRReplicator();
         Function callee = call.callee;
-        if (numberOfInst.get(caller) + numberOfInst.get(callee) >= instLimit) {
+        if (numberOfInst.get(caller) + numberOfInst.get(callee) >= CompileParameter.inlineInstLimit) {
             return false;
         }
         for (int i = 0; i < call.params.size(); i++) {
@@ -115,8 +111,8 @@ public class Inlining implements Pass {
                 if (inst instanceof Call) {
                     Call call = (Call) inst;
                     if (!call.tailCallable
-                    &&  (   (forced                             && numberOfInst.get(call.callee) < forcedInstLimit)
-                        ||  (canInline.contains(call.callee)    && numberOfInst.get(call.callee) < instLimit))) {
+                    &&  (   (forced                             && numberOfInst.get(call.callee) < CompileParameter.forcedInlineInstLimit)
+                        ||  (canInline.contains(call.callee)    && numberOfInst.get(call.callee) < CompileParameter.inlineInstLimit))) {
                         inlineCandidate.put(call, function);
                     }
                 }

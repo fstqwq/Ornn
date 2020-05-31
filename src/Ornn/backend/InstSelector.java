@@ -399,6 +399,29 @@ public class InstSelector implements IRVisitor {
             currentFunction.tailCallEntryBlock.precursors.add(currentBlock);
             return;
         }
+        if (inst.callee.name.equals("getInt")) {
+            currentFunction.paramInStackOffset = max(currentFunction.paramInStackOffset, 12);
+            currentBlock.add(new La((GReg) regTrans(root.getConstStr("%d")), a.get(0), currentBlock));
+            currentBlock.add(new IType(sp, new Imm(8), SCategory.add, a.get(1), currentBlock));
+            currentBlock.add(new Cl(rvRoot, new RVFunction("scanf"), currentBlock));
+            Reg reg = new VReg(vRegCount++, 4);
+            currentBlock.add(new Ld(sp, new Imm(8), regTrans(inst.dest), 4, currentBlock));
+            return;
+        }
+        if (inst.callee.name.equals("printInt")) {
+            currentFunction.paramInStackOffset = max(currentFunction.paramInStackOffset, 8);
+            currentBlock.add(new La((GReg) regTrans(root.getConstStr("%d")), a.get(0), currentBlock));
+            currentBlock.add(new Mv(regTrans(inst.params.get(0)), a.get(1), currentBlock));
+            currentBlock.add(new Cl(rvRoot, new RVFunction("printf"), currentBlock));
+            return;
+        }
+        if (inst.callee.name.equals("print")) {
+            currentFunction.paramInStackOffset = max(currentFunction.paramInStackOffset, 8);
+            currentBlock.add(new La((GReg) regTrans(root.getConstStr("%s")), a.get(0), currentBlock));
+            currentBlock.add(new Mv(regTrans(inst.params.get(0)), a.get(1), currentBlock));
+            currentBlock.add(new Cl(rvRoot, new RVFunction("printf"), currentBlock));
+            return;
+        }
         for (int i = 0; i < min(paramRegNum, inst.params.size()); i++) {
             Reg reg = regTrans(inst.params.get(i));
             if (reg instanceof GReg) {

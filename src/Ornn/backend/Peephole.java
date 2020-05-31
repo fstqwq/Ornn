@@ -1,5 +1,6 @@
 package Ornn.backend;
 
+import Ornn.CompileParameter;
 import Ornn.RISCV.*;
 import Ornn.RISCV.instrution.*;
 import Ornn.RISCV.operand.*;
@@ -139,10 +140,61 @@ public class Peephole {
             }
         } while (updated);
     }
+
+    static boolean superCopy() {
+        HashMap<RVBlock, Integer> nInst = new HashMap<>();
+
+        for (RVFunction function : root.functions) {
+            for (RVBlock block : function.blocks) {
+                int cnt = 0;
+                for (RVInst inst = block.front; inst != null; inst = inst.next) {
+                    cnt++;
+                }
+                nInst.put(block, cnt);
+            }
+        }
+        int instLimit = CompileParameter.outputInstLimit / nInst.size();
+        boolean changed = false;
+        for (RVFunction function : root.functions) {
+            for (RVBlock block : function.blocks) {
+                if (block.back instanceof Jmp) {
+                    RVBlock next = ((Jmp) block.back).offset;
+                    if (nInst.get(block) + nInst.get(next) < instLimit) {
+                        changed = true;
+                        nInst.put(block, nInst.get(block) + nInst.get(next) - 1);
+                        if (next == block) {
+                            ArrayList <RVInst> tmp = new ArrayList<>();
+                            for (RVInst inst = next.front; inst != null; inst = inst.next) {
+                                tmp.add(inst.getCopy());
+                            }
+                            block.back.delete();
+                            for (RVInst rvInst : tmp) {
+                                block.add(rvInst);
+                            }
+                        } else {
+                            block.back.delete();
+                            block.successors.remove(next);
+                            block.successors.addAll(next.successors);
+                            next.successors.forEach(x -> x.precursors.add(block));
+                            for (RVInst inst = next.front; inst != null; inst = inst.next) {
+                                RVInst rvInst = inst.getCopy();
+                                rvInst.block = block;
+                                block.add(rvInst);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
     public static void run(RVRoot root) {
         Peephole.root = root;
-        root.functions.forEach(Peephole::removeIdMove);
-        root.functions.forEach(Peephole::combineBlocks);
-        root.functions.forEach(Peephole::redundantElimination);
+        do {
+            root.functions.forEach(Peephole::removeIdMove);
+            root.functions.forEach(Peephole::combineBlocks);
+            root.functions.forEach(Peephole::redundantElimination);
+        } while (superCopy());
     }
 }

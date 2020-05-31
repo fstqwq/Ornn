@@ -37,4 +37,9 @@ public class Mv extends RVInst {
             rd = newReg;
         }
     }
+
+    @Override
+    public RVInst getCopy() {
+        return new Mv(rs, rd, block);
+    }
 }
