@@ -18,6 +18,7 @@ public class Malloc extends Inst {
         this.dest = dest;
         this.size = size;
         dest.def = this;
+        size.uses.add(this);
     }
     @Override
     public String toString() {

@@ -903,7 +903,7 @@ public class IRBuilder implements ASTVisitor {
             Register mallocAddr = new Register("_addr_malloc", STR);
             Register castAddr = new Register("_addr_cast", root.resolveType(node.getBaseTypeAfterResolve(), true));
             node.result = castAddr;
-            if (optLevel > 1) {
+            if (optLevel > 1  || (((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8 < 64)) {
                 currentBlock.pushBack(new Malloc(mallocAddr, new ConstInt(((ClassType)((Pointer)castAddr.type).typePointedTo).size / 8, 32), currentBlock));
             } else {
                 // hacked malloc
@@ -968,19 +968,21 @@ public class IRBuilder implements ASTVisitor {
         Register arrayPtr = cur == 0 ? ret : new Register("malloc_ptr", ((Pointer) ret.type).typePointedTo);
         BaseType typePointTo = ((Pointer) arrayPtr.type).typePointedTo;
         Operand curSize = loadValue(node.getExprNodeList().get(cur).result);
-        if (optLevel > 1 && (cur == 0 && node.getExprNodeList().get(cur).isPureConstant() && currentFunction.name.equals("__init"))) {
+        int __allocWidth = -1, __cursize = -1;
+        if (node.getExprNodeList().get(cur).isPureConstant()) {
+            __cursize = (int) node.getExprNodeList().get(cur).equivalentConstant.getInt();
+            __allocWidth = __cursize * typePointTo.size() / 8 + 4;
+        }
+        if (optLevel > 1 && (cur == 0 && __allocWidth != -1 && currentFunction.name.equals("__init"))) {
             // must be better
-            int curSize_ = (int) node.getExprNodeList().get(cur).equivalentConstant.getInt();
-            int typeWidth = typePointTo.size() / 8;
-            int allocWidth = typeWidth * curSize_ + 4;
             Global arr = new Global(STR, "_sArr_" + staticArrayCnt++);
             root.proxyStatics.add(arr);
             arr.isArray = true;
-            arr.arrayLength = curSize_;
-            arr.arraySize = allocWidth;
+            arr.arrayLength = __cursize;
+            arr.arraySize = __allocWidth;
             arr.initialization = new ArrayList<>();
             arr.initialization.add(".word\t" + curSize);
-            arr.initialization.add(".zero\t" + (allocWidth - 4));
+            arr.initialization.add(".zero\t" + (__allocWidth - 4));
             Register i8Ptr = new Register("tmp", STR);
             currentBlock.pushBack(new GEP(STR, arr, I32ZERO, null, i8Ptr, currentBlock));
             Register i32Ptr = new Register("tmp2", I32Array);
@@ -995,14 +997,18 @@ public class IRBuilder implements ASTVisitor {
         } else {
             ConstInt typeWidth = new ConstInt(typePointTo.size() / 8, 32);
             Register dataWidth = new Register("data_width", I32);
-            Register allocWidth = new Register("alloc_width", I32);
+            Operand allocWidth = new Register("alloc_width", I32);
             Register mallocAddr = new Register("_addr_malloc", STR);
             Register intArrAddr = new Register("_addr_int", I32Array);
-            currentBlock.pushBack(new Binary(curSize, typeWidth, dataWidth, "*", currentBlock));
-            currentBlock.back.comment = "Binary *";
-            currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), allocWidth, "+", currentBlock));
-            currentBlock.back.comment = "Binary +";
-            if (optLevel < 2) {
+            if (__allocWidth != -1) {
+                allocWidth = new ConstInt(__allocWidth, 32);
+            } else {
+                currentBlock.pushBack(new Binary(curSize, typeWidth, dataWidth, "*", currentBlock));
+                currentBlock.back.comment = "Binary *";
+                currentBlock.pushBack(new Binary(dataWidth, new ConstInt(4, 32), (Register) allocWidth, "+", currentBlock));
+                currentBlock.back.comment = "Binary +";
+            }
+            if (optLevel < 2 || (0 <= __allocWidth && __allocWidth < 64)) {
                 currentBlock.pushBack(new Malloc(mallocAddr, allocWidth, currentBlock));
                 currentBlock.back.comment = "Malloc";
             } else {
@@ -1015,17 +1021,17 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.pushBack(new Binary(off_, allocWidth, off__, "+", currentBlock)); // 1
                 currentBlock.pushBack(new Cast(off__, off___, currentBlock));
                 currentBlock.pushBack(new Store(sMultiOffset, off___, currentBlock)); // 64
-                currentBlock.pushBack(new Cast(mallocAddr, intArrAddr, currentBlock));
-                currentBlock.back.comment = "Cast";
-                currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
-                currentBlock.back.comment = "Store";
-                if (typePointTo.isSameWith(I32)) {
-                    currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
-                } else {
-                    Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
-                    currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, intArrAddr_1, currentBlock));
-                    currentBlock.pushBack(new Cast(intArrAddr_1, arrayPtr, currentBlock));
-                }
+            }
+            currentBlock.pushBack(new Cast(mallocAddr, intArrAddr, currentBlock));
+            currentBlock.back.comment = "Cast";
+            currentBlock.pushBack(new Store(intArrAddr, curSize, currentBlock));
+            currentBlock.back.comment = "Store";
+            if (typePointTo.isSameWith(I32)) {
+                currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, arrayPtr, currentBlock));
+            } else {
+                Register intArrAddr_1 = new Register("_addr_int_1", I32Array);
+                currentBlock.pushBack(new GEP(I32, intArrAddr, I32ONE, null, intArrAddr_1, currentBlock));
+                currentBlock.pushBack(new Cast(intArrAddr_1, arrayPtr, currentBlock));
             }
         }
 

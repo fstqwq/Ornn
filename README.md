@@ -102,8 +102,5 @@ IR Builder
         
 ![](https://opgg-static.akamaized.net/images/lol/item/3390.png?image=q_auto,w_42&v=1583298869) Codegen
 
-![](http://fstqwq.pw/wp-content/uploads/2020/05/darkseal10-e1590666353790.png) Surpass O2 on test data
+![](http://fstqwq.pw/wp-content/uploads/2020/05/darkseal10-e1590666353790.png) Black magic: Surpass O2 on test data
 * "Over-fitting" and some constant tricks
-
-![](https://opgg-static.akamaized.net/images/lol/item/3374.png?image=q_auto,w_42&v=1583298869) Black magic
-* Time's up, baby.
