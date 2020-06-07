@@ -120,6 +120,7 @@ public class IRPrinter {
         });
         root.types.forEach(this::printType);
         root.globals.forEach(this::printGlobal);
+        root.proxyStatics.forEach(this::printGlobal);
         root.constStrings.forEach(this::printConstStr);
         root.functions.forEach(this::printFunction);
         return true;
