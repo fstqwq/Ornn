@@ -32,7 +32,7 @@
 ### Mxstar compiler for MS208
 
 **Warning:** 
-There should be so many bugs and unreasonable designs that at last I have to add redundant code to ensure correctness.
+Current implementation contains bugs not fixed yet.
 
 
 ![](https://opgg-static.akamaized.net/images/lol/item/1054.png?image=q_auto,w_42&v=1583298869)
